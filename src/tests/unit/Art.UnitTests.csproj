@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>9999</WarningLevel>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <WarningLevel>9999</WarningLevel>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.development.json" />
+    <None Remove="appsettings.json" />
+    <None Remove="appsettings.production.json" />
+    <None Remove="Data\chimpanzee.txt" />
+    <None Remove="Data\Document_InsertDeleteText_FromFile_Test.txt" />
+    <None Remove="Data\dog.txt" />
+    <None Remove="Data\human.txt" />
+    <None Remove="Data\v54.1.p1_1240K_public.anno.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.production.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\chimpanzee.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Document_InsertDeleteText_FromFile_Test.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\dog.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\human.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\v54.1.p1_1240K_public.anno.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet.Annotations" Version="0.13.12" />
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Moq" Version="4.20.70" />
+    <PackageReference Include="NUnit" Version="3.14.0" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\art\Art.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="NUnit.Framework" />
+  </ItemGroup>
+
+</Project>

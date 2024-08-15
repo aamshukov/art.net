@@ -1,0 +1,6 @@
+﻿//..............................
+// UI Lab Inc. Arthur Amshukov .
+//..............................
+namespace Art.Framework.Document.PieceTable;
+
+public record Position(index Line, index Column);
