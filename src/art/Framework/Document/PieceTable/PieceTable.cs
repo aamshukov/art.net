@@ -12,11 +12,15 @@ namespace Art.Framework.Document.PieceTable;
 
 public sealed class PieceTable : ValueType
 {
-    private LinkedList<Piece> Pieces { get; init; }
+    public LinkedList<Piece> Pieces { get; init; }
 
     public count Count => Pieces.Count;
 
     public size TabSize { get; init; }
+
+    private id SeedPieceId = 2; // 0 - sentinels, 1 - original content
+
+    private id NextPieceId() => SeedPieceId++;
 
     /// <summary>
     /// Readonly original buffer, sequence of codepoints.
@@ -70,16 +74,16 @@ public sealed class PieceTable : ValueType
         Assert.NonNullReference(piece, nameof(piece));
         Assert.NonNullReference(Pieces.Last != default, nameof(piece));
 
-#pragma warning disable CS8604
+        #pragma warning disable CS8604
         Pieces.AddBefore(Pieces.Last, piece); // add to the end, before tail sentinel
-#pragma warning restore CS8604
+        #pragma warning restore CS8604
     }
 
     public LinkedListNode<Piece> InsertPiece(Piece piece, LinkedListNode<Piece> anchorNode, bool insertAfter)
     {
         Assert.NonNullReference(piece, nameof(piece));
 
-        if (insertAfter)
+        if(insertAfter)
         {
             return Pieces.AddAfter(anchorNode, piece);
         }
@@ -89,10 +93,23 @@ public sealed class PieceTable : ValueType
         }
     }
 
-    public List<ListNodeProxy> InsertPieces(List<ListNodeProxy> pieces)
+    public void Restore(id injectionPoint, List<Piece> addPieces, List<Piece> removePieces)
     {
-        List<ListNodeProxy> swappedPieces = new();
-        return swappedPieces;
+        foreach(var removePiece in removePieces)
+        {
+            Pieces.Remove(removePiece);
+        }
+
+        if(addPieces.Count > 0)
+        {
+            var startNode = FindPieceNodeByPieceId(injectionPoint, reverse: false);
+            Assert.NonNullReference(startNode, nameof(startNode));
+
+            foreach(var addPiece in addPieces)
+            {
+                startNode = Pieces.AddAfter(startNode, addPiece);
+            }
+        }
     }
 
     /// <summary>
@@ -101,8 +118,15 @@ public sealed class PieceTable : ValueType
     /// <param name="location"></param>
     /// <param name="codepoints"></param>
     /// <param name="contentOffset"></param>
-    /// <returns></returns>
-    public ListNodeProxy Insert(location location, ReadOnlyMemory<codepoint> codepoints, offset contentOffset)
+    /// <param name="injectionPoint"></param>
+    /// <param name="addPieces"></param>
+    /// <param name="removePieces"></param>
+    public void Insert(location location,
+                       ReadOnlyMemory<codepoint> codepoints,
+                       offset contentOffset,
+                       out id injectionPoint,
+                       out List<Piece> addPieces,
+                       out List<Piece> removePieces)
     {
         // 0 1 2 3 4 5 6 7 8 9                     0 1 2 3 4 5 6 7 8 9 10
         // a A B C D E F G H                       a A B C D E F G H
@@ -113,77 +137,96 @@ public sealed class PieceTable : ValueType
         Assert.Ensure(location >= 0, nameof(location));
         Assert.NonNullReference(codepoints, nameof(codepoints));
 
+        addPieces = new();
+        removePieces = new();
+
         FindPieceResult findPieceResult = FindPiece(location);
 
         var insertPosition = location - findPieceResult.Location;
         var existingPiece = findPieceResult.Piece;
         var codepointsLength = codepoints.Length;
 
-        ListNodeProxy proxyNode;
-
         Assert.Ensure(insertPosition >= 0, nameof(insertPosition));
 
-        if (insertPosition == 0 || findPieceResult.AtTheEnd) // if AtTheEnd is true then location way out of the end
+        if(insertPosition == 0 || findPieceResult.AtTheEnd) // if AtTheEnd is true then location way out of the end
         {
             // Case I: boundary case, either at the beginning of the peace or at the end ...
-            var newPiece = CreatePiece(id: Count - 1,         // -1 because there two sentinels already
+            var newPiece = CreatePiece(id: NextPieceId(),     // -1 because there two sentinels already
                                        start: contentOffset,  // location in working (added) content
                                        length: codepointsLength,
                                        contentType: ContentType.Added);
 
-            InsertPiece(newPiece, existingPiece, insertAfter: findPieceResult.AtTheEnd);
+            // record undo/redo data
+            injectionPoint = findPieceResult.AtTheEnd ? existingPiece.Value.Id : existingPiece.Previous!.Value.Id;
+            removePieces.Add(newPiece);
 
-            // make proxy to keep links
-            proxyNode = MakeListNodeProxy(existingPiece);
+            // link into table
+            InsertPiece(newPiece, existingPiece, insertAfter: findPieceResult.AtTheEnd);
         }
         else
         {
-            // Case II: at the middle of the piece case ... split
-            var newLhsPiece = CreatePiece(id: Count - 1,
+            // Case II: at the middle of the pieceNode case ... split
+            var newLhsPiece = CreatePiece(id: NextPieceId(),
                                           start: existingPiece.Value.Span.Start,
                                           length: insertPosition,
                                           contentType: existingPiece.Value.ContentType);
 
-            var newMiddlePiece = CreatePiece(id: Count,
+            var newMiddlePiece = CreatePiece(id: NextPieceId(),
                                              start: contentOffset,
                                              length: codepointsLength,
                                              contentType: ContentType.Added);
 
-            var newRhsPiece = CreatePiece(id: Count + 1,
+            var newRhsPiece = CreatePiece(id: NextPieceId(),
                                           start: existingPiece.Value.Span.Start + insertPosition,
                                           length: existingPiece.Value.Span.Length - insertPosition,
                                           contentType: existingPiece.Value.ContentType);
 
-            // LHS - piece before insertion : MIDDLE - new insertion piece : RHS - piece after insertion
-            // insert in reverse order
+            // record undo/redo data
+            injectionPoint = existingPiece.Previous!.Value.Id;
+
+            removePieces.Add(newLhsPiece);
+            removePieces.Add(newMiddlePiece);
+            removePieces.Add(newRhsPiece);
+
+            addPieces.Add(existingPiece.Value);
+
+            // link into table, insert in reverse order
+            // LHS - pieceNode before insertion : MIDDLE - new insertion pieceNode : RHS - pieceNode after insertion
             InsertPiece(newRhsPiece, existingPiece, insertAfter: true);
             InsertPiece(newMiddlePiece, existingPiece, insertAfter: true);
             InsertPiece(newLhsPiece, existingPiece, insertAfter: true);
 
-            // make proxy to keep links
-            proxyNode = MakeListNodeProxy(existingPiece);
-
-            // remove the existing piece
+            // remove the existing pieceNode
             Pieces.Remove(existingPiece);
         }
-
-        return proxyNode;
     }
 
-    public List<ListNodeProxy> Delete(location location, size length)
+    public void Delete(location location,
+                       size length,
+                       out id injectionPoint,
+                       out List<Piece> addPieces,
+                       out List<Piece> removePieces)
     {
         Assert.Ensure(location >= 0, nameof(location));
         Assert.Ensure(length >= 0, nameof(length));
 
+        injectionPoint = id.MinValue;
+        addPieces = new();
+        removePieces = new();
+
         DomainHelper.NormalizeRange(ref location, ref length, Length());
 
-        List<LinkedListNode<Piece>> pieces = EnumerateCoveringRange(location, length, out location startPieceOffset, out location endPieceOffset);
+        List<LinkedListNode<Piece>> pieceNodes = EnumerateCoveringRange(location, length, out location startPieceOffset, out location endPieceOffset);
 
-        LinkedListNode<Piece>? lhsPieceNode = pieces.FirstOrDefault();
-        LinkedListNode<Piece>? rhsPieceNode = pieces.LastOrDefault();
+        LinkedListNode<Piece>? lhsPieceNode = pieceNodes.FirstOrDefault();
+        LinkedListNode<Piece>? rhsPieceNode = pieceNodes.LastOrDefault();
 
-        if (lhsPieceNode is not null)
+        if(lhsPieceNode is not null)
         {
+            // record undo/redo data
+            injectionPoint = lhsPieceNode.Previous?.Value.Id ?? 0;
+
+            // calculate
             index newStart = location - startPieceOffset;
             size newLength = Math.Min(lhsPieceNode.Value.Span.Length - newStart, length);
 
@@ -192,18 +235,26 @@ public sealed class PieceTable : ValueType
 
             SplitForDeletion(newStart, newLength, lhsPieceNode.Value, out Piece? lhsPiece, out Piece? rhsPiece);
 
-            if (lhsPiece is not null)
+            if(lhsPiece is not null)
             {
+                // record undo/redo data
+                removePieces.Add(lhsPiece);
+
+                // link into table
                 Pieces.AddBefore(lhsPieceNode, lhsPiece);
             }
 
-            if (rhsPiece is not null)
+            if(rhsPiece is not null)
             {
+                // record undo/redo data
+                removePieces.Add(rhsPiece);
+
+                // link into table
                 Pieces.AddAfter(lhsPieceNode, rhsPiece);
             }
         }
 
-        if (rhsPieceNode is not null && !ReferenceEquals(lhsPieceNode, rhsPieceNode))
+        if(rhsPieceNode is not null && !ReferenceEquals(lhsPieceNode, rhsPieceNode))
         {
             index newStart = 0;
             size newLength = location + length - endPieceOffset;
@@ -213,65 +264,67 @@ public sealed class PieceTable : ValueType
 
             SplitForDeletion(newStart, newLength, rhsPieceNode.Value, out Piece? lhsPiece, out Piece? rhsPiece);
 
-            if (lhsPiece is not null)
+            if(lhsPiece is not null)
             {
+                // record undo/redo data
+                removePieces.Add(lhsPiece);
+
+                // link into table
                 Pieces.AddBefore(rhsPieceNode, lhsPiece);
             }
 
-            if (rhsPiece is not null)
+            if(rhsPiece is not null)
             {
+                // record undo/redo data
+                removePieces.Add(rhsPiece);
+
+                // link into table
                 Pieces.AddAfter(rhsPieceNode, rhsPiece);
             }
         }
 
-        // make proxies to keep links
-        List<ListNodeProxy> proxyNodes = new();
-
-        foreach (var piece in pieces)
+        // remove the existing nodes
+        foreach(var pieceNode in pieceNodes)
         {
-            proxyNodes.Add(MakeListNodeProxy(piece));
-        }
+            // record undo/redo data
+            addPieces.Add(pieceNode.Value);
 
-        // remove the existing pieces
-        foreach (var piece in pieces)
-        {
-            Pieces.Remove(piece);
+            // unlink into table
+            Pieces.Remove(pieceNode);
         }
-
-        return proxyNodes;
     }
 
     /// <summary>
-    /// Splits an existing piece for the deletion operation.
+    /// Splits an existing pieceNode for the deletion operation.
     /// </summary>
-    /// <param name="offset">Relative (local) offset in the piece</param>
-    /// <param name="length">Relative (local) length to consider for splitting in the piece.</param>
+    /// <param name="offset">Relative (local) offset in the pieceNode</param>
+    /// <param name="length">Relative (local) length to consider for splitting in the pieceNode.</param>
     /// <param name="piece"></param>
     /// <param name="lhsPiece"></param>
     /// <param name="rhsPiece"></param>
     private void SplitForDeletion(offset offset, size length, Piece piece, out Piece? lhsPiece, out Piece? rhsPiece)
     {
-        // Case I: no split - offset == 0 and length == piece.length
+        // Case I: no split - offset == 0 and length == pieceNode.length
         //      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
         //      A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
         //      ^                 unchanged                       ^     lhs = null, rhs = null
         // 
-        // Case II: split - offset == 0 and length < piece.length
+        // Case II: split - offset == 0 and length < pieceNode.length
         //      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
         //      A B C D E F G H I J K L M N O P Q R S T U V W X Y Z     lhs = null, rhs = NOT null
         //      ^    delete     ^
         //
-        // Case III: split - offset > 0 and offset + length == piece.length
+        // Case III: split - offset > 0 and offset + length == pieceNode.length
         //      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
         //      A B C D E F G H I J K L M N O P Q R S T U V W X Y Z     lhs = NOT null, rhs = null
         //                                            ^  delete   ^
         //
-        // Case IV: split - offset > 0 and offset + length < piece.length
+        // Case IV: split - offset > 0 and offset + length < pieceNode.length
         //      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
         //      A B C D E F G H I J K L M N O P Q R S T U V W X Y Z     lhs = NOT null, rhs = NOT null
         //                  ^      delete       ^
         //
-        // Case V: no split - offset > 0 and length == piece.length, similar to Case I.
+        // Case V: no split - offset > 0 and length == pieceNode.length, similar to Case I.
         //      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
         //      A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
         //            ^                                                 lhs = null, rhs = null
@@ -284,43 +337,43 @@ public sealed class PieceTable : ValueType
         index spanStart = piece.Span.Start;
         size spanLength = piece.Span.Length;
 
-        if (offset == 0 && length == spanLength || length == 0)
+        if(offset == 0 && length == spanLength || length == 0)
         {
             // Case I:
             lhsPiece = default;
             rhsPiece = default;
         }
-        else if (offset == 0 && length < spanLength)
+        else if(offset == 0 && length < spanLength)
         {
             // Case II:
             lhsPiece = default;
-            rhsPiece = CreatePiece(id: Count - 1,
+            rhsPiece = CreatePiece(id: NextPieceId(),
                                    start: spanStart + length,
                                    length: spanLength - length,
                                    contentType: piece.ContentType);
         }
-        else if (offset > 0 && offset + length == spanLength)
+        else if(offset > 0 && offset + length == spanLength)
         {
             // Case III:
             lhsPiece = default;
-            rhsPiece = CreatePiece(id: Count - 1,
+            rhsPiece = CreatePiece(id: NextPieceId(),
                                    start: spanStart,
                                    length: spanLength - length,
                                    contentType: piece.ContentType);
         }
-        else if (offset > 0 && offset + length < spanLength)
+        else if(offset > 0 && offset + length < spanLength)
         {
             // Case IV:
-            lhsPiece = CreatePiece(id: Count - 1,
+            lhsPiece = CreatePiece(id: NextPieceId(),
                                    start: spanStart,
                                    length: offset,
                                    contentType: piece.ContentType);
-            rhsPiece = CreatePiece(id: Count - 1,
+            rhsPiece = CreatePiece(id: NextPieceId(),
                                    start: spanStart + offset + length,
                                    length: spanLength - (offset + length),
                                    contentType: piece.ContentType);
         }
-#pragma warning disable S125 // Sections of code should not be commented out
+        #pragma warning disable S125 // Sections of code should not be commented out
         //else if(offset > 0 && length == spanLength)
         //{
         //    // Case V:
@@ -328,7 +381,7 @@ public sealed class PieceTable : ValueType
         //    rhsPiece = default;
         //    Assert.NotImplemented();
         //}
-#pragma warning restore S125 // Sections of code should not be commented out
+        #pragma warning restore S125 // Sections of code should not be commented out
         else
         {
             lhsPiece = default;
@@ -337,8 +390,8 @@ public sealed class PieceTable : ValueType
         }
     }
 
-    private sealed record FindPieceResult(location Location,           // absolute location of the found piece
-                                          LinkedListNode<Piece> Piece, // found piece
+    private sealed record FindPieceResult(location Location,           // absolute location of the found pieceNode
+                                          LinkedListNode<Piece> Piece, // found pieceNode
                                           bool AtTheEnd);              // indicates if insertion should happen 'after'
 
     private FindPieceResult FindPiece(location location)
@@ -346,24 +399,24 @@ public sealed class PieceTable : ValueType
         List<LinkedListNode<Piece>> pieces = EnumerateCoveringRange(location, 1, out location startPieceOffset, out location endPieceOffset, find: true);
         LinkedListNode<Piece>? piece = pieces.FirstOrDefault();
 
-        if (piece is not null)
+        if(piece is not null)
         {
-#pragma warning disable S125 // Sections of code should not be commented out
+            #pragma warning disable S125 // Sections of code should not be commented out
             return new FindPieceResult(Location: startPieceOffset, Piece: piece, AtTheEnd: false); //location == span.End);
-#pragma warning restore S125 // Sections of code should not be commented out
+            #pragma warning restore S125 // Sections of code should not be commented out
         }
         else
         {
-#pragma warning disable CS8602
-#pragma warning disable CS8604
+            #pragma warning disable CS8602
+            #pragma warning disable CS8604
             return new FindPieceResult(Location: endPieceOffset, Piece: Pieces.Last.Previous, AtTheEnd: true);
-#pragma warning restore CS8604
-#pragma warning restore CS8602
+            #pragma warning restore CS8604
+            #pragma warning restore CS8602
         }
     }
 
     public Piece FindExactPiece(location location,
-                                out location pieceStartLocation) // absolute location of the found piece
+                                out location pieceStartLocation) // absolute location of the found pieceNode
     {
         pieceStartLocation = -1;
 
@@ -371,11 +424,11 @@ public sealed class PieceTable : ValueType
 
         LinkedListNode<Piece>? node = Pieces.First?.Next;
 
-        while (node != default && node != Pieces.Last)
+        while(node != default && node != Pieces.Last)
         {
             var span = node.Value.Span;
 
-            if (location >= curLocation && location <= curLocation + span.Length - 1)
+            if(location >= curLocation && location <= curLocation + span.Length - 1)
             {
                 pieceStartLocation = curLocation;
                 return node.Value;
@@ -388,14 +441,51 @@ public sealed class PieceTable : ValueType
         return Piece.Sentinel;
     }
 
+    private LinkedListNode<Piece> FindPieceNodeByPieceId(id id, bool reverse)
+    {
+        // linear for now ...
+        if(reverse)
+        {
+            LinkedListNode<Piece> node = Pieces.Last!;
+
+            while(node != Pieces.First)
+            {
+                if(node.Value.Id == id)
+                {
+                    break;
+                }
+
+                node = node.Previous!;
+            }
+
+            return node;
+        }
+        else
+        {
+            LinkedListNode<Piece> node = Pieces.First!;
+
+            while(node != Pieces.Last)
+            {
+                if(node.Value.Id == id)
+                {
+                    break;
+                }
+
+                node = node.Next!;
+            }
+
+            return node;
+        }
+    }
+
     /// <summary>
-    /// Enumerates covering range of pieces.
-    /// First and/or last piece(s) might 'stick out'.
+    /// Enumerates covering range of proxyNodes.
+    /// First and/or last pieceNode(s) might 'stick out'.
     /// </summary>
     /// <param name="location"></param>
     /// <param name="length"></param>
-    /// <param name="startPieceOffset">Absolute offset of the first found piece in the document.</param>
-    /// <param name="endPieceOffset">Absolute offset of the end found piece in the document.</param>
+    /// <param name="startPieceOffset">Absolute offset of the first found pieceNode in the document.</param>
+    /// <param name="endPieceOffset">Absolute offset of the end found pieceNode in the document.</param>
     /// <returns></returns>
     [SuppressMessage("Major Code Smell", "S907:\"goto\" statement should not be used", Justification = "<Pending>")]
     public List<LinkedListNode<Piece>> EnumerateCoveringRange(location location, size length, out location startPieceOffset, out location endPieceOffset, bool find = false)
@@ -408,7 +498,7 @@ public sealed class PieceTable : ValueType
 
         List<LinkedListNode<Piece>> pieces = new();
 
-        if (length == 0)
+        if(length == 0)
         {
             goto _exit;
         }
@@ -449,12 +539,12 @@ public sealed class PieceTable : ValueType
         LinkedListNode<Piece>? node = Pieces.First?.Next;
 
         // find starting span containing the location
-        while (node != Pieces.Last && node is not null)
+        while(node != Pieces.Last && node is not null)
         {
             var span = node.Value.Span;
             var spanLength = span.Length;
 
-            if (current + spanLength - 1 >= location) // start, mimics if(span.Contains(start))
+            if(current + spanLength - 1 >= location) // start, mimics if(span.Contains(start))
             {
                 startPieceOffset = current;
                 pieces.Add(node);
@@ -465,20 +555,20 @@ public sealed class PieceTable : ValueType
             node = node.Next;
         }
 
-        if (find)
+        if(find)
             goto _exit;
 
         LinkedListNode<Piece>? startPieceNode = pieces.FirstOrDefault();
 
-        if (startPieceNode is not null)
+        if(startPieceNode is not null)
         {
             // find ending containing the location, collecting all spans on the run
-            while (node != Pieces.Last && node is not null)
+            while(node != Pieces.Last && node is not null)
             {
                 var span = node.Value.Span;
                 var spanLength = span.Length;
 
-                if (current + spanLength - 1 >= end) // end, mimics if(span.Contains(end))
+                if(current + spanLength - 1 >= end) // end, mimics if(span.Contains(end))
                 {
                     endPieceOffset = current;
                     pieces.Add(node);
@@ -493,7 +583,7 @@ public sealed class PieceTable : ValueType
 
             LinkedListNode<Piece>? startPieceNode2 = pieces.Skip(1).FirstOrDefault();
 
-            if (ReferenceEquals(startPieceNode, startPieceNode2))
+            if(ReferenceEquals(startPieceNode, startPieceNode2))
             {
                 pieces.Remove(startPieceNode2);
             }
@@ -530,7 +620,7 @@ public sealed class PieceTable : ValueType
         Piece? newLhsPiece = default;
         Piece? newRhsPiece = default;
 
-        if (lhsPieceNode is not null)
+        if(lhsPieceNode is not null)
         {
             index newStart = location - startPieceOffset;
             size newLength = Math.Min(lhsPieceNode.Value.Span.Length - newStart, length);
@@ -538,7 +628,7 @@ public sealed class PieceTable : ValueType
             Assert.Ensure(newStart >= 0, nameof(newStart));
             Assert.Ensure(newLength >= 0, nameof(newLength));
 
-            if (newLength > 0 && newLength != lhsPieceNode.Value.Span.Length)
+            if(newLength > 0 && newLength != lhsPieceNode.Value.Span.Length)
             {
                 newLhsPiece = CreatePiece(id: lhsPieceNode.Value.Id,
                                           start: newStart,
@@ -547,7 +637,7 @@ public sealed class PieceTable : ValueType
             }
         }
 
-        if (rhsPieceNode is not null && !ReferenceEquals(lhsPieceNode, rhsPieceNode))
+        if(rhsPieceNode is not null && !ReferenceEquals(lhsPieceNode, rhsPieceNode))
         {
             index newStart = 0;
             size newLength = location + length - endPieceOffset;
@@ -555,7 +645,7 @@ public sealed class PieceTable : ValueType
             Assert.Ensure(newStart >= 0, nameof(newStart));
             Assert.Ensure(newLength >= 0, nameof(newLength));
 
-            if (newLength > 0 && newLength != rhsPieceNode.Value.Span.Length)
+            if(newLength > 0 && newLength != rhsPieceNode.Value.Span.Length)
             {
                 newRhsPiece = CreatePiece(id: rhsPieceNode.Value.Id,
                                           start: newStart,
@@ -564,13 +654,13 @@ public sealed class PieceTable : ValueType
             }
         }
 
-        if (newLhsPiece is not null)
+        if(newLhsPiece is not null)
         {
             pieces.RemoveAt(0);
             pieces.Insert(0, new(newLhsPiece));
         }
 
-        if (newRhsPiece is not null)
+        if(newRhsPiece is not null)
         {
             pieces.RemoveAt(pieces.Count - 1);
             pieces.Add(new(newRhsPiece));
@@ -596,7 +686,7 @@ public sealed class PieceTable : ValueType
         ReadOnlyMemory<codepoint>? codepointsOpt = piece.ContentType == ContentType.Added ?
                                                         WorkingContent.Contents.LastOrDefault()?.Data :
                                                         OriginalContent.Contents.LastOrDefault()?.Data;
-        if (codepointsOpt is null)
+        if(codepointsOpt is null)
             return;
 
         ReadOnlyMemory<codepoint> codepoints = codepointsOpt.Value;
@@ -609,14 +699,14 @@ public sealed class PieceTable : ValueType
         Assert.Ensure(spanIndex >= 0, nameof(spanIndex));
         Assert.Ensure(spanLength >= 0, nameof(spanLength));
 
-        while (spanIndex < spanLength)
+        while(spanIndex < spanLength)
         {
             codepoint ch0 = codepoints.Span[spanIndex + 0];
             codepoint ch1 = spanIndex + 1 < spanLength ? codepoints.Span[spanIndex + 1] : Codepoint.BadCodepoint;
 
-            if (ch0 == 0x0000000D)
+            if(ch0 == 0x0000000D)
             {
-                if (ch1 == 0x0000000A)
+                if(ch1 == 0x0000000A)
                 {
                     spanIndex += 2;
                     lineStart += 1;
@@ -631,28 +721,28 @@ public sealed class PieceTable : ValueType
                     lineMap.Add(lineStart);
                 }
             }
-            else if (ch0 == 0x0000000A)
+            else if(ch0 == 0x0000000A)
             {
                 spanIndex += 1;
                 lineStart += 1;
                 lineMappings.Lf++;
                 lineMap.Add(lineStart);
             }
-            else if (ch0 == 0x00000085)
+            else if(ch0 == 0x00000085)
             {
                 spanIndex += 1;
                 lineStart += 1;
                 lineMappings.Nel++;
                 lineMap.Add(lineStart);
             }
-            else if (ch0 == 0x00002028)
+            else if(ch0 == 0x00002028)
             {
                 spanIndex += 1;
                 lineStart += 1;
                 lineMappings.Ls++;
                 lineMap.Add(lineStart);
             }
-            else if (ch0 == 0x00002029)
+            else if(ch0 == 0x00002029)
             {
                 spanIndex += 1;
                 lineStart += 1;
@@ -664,7 +754,7 @@ public sealed class PieceTable : ValueType
                 spanIndex += 1;
             }
 
-            if (spanIndex >= spanLength)
+            if(spanIndex >= spanLength)
             {
                 break;
             }
@@ -692,8 +782,4 @@ public sealed class PieceTable : ValueType
         Position result = new(0, 0);
         return result;
     }
-
-#pragma warning disable CS8604 // Possible null reference argument.
-    private static ListNodeProxy MakeListNodeProxy(LinkedListNode<Piece> node) => new ListNodeProxy(node, node.Previous, node.Next);
-#pragma warning restore CS8604 // Possible null reference argument.
 }

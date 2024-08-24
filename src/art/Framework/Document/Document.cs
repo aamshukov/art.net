@@ -310,14 +310,20 @@ public class Document : EntityType<string>, IDocument, IDisposable, IAsyncDispos
             return 0;
         }
 
-        ListNodeProxy affectedPiece = PieceTable.Insert(location, codepoints, WorkingContent.Length());
-        Assert.NonNullReference(affectedPiece, nameof(affectedPiece));
+        PieceTable.Insert(location,
+                          codepoints,
+                          WorkingContent.Length(),
+                          out id injectionPoint,
+                          out List<Piece> addPieces,
+                          out List<Piece> removePieces);
 
-        DocumentHistoryLiveEntry undoEntry = new(History.NextGroup(),
-                                                 [affectedPiece],
-                                                 DocumentEditActionType.Insert,
-                                                 DocumentHistoryEntryOperation.Undo);
-        History.Add(undoEntry);
+        DocumentHistoryLiveEntry historyEntry = new(History.NextGroup(),
+                                                    injectionPoint,
+                                                    addPieces,
+                                                    removePieces,
+                                                    DocumentEditActionType.Insert,
+                                                    DocumentHistoryEntryOperation.Undo);
+        History.Add(historyEntry);
 
         count count = WorkingContent.AppendContent(codepoints);
         Assert.Ensure(count == codepoints.Length, $"{nameof(count)}:{codepoints.Length}");
@@ -334,14 +340,19 @@ public class Document : EntityType<string>, IDocument, IDisposable, IAsyncDispos
 
         if(length > 0)
         {
-            List<ListNodeProxy> affectedPieces = PieceTable.Delete(location, length);
-            Assert.NonNullReference(affectedPieces, nameof(affectedPieces));
+            PieceTable.Delete(location,
+                              length,
+                              out id injectionPoint,
+                              out List<Piece> addPieces,
+                              out List<Piece> removePieces);
 
-            DocumentHistoryLiveEntry undoEntry = new(History.NextGroup(),
-                                                     affectedPieces,
-                                                     DocumentEditActionType.Delete,
-                                                     DocumentHistoryEntryOperation.Undo);
-            History.Add(undoEntry);
+            DocumentHistoryLiveEntry historyEntry = new(History.NextGroup(),
+                                                        injectionPoint,
+                                                        addPieces,
+                                                        removePieces,
+                                                        DocumentEditActionType.Delete,
+                                                        DocumentHistoryEntryOperation.Undo);
+            History.Add(historyEntry);
 
             Dirty = true;
         }
@@ -366,9 +377,11 @@ public class Document : EntityType<string>, IDocument, IDisposable, IAsyncDispos
     {
         foreach(DocumentHistoryLiveEntry entry in History.Undo().OfType<DocumentHistoryLiveEntry>())
         {
-            List<ListNodeProxy> swappedNodes = PieceTable.InsertPieces(entry.Pieces);
-            entry.Pieces.Clear();
-            entry.Pieces.AddRange(swappedNodes);
+            // restore to the prev state
+            PieceTable.Restore(entry.InjectionPoint, entry.AddPieces, entry.RemovePieces);
+
+            // switch add/restore entries for redo
+            (entry.RemovePieces, entry.AddPieces) = (entry.AddPieces, entry.RemovePieces);
         }
     }
 
@@ -387,15 +400,45 @@ public class Document : EntityType<string>, IDocument, IDisposable, IAsyncDispos
     {
         foreach(DocumentHistoryLiveEntry entry in History.Redo().OfType<DocumentHistoryLiveEntry>())
         {
-            List<ListNodeProxy> swappedNodes = PieceTable.InsertPieces(entry.Pieces);
-            entry.Pieces.Clear();
-            entry.Pieces.AddRange(swappedNodes);
+            // restore to the prev state
+            PieceTable.Restore(entry.InjectionPoint, entry.AddPieces, entry.RemovePieces);
+
+            // switch add/restore entries for undo
+            (entry.RemovePieces, entry.AddPieces) = (entry.AddPieces, entry.RemovePieces);
         }
     }
 
     public void ResetRedo()
     {
         History.ResetRedo();
+    }
+
+    [SuppressMessage("Minor Code Smell", "S3267:Loops should be simplified with \"LINQ\" expressions", Justification = "<Pending>")]
+    private void UndoRedo(DocumentHistoryEntryOperation operation)
+    {
+        foreach(DocumentHistoryLiveEntry entry in History.Undo().OfType<DocumentHistoryLiveEntry>())
+        {
+            // restore to the prev state
+            PieceTable.Restore(entry.InjectionPoint, entry.AddPieces, entry.RemovePieces);
+
+            // switch add/restore entries for redo
+            (entry.RemovePieces, entry.AddPieces) = (entry.AddPieces, entry.RemovePieces);
+        }
+    }
+
+    public List<string> CollectPiecesInfo()
+    {
+        List<String> piecesInfo = new();
+
+        offset offset = 0;
+
+        foreach(var piece in PieceTable.Pieces)
+        {
+            piecesInfo.Add($"{piece.Id} -> {GetString(offset, piece.Span.Length)} : {offset} : {piece.Span.Length} : {piece.ContentType}");
+            offset += piece.Span.Length;
+        }
+
+        return piecesInfo;
     }
 
     public override IEnumerable<object> GetEqualityComponents()

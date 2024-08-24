@@ -16,9 +16,11 @@ using Art.Framework.Document.PieceTable;
 using UILab.Art.Framework.Core.Content.Abstractions;
 using UILab.Art.Framework.Core.DataAccess;
 using UILab.Art.Framework.Core.DataAccess.Abstractions;
+using UILab.Art.Framework.Core.Text;
 using UILab.Art.Framework.Core.Text.Search;
 using UILab.Art.Framework.Document;
 using UILab.Art.Framework.Document.Abstractions;
+using static System.Net.Mime.MediaTypeNames;
 using ArtText = UILab.Art.Framework.Core.Text.Text;
 
 namespace UILab.Art.Tests;
@@ -939,11 +941,13 @@ internal class DocumentTests
         {
             var offset = RandomNumberGenerator.GetInt32(0, length);
             offset = Math.Min(offset, orgContent.Length - 1);
+            
+            var documentStrBefore = document.GetString(0);
 
             if((k % 2) == 0)
             {
                 var orgContentBefore = orgContent;
-                var documentStrBefore = document.GetString(0);
+                documentStrBefore = document.GetString(0);
                 randomStr = ArtText.GetRandomText(RandomNumberGenerator.GetInt32(0, length));
                 var codepoints = ArtText.GetCodepoints(randomStr);
                 orgContent = orgContent.Insert(offset, randomStr);
@@ -953,15 +957,15 @@ internal class DocumentTests
 
                 if(documentStr != orgContent)
                 {
-                    break;
+                    goto _assert;
                 }
-
+_assert:
                 Assert.That(documentStr, Is.EqualTo(orgContent));
             }
             else
             {
                 var orgContentBefore = orgContent;
-                var documentStrBefore = document.GetString(0);
+                documentStrBefore = document.GetString(0);
                 var randomLength = RandomNumberGenerator.GetInt32(0, Math.Max(1, length / 2));
                 randomLength = Math.Min(0, orgContent.Length - offset);
                 orgContent = orgContent.Remove(offset, randomLength);
@@ -970,9 +974,10 @@ internal class DocumentTests
 
                 if(documentStr != orgContent)
                 {
-                    break;
+                    goto _assert;
                 }
 
+_assert:
                 Assert.That(documentStr, Is.EqualTo(orgContent));
             }
         }
@@ -1034,7 +1039,7 @@ internal class DocumentTests
                         var documentStrBefore = document.GetString(0);
                         var randomStr = ArtText.GetRandomText(RandomNumberGenerator.GetInt32(0, length));
                         var codepoints = ArtText.GetCodepoints(randomStr);
-                        orgContent = orgContent.Insert(codepoints.Length, randomStr);
+                        orgContent = orgContent.Insert(randomStr.Length, randomStr);
                         var insertedCount = document.Insert(codepoints.Length, codepoints);
                         Assert.That(insertedCount, Is.EqualTo(codepoints.Length));
                         var documentStr = document.GetString(0);
@@ -1051,9 +1056,9 @@ internal class DocumentTests
 
                         if(documentStr != orgContent)
                         {
-                            break;
+                            goto _assert;
                         }
-
+_assert:
                         Assert.That(documentStr, Is.EqualTo(orgContent));
                     }
                 }
@@ -1233,7 +1238,7 @@ internal class DocumentTests
                         {
                             operation = "delete";
                             offset = RandomNumberGenerator.GetInt32(0, length);
-                            var lengthToDelete = RandomNumberGenerator.GetInt32(0, Math.Max(0, length / 2));
+                            var lengthToDelete = RandomNumberGenerator.GetInt32(0, Math.Max(1, length / 2));
                             var orgContentBeforeDelete = orgContent;
                             var documentStrBeforeDelete = document.GetString(0);
                             Assert.That(documentStrBeforeDelete, Is.EqualTo(orgContentBeforeDelete));
@@ -1278,7 +1283,7 @@ internal class DocumentTests
                     Console.WriteLine(ex.Message);
                     Console.WriteLine($"operation:{operation}, bufferSize:{bufferSize}, var offset:{offset}, length:{length}, randomStr:{randomStr}, randomStr.Length:{randomStr.Length}");
                     j = actions.Count;
-                    break;
+                    throw;
                 }
             }
         }
@@ -1709,7 +1714,7 @@ internal class DocumentTests
                     var m = ex.Message;
                     Console.WriteLine($"text: {text}");
                     Console.WriteLine($"pattern: {pattern}");
-                    break;
+                    throw;
                 }
             }
         }
@@ -1739,7 +1744,7 @@ internal class DocumentTests
                     var m = ex.Message;
                     Console.WriteLine($"text: {text}");
                     Console.WriteLine($"pattern: {pattern}");
-                    break;
+                    throw;
                 }
             }
         }
@@ -1772,7 +1777,7 @@ internal class DocumentTests
                 var m = ex.Message;
                 Console.WriteLine($"text: {randomText}");
                 Console.WriteLine($"pattern: {randomPattern}");
-                break;
+                throw;
             }
         }
     }
@@ -1804,7 +1809,7 @@ internal class DocumentTests
                 var m = ex.Message;
                 Console.WriteLine($"text: {randomText}");
                 Console.WriteLine($"pattern: {randomPattern}");
-                break;
+                throw;
             }
         }
     }
@@ -1812,18 +1817,473 @@ internal class DocumentTests
     [Test]
     public void Document_UndoRedo_Success()
     {
+        //          01234567
         var text = "ABCDEFGH";
         var bufferSize = 1;
 
         using Document document = (Document)GetDocument(text, bufferSize, loadedContent: default);
+
+        text = "a";
+        var codepoints = ArtText.GetCodepoints(text);
+        document.Insert(0, codepoints);
+        var textBeforeUndo = document.GetString(0);
+        Assert.That(textBeforeUndo, Is.EqualTo("aABCDEFGH"));
+        document.Undo();
+        var textAfterUndo = document.GetString(0);
+        Assert.That(textAfterUndo, Is.EqualTo("ABCDEFGH"));
+        document.Redo();
+        var textAfterRedo = document.GetString(0);
+        Assert.That(textAfterRedo, Is.EqualTo("aABCDEFGH"));
+        document.Undo();
+        document.Undo();
+        document.Redo();
+        document.Redo();
+        textAfterRedo = document.GetString(0);
+        Assert.That(textAfterRedo, Is.EqualTo("aABCDEFGH"));
+
+        text = "b";
+        codepoints = ArtText.GetCodepoints(text);
+        document.Insert(1, codepoints);
+        textBeforeUndo = document.GetString(0);
+        Assert.That(textBeforeUndo, Is.EqualTo("abABCDEFGH"));
+        document.Undo();
+        textAfterUndo = document.GetString(0);
+        Assert.That(textAfterUndo, Is.EqualTo("aABCDEFGH"));
+        document.Redo();
+        textAfterRedo = document.GetString(0);
+        Assert.That(textAfterRedo, Is.EqualTo("abABCDEFGH"));
+        document.Undo();
+        textAfterUndo = document.GetString(0);
+        Assert.That(textAfterUndo, Is.EqualTo("aABCDEFGH"));
+        document.Undo();
+        textAfterUndo = document.GetString(0);
+        Assert.That(textAfterUndo, Is.EqualTo("ABCDEFGH"));
+        document.Redo();
+        textAfterRedo = document.GetString(0);
+        Assert.That(textAfterRedo, Is.EqualTo("aABCDEFGH"));
+        document.Redo();
+        textAfterRedo = document.GetString(0);
+        Assert.That(textAfterRedo, Is.EqualTo("abABCDEFGH"));
+
+        text = "c";
+        codepoints = ArtText.GetCodepoints(text);
+        document.Insert(5, codepoints);
+        textBeforeUndo = document.GetString(0);
+        Assert.That(textBeforeUndo, Is.EqualTo("abABCcDEFGH"));
+        document.Undo();
+        textAfterUndo = document.GetString(0);
+        Assert.That(textAfterUndo, Is.EqualTo("abABCDEFGH"));
+        document.Redo();
+        textAfterRedo = document.GetString(0);
+        Assert.That(textAfterRedo, Is.EqualTo("abABCcDEFGH"));
+        document.Undo();
+        textAfterUndo = document.GetString(0);
+        Assert.That(textAfterUndo, Is.EqualTo("abABCDEFGH"));
+        document.Undo();
+        textAfterUndo = document.GetString(0);
+        Assert.That(textAfterUndo, Is.EqualTo("aABCDEFGH"));
+        document.Undo();
+        textAfterUndo = document.GetString(0);
+        Assert.That(textAfterUndo, Is.EqualTo("ABCDEFGH"));
+        document.Redo();
+        textAfterRedo = document.GetString(0);
+        Assert.That(textAfterRedo, Is.EqualTo("aABCDEFGH"));
+        document.Redo();
+        textAfterRedo = document.GetString(0);
+        Assert.That(textAfterRedo, Is.EqualTo("abABCDEFGH"));
+        document.Redo();
+        textAfterRedo = document.GetString(0);
+        Assert.That(textAfterRedo, Is.EqualTo("abABCcDEFGH"));
+
+        document.Delete(0, 1);
+        var textAfterDelete = document.GetString(0);
+        Assert.That(textAfterDelete, Is.EqualTo("bABCcDEFGH"));
+        document.Undo();
+        textAfterUndo = document.GetString(0);
+        Assert.That(textAfterUndo, Is.EqualTo("abABCcDEFGH"));
+        document.Redo();
+        textAfterRedo = document.GetString(0);
+        Assert.That(textAfterRedo, Is.EqualTo("bABCcDEFGH"));
+
+        document.Delete(5, 2);
+        textAfterDelete = document.GetString(0);
+        Assert.That(textAfterDelete, Is.EqualTo("bABCcFGH"));
+        document.Undo();
+        textAfterUndo = document.GetString(0);
+        Assert.That(textAfterUndo, Is.EqualTo("bABCcDEFGH"));
+        document.Redo();
+        textAfterRedo = document.GetString(0);
+        Assert.That(textAfterRedo, Is.EqualTo("bABCcFGH"));
     }
 
     [Test]
-    public void Document_UndoRedo_Grouped_Success()
+    public void Document_UndoRedo_Debug_Success()
     {
-        var text = "ABCDEFGHJ";
-        var bufferSize = 1;
+        count count = 100;
 
-        using Document document = (Document)GetDocument(text, bufferSize, loadedContent: default);
+        for(int k = 1; k < count; k++)
+        {
+            size bufferSize = k;
+
+            using Document document = (Document)GetDocument(string.Empty, bufferSize);
+
+            int[] offsets =    [ 1,    23,                   2,                       6,   11,                            21,    5,       13,              22];
+            string[] strings = ["hc", "P46wjZGtBTPTc51nHG", "qtHoPDP0KvaDxlU8Kdv3e", "w", "ovEXk2gXakavt2IqCdOHPNj1eOo", "Z0S", "vf8a2", "lgqGrQNNqS7Sd", "npL"];
+
+            foreach((int offset, string str) in offsets.Zip(strings))
+            {
+                var codepoints = ArtText.GetCodepoints(str);
+                var textBeforeInsert = document.GetString(0);
+                document.Insert(offset, codepoints);
+                var textAfterInsert = document.GetString(0);
+                var piecesInfoAfterInsert = document.CollectPiecesInfo();
+                document.Undo();
+                var piecesInfoAfterUndo = document.CollectPiecesInfo();
+                var textAfterUndo = document.GetString(0);
+
+                if(textAfterUndo != textBeforeInsert)
+                {
+                    goto _assert0;
+                }
+_assert0:
+                Assert.That(textAfterUndo, Is.EqualTo(textBeforeInsert));
+
+                document.Redo();
+                var piecesInfoAfterRedo = document.CollectPiecesInfo();
+                var textAfterRedo = document.GetString(0);
+                Assert.That(piecesInfoAfterRedo.SequenceEqual(piecesInfoAfterInsert), Is.True);
+                Assert.That(textAfterRedo, Is.EqualTo(textAfterInsert));
+            }
+        }
+    }
+
+    [Test]
+    public void Document_UndoRedo_Delete_Debug_Success()
+    {
+        size bufferSize = 3;
+
+        using Document document = (Document)GetDocument("f67S97tUg", bufferSize);
+
+        var textBeforeDelete = document.GetString(0);
+        var piecesInfoBeforeDelete = document.CollectPiecesInfo();
+        document.Delete(2, 3);
+        var piecesInfoAfterDelete = document.CollectPiecesInfo();
+        var textAfterDelete = document.GetString(0);
+
+        var textBeforeUndo = document.GetString(0);
+        document.Undo();
+        var piecesInfoAfterUndo = document.CollectPiecesInfo();
+        var textAfterUndo = document.GetString(0);
+
+        if(textAfterUndo != textBeforeDelete)
+        {
+            goto _assert0;
+        }
+_assert0:
+        Assert.That(textAfterUndo, Is.EqualTo(textBeforeDelete));
+
+        document.Redo();
+        var piecesInfoAfterRedo = document.CollectPiecesInfo();
+        var textAfterRedo = document.GetString(0);
+        Assert.That(piecesInfoAfterRedo.SequenceEqual(piecesInfoAfterDelete), Is.True);
+        Assert.That(textAfterRedo, Is.EqualTo(textAfterDelete));
+    }
+
+    [Test]
+    public void Document_UndoRedo_Delete_Debug2_Success()
+    {
+        size bufferSize = 18;
+
+        using Document document = (Document)GetDocument("veH8TUw", bufferSize);
+
+        var codepoints = ArtText.GetCodepoints("zg");
+        var textBeforeInsert = document.GetString(0);
+        var piecesInfoBeforeInsert = document.CollectPiecesInfo();
+        document.Insert(13, codepoints);
+        var textAfterInsert = document.GetString(0);
+        var piecesInfoAfterInsert = document.CollectPiecesInfo();
+        document.Undo();
+        var piecesInfoAfterUndo = document.CollectPiecesInfo();
+        var textAfterUndo = document.GetString(0);
+        Assert.That(textAfterUndo, Is.EqualTo(textBeforeInsert));
+
+        document.Redo();
+        var textAfterRedo = document.GetString(0);
+        var piecesInfoAfterRedo = document.CollectPiecesInfo();
+        Assert.That(textAfterRedo, Is.EqualTo(textAfterInsert));
+
+        var textBeforeDelete = document.GetString(0);
+        var piecesInfoBeforeDelete = document.CollectPiecesInfo();
+        document.Delete(4, 1);
+        var piecesInfoAfterDelete = document.CollectPiecesInfo();
+        var textAfterDelete = document.GetString(0);
+        document.Undo();
+        piecesInfoAfterUndo = document.CollectPiecesInfo();
+        textAfterUndo = document.GetString(0);
+        Assert.That(textAfterUndo, Is.EqualTo(textBeforeDelete));
+
+        document.Redo();
+        piecesInfoAfterRedo = document.CollectPiecesInfo();
+        textAfterRedo = document.GetString(0);
+        Assert.That(piecesInfoAfterRedo.SequenceEqual(piecesInfoAfterDelete), Is.True);
+        Assert.That(textAfterRedo, Is.EqualTo(textAfterDelete));
+    }
+
+    [Test]
+    public void Document_UndoRedo_Random_Success()
+    {
+        count count = 100;
+        size length = 100;
+        size bufferSize = RandomNumberGenerator.GetInt32(1, length);
+        Console.WriteLine($"bufferSize: {bufferSize}");
+
+        var randomStr = ArtText.GetRandomText(RandomNumberGenerator.GetInt32(0, length));
+        using Document document = (Document)GetDocument(randomStr, bufferSize);
+        var documentText = document.GetString(0);
+        Console.WriteLine($"Document: {documentText}");
+
+        Stack<int> randomInsertOffsets = new();
+        Stack<string> randomInsertStrings = new();
+
+        Stack<int> randomDeleteOffsets = new();
+        Stack<string> randomDeleteLengths = new();
+
+        for(int k = 0; k < count; k++)
+        {
+            var i = RandomNumberGenerator.GetInt32(0, length);
+
+            if((i % 2) == 0)
+            {
+                randomStr = ArtText.GetRandomText(RandomNumberGenerator.GetInt32(0, length));
+                randomInsertStrings.Push($"{randomStr}:{k}");
+                var codepoints = ArtText.GetCodepoints(randomStr);
+                var offset = RandomNumberGenerator.GetInt32(0, length);
+                randomInsertOffsets.Push(offset);
+                var textBeforeInsert = document.GetString(0);
+                var insertedCount = document.Insert(offset, codepoints);
+                Assert.That(insertedCount, Is.EqualTo(codepoints.Length));
+
+                var textBeforeUndo = document.GetString(0);
+                document.Undo();
+                var textAfterUndo = document.GetString(0);
+
+                if(textAfterUndo != textBeforeInsert)
+                {
+                    Console.WriteLine($"k: {k}");
+                    Console.WriteLine($"document: {textBeforeInsert}");
+                    Console.WriteLine($"randomStr: {randomStr}");
+                    Console.WriteLine($"offset: {offset}");
+                    Console.WriteLine($"Insert Offsets: {string.Join(", ", randomInsertOffsets)}");
+                    Console.WriteLine($"Insert Strings: {string.Join(", ", randomInsertStrings)}");
+                    Console.WriteLine($"Delete Offsets: {string.Join(", ", randomDeleteOffsets)}");
+                    Console.WriteLine($"Delete Lengths: {string.Join(", ", randomDeleteLengths)}");
+                    goto _assert0;
+                }
+_assert0:
+                Assert.That(textAfterUndo, Is.EqualTo(textBeforeInsert));
+
+                document.Redo();
+                var textAfterRedo = document.GetString(0);
+                if(textAfterRedo != textBeforeUndo)
+                {
+                    Console.WriteLine($"k: {k}");
+                    Console.WriteLine($"document: {textBeforeInsert}");
+                    Console.WriteLine($"randomStr: {randomStr}");
+                    Console.WriteLine($"offset: {offset}");
+                    Console.WriteLine($"Insert Offsets: {string.Join(", ", randomInsertOffsets)}");
+                    Console.WriteLine($"Insert Strings: {string.Join(", ", randomInsertStrings)}");
+                    Console.WriteLine($"Delete Offsets: {string.Join(", ", randomDeleteOffsets)}");
+                    Console.WriteLine($"Delete Lengths: {string.Join(", ", randomDeleteLengths)}");
+                    goto _assert1;
+                }
+_assert1:
+                Assert.That(textAfterRedo, Is.EqualTo(textBeforeUndo));
+            }
+            else
+            {
+                var offset = RandomNumberGenerator.GetInt32(0, length);
+                randomDeleteOffsets.Push(offset);
+                var randomLength = RandomNumberGenerator.GetInt32(1, Math.Max(1, length / 2));
+                randomDeleteLengths.Push($"{randomLength}:{k}");
+                var textBeforeDelete = document.GetString(0);
+                var piecesInfoBeforeDelete = document.CollectPiecesInfo();
+                document.Delete(offset, randomLength);
+                var piecesInfoAfterDelete = document.CollectPiecesInfo();
+                var textBeforeUndo = document.GetString(0);
+                document.Undo();
+                var piecesInfoAfterUndo = document.CollectPiecesInfo();
+                var textAfterUndo = document.GetString(0);
+
+                if(textAfterUndo != textBeforeDelete)
+                {
+                    Console.WriteLine($"k: {k}");
+                    Console.WriteLine($"document: {textBeforeDelete}");
+                    Console.WriteLine($"randomStr: {randomStr}");
+                    Console.WriteLine($"offset: {offset}");
+                    Console.WriteLine($"Insert Offsets: {string.Join(", ", randomInsertOffsets)}");
+                    Console.WriteLine($"Insert Strings: {string.Join(", ", randomInsertStrings)}");
+                    Console.WriteLine($"Delete Offsets: {string.Join(", ", randomDeleteOffsets)}");
+                    Console.WriteLine($"Delete Lengths: {string.Join(", ", randomDeleteLengths)}");
+                    goto _assert0;
+                }
+            _assert0:
+                Assert.That(textAfterUndo, Is.EqualTo(textBeforeDelete));
+
+                document.Redo();
+                var textAfterRedo = document.GetString(0);
+                if(textAfterRedo != textBeforeUndo)
+                {
+                    Console.WriteLine($"k: {k}");
+                    Console.WriteLine($"document: {textBeforeDelete}");
+                    Console.WriteLine($"randomStr: {randomStr}");
+                    Console.WriteLine($"offset: {offset}");
+                    Console.WriteLine($"Insert Offsets: {string.Join(", ", randomInsertOffsets)}");
+                    Console.WriteLine($"Insert Strings: {string.Join(", ", randomInsertStrings)}");
+                    Console.WriteLine($"Delete Offsets: {string.Join(", ", randomDeleteOffsets)}");
+                    Console.WriteLine($"Delete Lengths: {string.Join(", ", randomDeleteLengths)}");
+                    goto _assert1;
+                }
+            _assert1:
+                Assert.That(textAfterRedo, Is.EqualTo(textBeforeUndo));
+            }
+        }
+
+        while(document.CanUndo())
+        {
+            document.Undo();
+        }
+
+        Assert.That(documentText, Is.EqualTo(document.GetString(0)));
+    }
+
+    [Test]
+    public void Document_UndoRedo_Long_Random_Success()
+    {
+        count count = 100;
+        size length = 10000;
+
+        for(size n = 1; n < count; n++)
+        {
+            size bufferSize = n;
+            Console.WriteLine($"bufferSize: {bufferSize}");
+
+            var randomStr = ArtText.GetRandomText(RandomNumberGenerator.GetInt32(0, length));
+            using Document document = (Document)GetDocument(randomStr, bufferSize);
+            var documentText = document.GetString(0);
+            Console.WriteLine($"Document: {documentText}");
+
+            Stack<int> randomInsertOffsets = new();
+            Stack<string> randomInsertStrings = new();
+
+            Stack<int> randomDeleteOffsets = new();
+            Stack<string> randomDeleteLengths = new();
+
+            for(int k = 0; k < count; k++)
+            {
+                var i = RandomNumberGenerator.GetInt32(0, length);
+
+                if((i % 2) == 0)
+                {
+                    randomStr = ArtText.GetRandomText(RandomNumberGenerator.GetInt32(0, length));
+                    randomInsertStrings.Push($"{randomStr}:{k}");
+                    var codepoints = ArtText.GetCodepoints(randomStr);
+                    var offset = RandomNumberGenerator.GetInt32(0, length);
+                    randomInsertOffsets.Push(offset);
+                    var textBeforeInsert = document.GetString(0);
+                    var insertedCount = document.Insert(offset, codepoints);
+                    Assert.That(insertedCount, Is.EqualTo(codepoints.Length));
+
+                    var textBeforeUndo = document.GetString(0);
+                    document.Undo();
+                    var textAfterUndo = document.GetString(0);
+
+                    if(textAfterUndo != textBeforeInsert)
+                    {
+                        Console.WriteLine($"k: {k}");
+                        Console.WriteLine($"document: {textBeforeInsert}");
+                        Console.WriteLine($"randomStr: {randomStr}");
+                        Console.WriteLine($"offset: {offset}");
+                        Console.WriteLine($"Insert Offsets: {string.Join(", ", randomInsertOffsets)}");
+                        Console.WriteLine($"Insert Strings: {string.Join(", ", randomInsertStrings)}");
+                        Console.WriteLine($"Delete Offsets: {string.Join(", ", randomDeleteOffsets)}");
+                        Console.WriteLine($"Delete Lengths: {string.Join(", ", randomDeleteLengths)}");
+                        goto _assert0;
+                    }
+    _assert0:
+                    Assert.That(textAfterUndo, Is.EqualTo(textBeforeInsert));
+
+                    document.Redo();
+                    var textAfterRedo = document.GetString(0);
+                    if(textAfterRedo != textBeforeUndo)
+                    {
+                        Console.WriteLine($"k: {k}");
+                        Console.WriteLine($"document: {textBeforeInsert}");
+                        Console.WriteLine($"randomStr: {randomStr}");
+                        Console.WriteLine($"offset: {offset}");
+                        Console.WriteLine($"Insert Offsets: {string.Join(", ", randomInsertOffsets)}");
+                        Console.WriteLine($"Insert Strings: {string.Join(", ", randomInsertStrings)}");
+                        Console.WriteLine($"Delete Offsets: {string.Join(", ", randomDeleteOffsets)}");
+                        Console.WriteLine($"Delete Lengths: {string.Join(", ", randomDeleteLengths)}");
+                        goto _assert1;
+                    }
+    _assert1:
+                    Assert.That(textAfterRedo, Is.EqualTo(textBeforeUndo));
+                }
+                else
+                {
+                    var offset = RandomNumberGenerator.GetInt32(0, length);
+                    randomDeleteOffsets.Push(offset);
+                    var randomLength = RandomNumberGenerator.GetInt32(1, Math.Max(1, length / 2));
+                    randomDeleteLengths.Push($"{randomLength}:{k}");
+                    var textBeforeDelete = document.GetString(0);
+                    var piecesInfoBeforeDelete = document.CollectPiecesInfo();
+                    document.Delete(offset, randomLength);
+                    var piecesInfoAfterDelete = document.CollectPiecesInfo();
+                    var textBeforeUndo = document.GetString(0);
+                    document.Undo();
+                    var piecesInfoAfterUndo = document.CollectPiecesInfo();
+                    var textAfterUndo = document.GetString(0);
+
+                    if(textAfterUndo != textBeforeDelete)
+                    {
+                        Console.WriteLine($"k: {k}");
+                        Console.WriteLine($"document: {textBeforeDelete}");
+                        Console.WriteLine($"randomStr: {randomStr}");
+                        Console.WriteLine($"offset: {offset}");
+                        Console.WriteLine($"Insert Offsets: {string.Join(", ", randomInsertOffsets)}");
+                        Console.WriteLine($"Insert Strings: {string.Join(", ", randomInsertStrings)}");
+                        Console.WriteLine($"Delete Offsets: {string.Join(", ", randomDeleteOffsets)}");
+                        Console.WriteLine($"Delete Lengths: {string.Join(", ", randomDeleteLengths)}");
+                        goto _assert0;
+                    }
+                _assert0:
+                    Assert.That(textAfterUndo, Is.EqualTo(textBeforeDelete));
+
+                    document.Redo();
+                    var textAfterRedo = document.GetString(0);
+                    if(textAfterRedo != textBeforeUndo)
+                    {
+                        Console.WriteLine($"k: {k}");
+                        Console.WriteLine($"document: {textBeforeDelete}");
+                        Console.WriteLine($"randomStr: {randomStr}");
+                        Console.WriteLine($"offset: {offset}");
+                        Console.WriteLine($"Insert Offsets: {string.Join(", ", randomInsertOffsets)}");
+                        Console.WriteLine($"Insert Strings: {string.Join(", ", randomInsertStrings)}");
+                        Console.WriteLine($"Delete Offsets: {string.Join(", ", randomDeleteOffsets)}");
+                        Console.WriteLine($"Delete Lengths: {string.Join(", ", randomDeleteLengths)}");
+                        goto _assert1;
+                    }
+                _assert1:
+                    Assert.That(textAfterRedo, Is.EqualTo(textBeforeUndo));
+                }
+            }
+
+            while(document.CanUndo())
+            {
+                document.Undo();
+            }
+
+            Assert.That(documentText, Is.EqualTo(document.GetString(0)));
+        }
     }
 }

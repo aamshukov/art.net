@@ -55,7 +55,7 @@ public class Buffer<T> : EntityType<id>
 
     public override IEnumerable<object> GetEqualityComponents()
     {
-        foreach (var component in base.GetEqualityComponents())
+        foreach(var component in base.GetEqualityComponents())
             yield return component;
         yield return Size;
         yield return Capacity;

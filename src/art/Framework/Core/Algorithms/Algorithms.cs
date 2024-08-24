@@ -50,14 +50,14 @@ public static class Algorithms
     /// <returns></returns>
     public static ulong[,] CalculateLcsTable<T>(T[] lhs, T[] rhs, IEqualityComparer<T> comparer)
     {
-        size m = lhs.Length;
-        size n = rhs.Length;
+        size m = lhs.Length; // rows
+        size n = rhs.Length; // columns
 
         ulong[,] table = new ulong[m + 1, n + 1];
 
-        for(index i = 0; i < m; i++)
+        for(index i = 0; i < m; i++) // rows
         {
-            for(index j = 0; j < n; j++)
+            for(index j = 0; j < n; j++) // columns
             {
                 T x = lhs[i];
                 T y = rhs[j];
@@ -77,19 +77,20 @@ public static class Algorithms
     }
 
     [SuppressMessage("Blocker Code Smell", "S2368:Public methods should not have multidimensional array parameters", Justification = "<Pending>")]
-    public static index[] BuildLcs(ulong[,] table, size m, size n)
+    public static (index, index)[] BuildLcs(ulong[,] table, size m, size n)
     {
-        index i = m;
-        index j = n;
+        index i = m; // rows
+        index j = n; // columns
+
         index k = (index)(table[m, n] & ~EQUALITY_ELEMENT_MASK);
 
-        index[] lcs = new index[k];
+        (index, index)[] lcs = new (index, index)[k];
 
         while(i > 0 && j > 0)
         {
             if((table[i, j] & EQUALITY_ELEMENT_MASK) == EQUALITY_ELEMENT_MASK)
             {
-                lcs[k - 1] = i - 1; // -1 as we padded with extra row/col for table
+                lcs[k - 1] = (i - 1, j - 1); // -1 as we padded with extra row/col for table
 
                 i--;
                 j--;

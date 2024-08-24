@@ -28,7 +28,7 @@ public sealed class Piece : EntityType<id>
 
     public override IEnumerable<object> GetEqualityComponents()
     {
-        foreach (var component in base.GetEqualityComponents())
+        foreach(var component in base.GetEqualityComponents())
             yield return component;
         yield return Span;
         yield return ContentType;

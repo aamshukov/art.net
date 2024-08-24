@@ -8,9 +8,9 @@ namespace Art.Framework.Document.History;
 
 public sealed class DocumentHistory : Disposable, IDocumentHistory
 {
-    public Stack<DocumentHistoryEntry> UndoStack { get; init; }
+    private Stack<DocumentHistoryEntry> UndoStack { get; init; }
 
-    public Stack<DocumentHistoryEntry> RedoStack { get; init; }
+    private Stack<DocumentHistoryEntry> RedoStack { get; init; }
 
     public const id DefaultGroup = 0;
 
@@ -30,7 +30,7 @@ public sealed class DocumentHistory : Disposable, IDocumentHistory
 
     public void Add(DocumentHistoryEntry entry)
     {
-        if(UndoStack.Count >= MaxHistorySize)
+        if(UndoStack.Count >= MaxHistorySize || RedoStack.Count >= MaxHistorySize)
         {
             // cheapest for now ...
             ResetUndo();
@@ -65,9 +65,12 @@ public sealed class DocumentHistory : Disposable, IDocumentHistory
 
                 RedoStack.Push(entry);
 
-                entry = UndoStack.Peek();
+                if(CanUndo())
+                    entry = UndoStack.Peek();
+                else
+                    break;
             }
-            while(CanUndo() && group != DefaultGroup && group == entry.Group);
+            while(group != DefaultGroup && group == entry.Group);
         }
     }
 
@@ -100,9 +103,12 @@ public sealed class DocumentHistory : Disposable, IDocumentHistory
 
                 UndoStack.Push(entry);
 
-                entry = RedoStack.Peek();
+                if(CanRedo())
+                    entry = RedoStack.Peek();
+                else
+                    break;
             }
-            while(CanRedo() && group != DefaultGroup && group == entry.Group);
+            while(group != DefaultGroup && group == entry.Group);
         }
     }
 
