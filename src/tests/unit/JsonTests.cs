@@ -633,7 +633,9 @@ internal class JsonTests
             //Console.WriteLine(rhsJson);
 
             builder.Build(lhsJson, rhsJson);
-            Validate(builder, lhsJson);
+            var lhsObject = JsonConvert.DeserializeObject(lhsJson);
+            Assert.That(lhsObject, Is.Not.Null);
+            builder.Document.ApplyTo(lhsObject);
         }
     }
 }
