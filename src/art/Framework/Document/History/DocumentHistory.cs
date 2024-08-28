@@ -16,7 +16,7 @@ public sealed class DocumentHistory : Disposable, IDocumentHistory
 
     private id SeedGroup = DefaultGroup + 1;
 
-    public id NextGroup() => SeedGroup++;
+    public id NextGroup() => Interlocked.Increment(ref SeedGroup);
 
     private size MaxHistorySize { get; init; }
 

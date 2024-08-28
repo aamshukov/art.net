@@ -20,7 +20,7 @@ public sealed class PieceTable : ValueType
 
     private id SeedPieceId = 2; // 0 - sentinels, 1 - original content
 
-    private id NextPieceId() => SeedPieceId++;
+    private id NextPieceId() => Interlocked.Increment(ref SeedPieceId);
 
     /// <summary>
     /// Readonly original buffer, sequence of codepoints.
