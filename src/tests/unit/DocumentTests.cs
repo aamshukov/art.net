@@ -16,11 +16,9 @@ using Art.Framework.Document.PieceTable;
 using UILab.Art.Framework.Core.Content.Abstractions;
 using UILab.Art.Framework.Core.DataAccess;
 using UILab.Art.Framework.Core.DataAccess.Abstractions;
-using UILab.Art.Framework.Core.Text;
 using UILab.Art.Framework.Core.Text.Search;
 using UILab.Art.Framework.Document;
 using UILab.Art.Framework.Document.Abstractions;
-using static System.Net.Mime.MediaTypeNames;
 using ArtText = UILab.Art.Framework.Core.Text.Text;
 
 namespace UILab.Art.Tests;

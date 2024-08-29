@@ -41,7 +41,7 @@ public static class Algorithms
     public const ulong EQUALITY_ELEMENT_MASK = 0x0010_0000_0000_0000;
 
     /// <summary>
-    /// Calculates longest common subsequence (LCS).
+    /// Calculates longest common subsequence (LCS) for two strings.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="lhs"></param>
@@ -103,6 +103,97 @@ public static class Algorithms
             else
             {
                 j--;
+            }
+        }
+
+        return lcs;
+    }
+
+    /// <summary>
+    /// Calculates longest common subsequence (LCS) for three strings.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="lhs"></param>
+    /// <param name="rhs"></param>
+    /// <param name="comparer"></param>
+    /// <returns></returns>
+    [SuppressMessage("Major Bug", "S2583:Conditionally executed code should be reachable", Justification = "<Pending>")]
+    public static ulong[,,] CalculateLcsTable3<T>(T[] lhs, T[] mhs, T[] rhs, IEqualityComparer<T> comparer)
+    {
+        size m = lhs.Length; // rows
+        size n = mhs.Length; // columns
+        size s = rhs.Length; // columns
+
+        ulong[,,] table = new ulong[m + 1, n + 1, s + 1];
+
+        for(index i = 0; i < m; i++)
+        {
+            for(index j = 0; j < n; j++)
+            {
+                for(index k = 0; k < s; k++)
+                {
+                    if(i == 0 || j == 0 || k == 0)
+                    {
+                        table[i, j, k] = 0;
+                    }
+                    else
+                    {
+                        T x = lhs[i];
+                        T y = mhs[j];
+                        T z = rhs[k];
+
+                        if(comparer.Equals(x, y) && comparer.Equals(x, z))
+                        {
+                            table[i + 1, j + 1, k + 1] = ((table[i, j, k] + 1) & ~EQUALITY_ELEMENT_MASK) | EQUALITY_ELEMENT_MASK;
+                        }
+                        else
+                        {
+                            table[i + 1, j + 1, k + 1] = Math.Max(Math.Max(table[i + 1, j, k], table[i, j + 1, k]), table[i, j, k + 1]) & ~EQUALITY_ELEMENT_MASK;
+                        }
+                    }
+                }
+            }
+        }
+
+        return table;
+    }
+
+    [SuppressMessage("Blocker Code Smell", "S2368:Public methods should not have multidimensional array parameters", Justification = "<Pending>")]
+    public static (index, index, index)[] BuildLcs3(ulong[,,] table, size m, size n, size s)
+    {
+        index i = m; // x
+        index j = n; // y
+        index k = s; // z
+
+        index c = (index)(table[m, n, s] & ~EQUALITY_ELEMENT_MASK);
+
+        (index, index, index)[] lcs = new (index, index, index)[c];
+
+        while(i > 0 && j > 0 && k > 0)
+        {
+            if((table[i, j, k] & EQUALITY_ELEMENT_MASK) == EQUALITY_ELEMENT_MASK)
+            {
+                lcs[c - 1] = (i - 1, j - 1, k - 1); // -1 as we padded with extra row/col for table
+
+                i--;
+                j--;
+                k--;
+
+                c--;
+            }
+            else if((table[i - 1, j, k] & ~EQUALITY_ELEMENT_MASK) > (table[i, j - 1, k] & ~EQUALITY_ELEMENT_MASK) &&
+                    (table[i - 1, j, k] & ~EQUALITY_ELEMENT_MASK) > (table[i, j, k - 1] & ~EQUALITY_ELEMENT_MASK))
+            {
+                i--;
+            }
+            else if((table[i, j - 1, k] & ~EQUALITY_ELEMENT_MASK) > (table[i - 1, j, k] & ~EQUALITY_ELEMENT_MASK) &&
+                    (table[i, j - 1, k] & ~EQUALITY_ELEMENT_MASK) > (table[i, j, k - 1] & ~EQUALITY_ELEMENT_MASK))
+            {
+                j--;
+            }
+            else
+            {
+                k--;
             }
         }
 
