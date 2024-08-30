@@ -2,6 +2,7 @@
 // UI Lab Inc. Arthur Amshukov .
 //..............................
 using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json.Linq;
 using UILab.Art.Framework.Core.Diagnostics;
 
 namespace UILab.Art.Framework.Core.Algorithms;
@@ -198,5 +199,39 @@ public static class Algorithms
         }
 
         return lcs;
+    }
+
+    /// <summary>
+    /// Calculates MLCS.
+    /// Non optimized version: calculates LCS for first two strings and then result applied to the rest of strings.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="sequences"></param>
+    /// <param name="comparer"></param>
+    /// <returns></returns>
+    public static IEnumerable<index> CalculateMlcsTable<T>(IEnumerable<T> sequences, IEqualityComparer<T> comparer)
+    {
+        Assert.NotImplemented();
+        return Enumerable.Empty<index>();
+    }
+
+    /// <summary>
+    /// Calculates Longest Common Substring.
+    /// The longest common substring is the max value of LCP[] array.
+    /// Suffix array construction by induced sorting (SA-IS),
+    /// see C++  and Python projects (might be ported over at some point).
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="strings"></param>
+    /// <param name="comparer"></param>
+    /// <returns></returns>
+    public static void CalculateLcs<T>(IEnumerable<T> strings,
+                                       IEqualityComparer<T> comparer,
+                                       out index index,
+                                       out size length)
+{
+        Assert.NotImplemented();
+        index = 0;
+        length = 0;
     }
 }
