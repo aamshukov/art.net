@@ -32,4 +32,9 @@
     <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Framework\Core\Adt\Graph\" />
+    <Folder Include="Framework\Core\Adt\Tree\" />
+  </ItemGroup>
+
 </Project>
