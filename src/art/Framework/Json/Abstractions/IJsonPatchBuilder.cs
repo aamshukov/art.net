@@ -3,7 +3,7 @@
 //..............................
 using Newtonsoft.Json.Linq;
 
-namespace Art.Framework.Json;
+namespace UILab.Art.Framework.Json;
 
 public interface IJsonPatchBuilder
 {

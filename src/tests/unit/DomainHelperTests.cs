@@ -1,7 +1,6 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-using Art.Framework.Core.Domain;
 using UILab.Art.Framework.Core.Domain;
 
 namespace UILab.Art.Tests;
@@ -51,7 +50,7 @@ internal class DomainHelperTests
     public void DomainHelper_ToString_Success()
     {
         B b = new();
-        string stringified = DomainHelper.ToString(b);
+        string stringified = DomainHelper.Stringify(b);
         Assert.That(stringified, Is.EqualTo(b.ToString()));
     }
 }

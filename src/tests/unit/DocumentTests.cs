@@ -10,14 +10,13 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Art.Framework.Core.Content;
-using Art.Framework.Document.History;
-using Art.Framework.Document.PieceTable;
+using UILab.Art.Framework.Core.Content;
+using UILab.Art.Framework.Document.History;
+using UILab.Art.Framework.Document;
 using UILab.Art.Framework.Core.Content.Abstractions;
 using UILab.Art.Framework.Core.DataAccess;
 using UILab.Art.Framework.Core.DataAccess.Abstractions;
 using UILab.Art.Framework.Core.Text.Search;
-using UILab.Art.Framework.Document;
 using UILab.Art.Framework.Document.Abstractions;
 using ArtText = UILab.Art.Framework.Core.Text.Text;
 

@@ -1,7 +1,7 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-using Art.Framework.Document.History;
+using UILab.Art.Framework.Document.History;
 
 namespace UILab.Art.Framework.Document.Abstractions;
 

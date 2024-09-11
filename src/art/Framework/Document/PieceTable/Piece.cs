@@ -4,7 +4,7 @@
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
 
-namespace Art.Framework.Document.PieceTable;
+namespace UILab.Art.Framework.Document;
 
 public sealed class Piece : EntityType<id>
 {

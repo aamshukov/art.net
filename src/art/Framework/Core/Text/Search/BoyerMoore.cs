@@ -6,8 +6,8 @@
 // 𝑖 𝑗 𝑘 𝑙 𝑚 𝑛
 //
 using System.Diagnostics.CodeAnalysis;
-using Art.Framework.Core.Domain;
 using UILab.Art.Framework.Core.Diagnostics;
+using UILab.Art.Framework.Core.Domain;
 using UILab.Art.Framework.Core.Text.Search.Abstractions;
 
 namespace UILab.Art.Framework.Core.Text.Search;

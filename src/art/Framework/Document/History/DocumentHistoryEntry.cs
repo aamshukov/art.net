@@ -1,9 +1,9 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-using Art.Framework.Core.Domain;
+using UILab.Art.Framework.Core.Domain;
 
-namespace Art.Framework.Document.History;
+namespace UILab.Art.Framework.Document.History;
 
 public abstract class DocumentHistoryEntry
 {

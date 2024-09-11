@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 using UILab.Art.Framework.Core.Algorithms;
 using UILab.Art.Framework.Core.Diagnostics;
 
-namespace Art.Framework.Json;
+namespace UILab.Art.Framework.Json;
 
 public class JsonPatchBuilder : IJsonPatchBuilder
 {

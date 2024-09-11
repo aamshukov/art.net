@@ -4,7 +4,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
-using Art.Framework.Core.Domain;
+using UILab.Art.Framework.Core.Domain;
 using UILab.Art.Framework.Core.Text;
 using UILab.Art.Framework.Core.Text.Search;
 using static UILab.Art.Framework.Core.Text.Search.BoyerMoore;

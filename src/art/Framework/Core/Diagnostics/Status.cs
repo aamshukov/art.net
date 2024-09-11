@@ -1,8 +1,7 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-using Art.Framework.Core.Domain;
-using UILab.Art.Framework.Core.Domain.Abstractions;
+using UILab.Art.Framework.Core.Domain;
 
 namespace UILab.Art.Framework.Core.Diagnostics;
 

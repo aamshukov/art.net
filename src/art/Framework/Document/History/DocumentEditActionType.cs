@@ -1,7 +1,7 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-namespace Art.Framework.Document.History;
+namespace UILab.Art.Framework.Document.History;
 
 public enum DocumentEditActionType
 {

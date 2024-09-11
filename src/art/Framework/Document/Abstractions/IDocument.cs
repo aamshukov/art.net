@@ -1,7 +1,6 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-using Art.Framework.Document.PieceTable;
 using UILab.Art.Framework.Core.Text;
 using UILab.Art.Framework.Core.Text.Search;
 

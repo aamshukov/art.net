@@ -2,7 +2,7 @@
 // UI Lab Inc. Arthur Amshukov .
 //..............................
 using System.Diagnostics.CodeAnalysis;
-using Art.Framework.Core.Content;
+using UILab.Art.Framework.Core.Content;
 using UILab.Art.Framework.Core.Content.Abstractions;
 using UILab.Art.Framework.Core.DataAccess.Abstractions;
 using UILab.Art.Framework.Core.Diagnostics;

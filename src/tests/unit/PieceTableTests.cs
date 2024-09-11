@@ -1,7 +1,7 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-using Art.Framework.Document.PieceTable;
+using UILab.Art.Framework.Document;
 
 namespace UILab.Art.Tests;
 

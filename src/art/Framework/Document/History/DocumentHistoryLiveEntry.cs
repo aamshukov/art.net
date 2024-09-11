@@ -1,10 +1,9 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-using Art.Framework.Document.PieceTable;
 using UILab.Art.Framework.Core.Diagnostics;
 
-namespace Art.Framework.Document.History;
+namespace UILab.Art.Framework.Document.History;
 
 public sealed class DocumentHistoryLiveEntry : DocumentHistoryEntry
 {

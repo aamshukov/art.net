@@ -4,7 +4,7 @@
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
 
-namespace Art.Framework.Core.Content;
+namespace UILab.Art.Framework.Core.Content;
 
 public class Buffer<T> : EntityType<id>
 {

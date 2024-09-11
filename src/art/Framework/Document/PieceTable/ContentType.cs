@@ -1,7 +1,7 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-namespace Art.Framework.Document.PieceTable;
+namespace UILab.Art.Framework.Document;
 
 public enum ContentType
 {

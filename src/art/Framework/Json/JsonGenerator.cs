@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using Newtonsoft.Json;
 using UILab.Art.Framework.Core.Text;
 
-namespace Art.Framework.Json;
+namespace UILab.Art.Framework.Json;
 
 public sealed class JsonGenerator
 {

@@ -4,16 +4,13 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
-using Art.Framework.Core.Domain;
-using Art.Framework.Document.History;
-using Art.Framework.Document.PieceTable;
 using UILab.Art.Framework.Core.Content.Abstractions;
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
 using UILab.Art.Framework.Core.Text;
 using UILab.Art.Framework.Core.Text.Search;
 using UILab.Art.Framework.Document.Abstractions;
-using ContentType = Art.Framework.Document.PieceTable.ContentType;
+using UILab.Art.Framework.Document.History;
 
 namespace UILab.Art.Framework.Document;
 
@@ -66,6 +63,8 @@ public class Document : EntityType<string>, IDocument, IDisposable, IAsyncDispos
 
     public bool Dirty { get; set; }
 
+    public DocumentCursor Cursor { get; init; }
+
     public Document(string id,
                     string source,
                     IContent<codepoint> content,
@@ -88,6 +87,7 @@ public class Document : EntityType<string>, IDocument, IDisposable, IAsyncDispos
         Encoding = encoding;
         History = history;
         Dirty = false;
+        Cursor = new();
 
         OriginalContent = content;
         WorkingContent = new DocumentContent(id: $"{((DocumentContent)content).Id}-{ContentType.Added}",

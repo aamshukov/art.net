@@ -3,7 +3,7 @@
 //..............................
 using UILab.Art.Framework.Core.Diagnostics;
 
-namespace Art.Framework.Document.History;
+namespace UILab.Art.Framework.Document.History;
 
 public sealed class DocumentHistoryOfflineEntry : DocumentHistoryEntry
 {

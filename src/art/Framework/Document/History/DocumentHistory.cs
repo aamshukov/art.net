@@ -4,7 +4,7 @@
 using UILab.Art.Framework.Core;
 using UILab.Art.Framework.Document.Abstractions;
 
-namespace Art.Framework.Document.History;
+namespace UILab.Art.Framework.Document.History;
 
 public sealed class DocumentHistory : Disposable, IDocumentHistory
 {
