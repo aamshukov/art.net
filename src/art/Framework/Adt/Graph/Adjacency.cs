@@ -20,13 +20,13 @@ public sealed class Adjacency<TVertex, TEdge>
     public TEdge Edge { get; init; }
 
     /// <summary>
-    /// Set of vetices.
+    /// Set of vertices.
     /// U 'vertex'.
     /// </summary>
     public List<TVertex> Head { get; init; }
 
     /// <summary>
-    /// Set of vetices.
+    /// Set of vertices.
     /// V 'vertex'.
     /// </summary>
     public List<TVertex> Tail { get; init; }

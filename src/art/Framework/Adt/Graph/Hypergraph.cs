@@ -1,6 +1,7 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
+using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
 
 namespace UILab.Art.Framework.Adt.Graph;
@@ -10,12 +11,6 @@ public class Hypergraph<TVertex, TEdge> : EntityType<id>
     where TEdge : class
 {
     public string Label { get; init; }
-
-    /// <summary>
-    /// Root vertex.
-    /// Optional, used in some algorithms.
-    /// </summary>
-    public TVertex? Root { get; set; }
 
     public Flags Flags { get; init; }
 
@@ -78,10 +73,12 @@ public class Hypergraph<TVertex, TEdge> : EntityType<id>
 
     public void AddVertex(TVertex vertex)
     {
+        Assert.NonNullReference(vertex, nameof(vertex));
     }
 
     public bool TryAddVertex(TVertex vertex)
     {
+        Assert.NonNullReference(vertex, nameof(vertex));
         return false;
     }
 
@@ -109,10 +106,12 @@ public class Hypergraph<TVertex, TEdge> : EntityType<id>
 
     public void AddEdge(TEdge edge)
     {
+        Assert.NonNullReference(edge, nameof(edge));
     }
 
     public bool TryAddEdge(TEdge edge)
     {
+        Assert.NonNullReference(edge, nameof(edge));
         return false;
     }
 
@@ -140,6 +139,7 @@ public class Hypergraph<TVertex, TEdge> : EntityType<id>
 
     public bool TryAddAdjacency(Adjacency<TVertex, TEdge> adjacency)
     {
+        Assert.NonNullReference(adjacency, nameof(adjacency));
         return false;
     }
 
@@ -152,6 +152,128 @@ public class Hypergraph<TVertex, TEdge> : EntityType<id>
     {
         adjacency = default;
         return false;
+    }
+
+    /// <summary>
+    /// Gets the number of edges incident to the vertex.
+    /// </summary>
+    /// <param name="vertex"></param>
+    public count GetDegree(TVertex vertex)
+    {
+        Assert.NonNullReference(vertex, nameof(vertex));
+        return 0;
+    }
+
+    /// <summary>
+    /// Gets the number of incoming edges incident to the vertex.
+    /// </summary>
+    /// <param name="vertex"></param>
+    public count GetInDegree(TVertex vertex)
+    {
+        Assert.NonNullReference(vertex, nameof(vertex));
+        return 0;
+    }
+
+    /// <summary>
+    /// Gets the number of outcoming edges incident to the vertex.
+    /// </summary>
+    /// <param name="vertex"></param>
+    public count GetOutDegree(TVertex vertex)
+    {
+        Assert.NonNullReference(vertex, nameof(vertex));
+        return 0;
+    }
+
+    /// <summary>
+    /// Finds an edge that connects the vertex U to the vertex V.
+    /// </summary>
+    /// <param name="u"></param>
+    /// <param name="v"></param>
+    public TEdge? FindEdge(TVertex u, TVertex v)
+    {
+        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(v, nameof(v));
+        return default;
+    }
+
+    /// <summary>
+    /// Finds all edges that connects the vertex U to the vertex V.
+    /// </summary>
+    /// <param name="u"></param>
+    /// <param name="v"></param>
+    public IEnumerable<TEdge> FindEdges(TVertex u, TVertex v)
+    {
+        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(v, nameof(v));
+        yield return (TEdge)Enumerable.Empty<TEdge>();
+    }
+
+    /// <summary>
+    /// Gets all vertices which are predecessors of the vertex.
+    /// </summary>
+    /// <param name="vertex"></param>
+    public IEnumerable<TVertex> CollectPredecessors(TVertex vertex)
+    {
+        Assert.NonNullReference(vertex, nameof(vertex));
+        yield return (TVertex)Enumerable.Empty<TVertex>();
+    }
+
+    /// <summary>
+    /// Gets all vertices which are successors of the vertex.
+    /// </summary>
+    /// <param name="vertex"></param>
+    public IEnumerable<TVertex> CollectSuccessors(TVertex vertex)
+    {
+        Assert.NonNullReference(vertex, nameof(vertex));
+        yield return (TVertex)Enumerable.Empty<TVertex>();
+    }
+
+    /// <summary>
+    /// Gets all vertices which are connected to the vertex via any edges.
+    /// </summary>
+    /// <param name="vertex"></param>
+    public IEnumerable<TVertex> GetNeighbors(TVertex vertex)
+    {
+        Assert.NonNullReference(vertex, nameof(vertex));
+        yield return (TVertex)Enumerable.Empty<TVertex>();
+    }
+
+    /// <summary>
+    /// Calculates incidence matrix: V𝑛, E𝑚 then incidence matrix of size [𝑛, 𝑚].
+    /// Values might be:
+    ///     undirected - 0, 1, 2
+    ///     directed   - 0, 1
+    /// </summary>
+    public byte[,] CalculateIncidenceMatrix()
+    {
+        size n = 0;
+        size m = 0;
+
+        byte[,] matrix = new byte[n, m];
+
+        return matrix;
+    }
+
+    /// <summary>
+    /// Calculates adjacency matrix: V𝑛, V𝑛 then adjacency matrix of size [𝑛, n].
+    /// Values might be: 0, 1
+    /// </summary>
+    public byte[,] CalculateAdjacencyMatrix()
+    {
+        size n = 0;
+
+        byte[,] matrix = new byte[n, n];
+
+        return matrix;
+    }
+
+    /// <summary>
+    /// Checks if the hypergraph is a k-uniform hypergraph.
+    /// </summary>
+    /// <param name="k"></param>
+    public virtual bool IsUniform(size k = 0)
+    {
+        return true;
     }
 
     public override IEnumerable<object> GetEqualityComponents()
