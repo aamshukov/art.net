@@ -8,7 +8,7 @@ namespace UILab.Art.Framework.Adt.Graph;
 /// </summary>
 /// <typeparam name="TVertex"></typeparam>
 /// <typeparam name="TEdge"></typeparam>
-public class Graph<TVertex, TEdge> : Hypergraph<TVertex, TEdge>
+public class Graph<TVertex, TEdge> : HyperGraph<TVertex, TEdge>
     where TVertex : class
     where TEdge : class
 {

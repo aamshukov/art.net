@@ -6,7 +6,7 @@ using UILab.Art.Framework.Core.Domain;
 
 namespace UILab.Art.Framework.Adt.Graph;
 
-public class Hypergraph<TVertex, TEdge> : EntityType<id>
+public class HyperGraph<TVertex, TEdge> : EntityType<id>
     where TVertex : class
     where TEdge : class
 {
@@ -33,14 +33,14 @@ public class Hypergraph<TVertex, TEdge> : EntityType<id>
     /// <summary>
     /// Vertex to adjacencies map.
     /// </summary>
-    protected Dictionary<id, Adjacency<TVertex, TEdge>> Adjacencies { get; init; }
+    protected Dictionary<id, HyperEdge<TVertex, TEdge>> Adjacencies { get; init; }
 
     /// <summary>
     /// Edge to adjacencies map.
     /// </summary>
-    protected Dictionary<id, Adjacency<TVertex, TEdge>> Incidents { get; init; }
+    protected Dictionary<id, HyperEdge<TVertex, TEdge>> Incidents { get; init; }
 
-    public Hypergraph(id id,
+    public HyperGraph(id id,
                       string? label = default,
                       Flags flags = Flags.Clear,
                       Color color = Color.Unknown,
@@ -126,31 +126,31 @@ public class Hypergraph<TVertex, TEdge> : EntityType<id>
         return false;
     }
 
-    public Adjacency<TVertex, TEdge>? GetAdjacency(id id)
+    public HyperEdge<TVertex, TEdge>? GetHyperEdge(id id)
     {
         return default;
     }
 
-    public bool TryGetAdjacency(id id, out Adjacency<TVertex, TEdge>? adjacency)
+    public bool TryGetHyperEdge(id id, out HyperEdge<TVertex, TEdge>? hyperEdge)
     {
-        adjacency = default;
+        hyperEdge = default;
         return false;
     }
 
-    public bool TryAddAdjacency(Adjacency<TVertex, TEdge> adjacency)
+    public bool TryAddHyperEdge(HyperEdge<TVertex, TEdge> hyperEdge)
     {
-        Assert.NonNullReference(adjacency, nameof(adjacency));
+        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
         return false;
     }
 
-    public Adjacency<TVertex, TEdge>? RemoveAdjacency(id id)
+    public HyperEdge<TVertex, TEdge>? RemoveHyperEdge(id id)
     {
         return default;
     }
 
-    public bool TryRemoveAdjacency(id id, out Adjacency<TVertex, TEdge>? adjacency)
+    public bool TryRemoveHyperEdge(id id, out HyperEdge<TVertex, TEdge>? hyperEdge)
     {
-        adjacency = default;
+        hyperEdge = default;
         return false;
     }
 

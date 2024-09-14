@@ -13,6 +13,9 @@ public class Edge<TValue> : EntityType<id>, IVisitable
 
     public string Label { get; init; }
 
+    /// <summary>
+    /// Arbitrary values, but in some cases might be 'weight'.
+    /// </summary>
     public TValue? Value { get; init; }
 
     public Flags Flags { get; init; }
