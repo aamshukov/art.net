@@ -67,4 +67,28 @@ internal class GraphTests
             Assert.That(newEdge, Is.EqualTo(existingEdge2));
         });
     }
+
+    [Test]
+    public void Hypergraph_Create_Undirectional_HyperEdge_Success()
+    {
+        HyperGraph<Vertex<string>, Edge<string>> hyperGraph = new(1);
+
+        var newEdge = hyperGraph.CreateEdge<string>(label: "Edge");
+
+        var newVertexA = hyperGraph.CreateVertex<string>(label: "A");
+        hyperGraph.AddVertex(newVertexA);
+        var newVertexB = hyperGraph.CreateVertex<string>(label: "B");
+        hyperGraph.AddVertex(newVertexB);
+        var newVertexC = hyperGraph.CreateVertex<string>(label: "C");
+        hyperGraph.AddVertex(newVertexC);
+
+        var domain = new List<Vertex<string>>() { newVertexA, newVertexB, newVertexC };
+        var hyperEdge = hyperGraph.CreateHyperEdge(newEdge, domain);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(hyperEdge.U, Is.EqualTo(newVertexA));
+            Assert.That(hyperEdge.V, Is.EqualTo(default));
+        });
+    }
 }

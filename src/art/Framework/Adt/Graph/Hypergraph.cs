@@ -1,7 +1,6 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-using Newtonsoft.Json.Linq;
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
 
@@ -30,6 +29,10 @@ public class HyperGraph<TVertex, TEdge> : EntityType<id>
     private id NextEdgeId() => Interlocked.Increment(ref EdgeId);
 
     private Dictionary<id, TEdge> Edges { get; init; }
+
+    private id HyperEdgeId = 0;
+
+    private id NextHyperEdgeId() => Interlocked.Increment(ref HyperEdgeId);
 
     /// <summary>
     /// Vertex to adjacencies map.
@@ -169,32 +172,14 @@ public class HyperGraph<TVertex, TEdge> : EntityType<id>
         return Edges.Remove(id, out edge);
     }
 
-    public HyperEdge<TVertex, TEdge>? GetHyperEdge(id id)
+    public HyperEdge<TVertex, TEdge> CreateHyperEdge(TEdge edge,
+                                                     List<TVertex>? domain = default,
+                                                     List<TVertex>? codomain = default,
+                                                     Direction direction = Direction.Undirectional,
+                                                     string? version = default)
     {
-        return default;
-    }
-
-    public bool TryGetHyperEdge(id id, out HyperEdge<TVertex, TEdge>? hyperEdge)
-    {
-        hyperEdge = default;
-        return false;
-    }
-
-    public bool TryAddHyperEdge(HyperEdge<TVertex, TEdge> hyperEdge)
-    {
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
-        return false;
-    }
-
-    public HyperEdge<TVertex, TEdge>? RemoveHyperEdge(id id)
-    {
-        return default;
-    }
-
-    public bool TryRemoveHyperEdge(id id, out HyperEdge<TVertex, TEdge>? hyperEdge)
-    {
-        hyperEdge = default;
-        return false;
+        return (HyperEdge<TVertex, TEdge>)Activator.CreateInstance(typeof(HyperEdge<TVertex, TEdge>),
+                                                                   [NextHyperEdgeId(), edge, domain, codomain, direction, version])!;
     }
 
     /// <summary>

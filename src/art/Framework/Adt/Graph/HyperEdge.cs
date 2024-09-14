@@ -3,6 +3,7 @@
 //..............................
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
+using UILab.Art.Framework.Core.Domain.Abstractions;
 
 namespace UILab.Art.Framework.Adt.Graph;
 
@@ -11,7 +12,7 @@ namespace UILab.Art.Framework.Adt.Graph;
 /// </summary>
 /// <typeparam name="TVertex"></typeparam>
 /// <typeparam name="TEdge"></typeparam>
-public sealed class HyperEdge<TVertex, TEdge>
+public sealed class HyperEdge<TVertex, TEdge> : EntityType<id>, IVisitable
     where TVertex : EntityType<id>
     where TEdge : EntityType<id>
 {
@@ -37,43 +38,49 @@ public sealed class HyperEdge<TVertex, TEdge>
     /// <summary>
     /// Gets the first element of the head, mimics graph's endpoint.
     /// </summary>
-    public TVertex? U()
+    public TVertex? U
     {
-        TVertex? u = default;
-
-        if(Domain.Count > 1)
+        get
         {
-            u = Direction switch
-            {
-                 Direction.Undirectional => Domain[0],
-                 Direction.Directional => Domain[0],
-                 Direction.Bidirectional => Domain[0],
-                 _ => default
-            };
-        }
+            TVertex? u = default;
 
-        return u;
+            if(Domain.Count > 1)
+            {
+                u = Direction switch
+                {
+                     Direction.Undirectional => Domain[0],
+                     Direction.Directional => Domain[0],
+                     Direction.Bidirectional => Domain[0],
+                     _ => default
+                };
+            }
+
+            return u;
+        }
     }
 
     /// <summary>
     /// Gets the first element of the tail, mimics graph's endpoint.
     /// </summary>
-    public TVertex? V()
+    public TVertex? V
     {
-        TVertex? v = default;
-
-        if(Domain.Count > 1)
+        get
         {
-            v = Direction switch
-            {
-                 Direction.Undirectional => Domain[1],
-                 Direction.Directional => Domain[1],
-                 Direction.Bidirectional => Domain[1],
-                 _ => default
-            };
-        }
+            TVertex? v = default;
 
-        return v;
+            if(Codomain.Count > 1)
+            {
+                v = Direction switch
+                {
+                     Direction.Undirectional => Codomain[0],
+                     Direction.Directional => Codomain[0],
+                     Direction.Bidirectional => Codomain[0],
+                     _ => default
+                };
+            }
+
+            return v;
+        }
     }
 
     /// <summary>
@@ -81,20 +88,32 @@ public sealed class HyperEdge<TVertex, TEdge>
     /// </summary>
     public Direction Direction { get; init; }
 
-    public HyperEdge(TEdge edge,
-                     List<TVertex> domain,
-                     List<TVertex> codomain,
-                     Direction direction = Direction.Undirectional)
+    public HyperEdge(id id,
+                     TEdge edge,
+                     List<TVertex>? domain = default,
+                     List<TVertex>? codomain = default,
+                     Direction direction = Direction.Undirectional,
+                     string? version = default) : base(id, version)
     {
         Assert.NonNullReference(edge, nameof(edge));
-        Assert.NonEmptyCollection(domain, nameof(domain));
-        Assert.NonEmptyCollection(codomain, nameof(codomain));
 
         Edge = edge;
 
-        Domain = domain;
-        Codomain = codomain;
+        Domain = domain ?? new();
+        Codomain = codomain ?? new();
 
         Direction = direction;
+    }
+
+    public override IEnumerable<object> GetEqualityComponents()
+    {
+        foreach(var component in base.GetEqualityComponents())
+            yield return component;
+    }
+
+    public TResult? Accept<TParam, TResult>(IVisitor<TParam, TResult> visitor, TParam? param = default)
+    {
+        Assert.NonNullReference(visitor, nameof(visitor));
+        return visitor.Visit(this, param);
     }
 }
