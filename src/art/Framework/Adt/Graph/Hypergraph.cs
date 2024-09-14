@@ -1,14 +1,15 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
+using Newtonsoft.Json.Linq;
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
 
 namespace UILab.Art.Framework.Adt.Graph;
 
 public class HyperGraph<TVertex, TEdge> : EntityType<id>
-    where TVertex : class
-    where TEdge : class
+    where TVertex : EntityType<id>
+    where TEdge : EntityType<id>
 {
     public string Label { get; init; }
 
@@ -44,6 +45,7 @@ public class HyperGraph<TVertex, TEdge> : EntityType<id>
                       string? label = default,
                       Flags flags = Flags.Clear,
                       Color color = Color.Unknown,
+                      Dictionary<string, object>? attributes = default,
                       string? version = default) : base(id, version)
     {
         Label = label?.Trim() ?? string.Empty;
@@ -51,7 +53,7 @@ public class HyperGraph<TVertex, TEdge> : EntityType<id>
         Flags = flags;
         Color = color;
 
-        Attributes = new();
+        Attributes = attributes ?? new();
 
         Vertices = new();
         Edges = new();
@@ -60,70 +62,111 @@ public class HyperGraph<TVertex, TEdge> : EntityType<id>
         Incidents = new();
     }
 
+    public TVertex CreateVertex<TValue>(string? label = default,
+                                        TValue? value = default,
+                                        Flags flags = Flags.Clear,
+                                        Color color = Color.Unknown,
+                                        Dictionary<string, object>? attributes = default,
+                                        string? version = default)
+    {
+        return (TVertex)Activator.CreateInstance(typeof(TVertex), [NextVertexId(), label, value, flags, color, attributes, version])!;
+    }
+
     public TVertex? GetVertex(id id)
     {
+        if(Vertices.TryGetValue(id, out TVertex? vertex))
+            return vertex;
         return default;
     }
 
     public bool TryGetVertex(id id, out TVertex? vertex)
     {
-        vertex = default;
-        return false;
+        return Vertices.TryGetValue(id, out vertex);
     }
 
     public void AddVertex(TVertex vertex)
     {
         Assert.NonNullReference(vertex, nameof(vertex));
+        Assert.Ensure(!Vertices.ContainsKey(vertex.Id), nameof(vertex));
+
+        Vertices.Add(vertex.Id, vertex);
     }
 
     public bool TryAddVertex(TVertex vertex)
     {
         Assert.NonNullReference(vertex, nameof(vertex));
-        return false;
+
+        bool result = !Vertices.ContainsKey(vertex.Id);
+
+        if(result)
+            Vertices.Add(vertex.Id, vertex);
+
+        return result;
     }
 
     public TVertex? RemoveVertex(id id)
     {
+        if(Vertices.Remove(id, out TVertex? vertex))
+            return vertex;
         return default;
     }
 
     public bool TryRemoveVertex(id id, out TVertex? vertex)
     {
-        vertex = default;
-        return false;
+        return Vertices.Remove(id, out vertex);
+    }
+
+    public TEdge CreateEdge<TValue>(string? label = default,
+                                    TValue? value = default,
+                                    Flags flags = Flags.Clear,
+                                    Dictionary<string, object>? attributes = default,
+                                    string? version = default)
+    {
+        return (TEdge)Activator.CreateInstance(typeof(TEdge), [NextEdgeId(), label, value, flags, attributes, version])!;
     }
 
     public TEdge? GetEdge(id id)
     {
+        if(Edges.TryGetValue(id, out TEdge? edge))
+            return edge;
         return default;
     }
 
     public bool TryGetEdge(id id, out TEdge? edge)
     {
-        edge = default;
-        return false;
+        return Edges.TryGetValue(id, out edge);
     }
 
     public void AddEdge(TEdge edge)
     {
         Assert.NonNullReference(edge, nameof(edge));
+        Assert.Ensure(!Edges.ContainsKey(edge.Id), nameof(edge));
+
+        Edges.Add(edge.Id, edge);
     }
 
     public bool TryAddEdge(TEdge edge)
     {
         Assert.NonNullReference(edge, nameof(edge));
-        return false;
+
+        bool result = !Edges.ContainsKey(edge.Id);
+
+        if(result)
+            Edges.Add(edge.Id, edge);
+
+        return result;
     }
 
     public TEdge? RemoveEdge(id id)
     {
+        if(Edges.Remove(id, out TEdge? edge))
+            return edge;
         return default;
     }
 
     public bool TryRemoveEdge(id id, out TEdge? edge)
     {
-        edge = default;
-        return false;
+        return Edges.Remove(id, out edge);
     }
 
     public HyperEdge<TVertex, TEdge>? GetHyperEdge(id id)

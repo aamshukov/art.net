@@ -1,6 +1,8 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
+using UILab.Art.Framework.Core.Domain;
+
 namespace UILab.Art.Framework.Adt.Graph;
 
 /// <summary>
@@ -9,8 +11,8 @@ namespace UILab.Art.Framework.Adt.Graph;
 /// <typeparam name="TVertex"></typeparam>
 /// <typeparam name="TEdge"></typeparam>
 public class Graph<TVertex, TEdge> : HyperGraph<TVertex, TEdge>
-    where TVertex : class
-    where TEdge : class
+    where TVertex : EntityType<id>
+    where TEdge : EntityType<id>
 {
     /// <summary>
     /// Root vertex.
@@ -22,7 +24,8 @@ public class Graph<TVertex, TEdge> : HyperGraph<TVertex, TEdge>
                  string? label = default,
                  Flags flags = Flags.Clear,
                  Color color = Color.Unknown,
-                 string? version = default) : base(id, label, flags, color, version)
+                 Dictionary<string, object>? attributes = default,
+                 string? version = default) : base(id, label, flags, color, attributes, version)
     {
     }
 

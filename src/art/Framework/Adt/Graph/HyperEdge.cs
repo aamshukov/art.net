@@ -2,6 +2,7 @@
 // UI Lab Inc. Arthur Amshukov .
 //..............................
 using UILab.Art.Framework.Core.Diagnostics;
+using UILab.Art.Framework.Core.Domain;
 
 namespace UILab.Art.Framework.Adt.Graph;
 
@@ -11,8 +12,8 @@ namespace UILab.Art.Framework.Adt.Graph;
 /// <typeparam name="TVertex"></typeparam>
 /// <typeparam name="TEdge"></typeparam>
 public sealed class HyperEdge<TVertex, TEdge>
-    where TVertex : class
-    where TEdge : class
+    where TVertex : EntityType<id>
+    where TEdge : EntityType<id>
 {
     /// <summary>
     /// Edge, which connects domain (D) and codomain (C) sets of vertices according to direction.
@@ -53,7 +54,6 @@ public sealed class HyperEdge<TVertex, TEdge>
 
         return u;
     }
-
 
     /// <summary>
     /// Gets the first element of the tail, mimics graph's endpoint.

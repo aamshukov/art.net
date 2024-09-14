@@ -19,14 +19,14 @@ public class Vertex<TValue> : EntityType<id>, IVisitable
 
     public Color Color { get; init; }
 
-    public Dictionary<string, object?> Attributes { get; init; }
+    public Dictionary<string, object> Attributes { get; init; }
 
     public Vertex(id id,
                   string? label = default,
                   TValue? value = default,
                   Flags flags = Flags.Clear,
                   Color color = Color.Unknown,
-                  Dictionary<string, object?>? attributes = default,
+                  Dictionary<string, object>? attributes = default,
                   string? version = default) : base(id, version)
     {
         Label = label?.Trim() ?? id.ToString();

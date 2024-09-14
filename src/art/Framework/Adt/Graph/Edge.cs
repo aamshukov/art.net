@@ -20,13 +20,13 @@ public class Edge<TValue> : EntityType<id>, IVisitable
 
     public Flags Flags { get; init; }
 
-    public Dictionary<string, object?> Attributes { get; init; }
+    public Dictionary<string, object> Attributes { get; init; }
 
     public Edge(id id,
                 string? label = default,
                 TValue? value = default,
                 Flags flags = Flags.Clear,
-                Dictionary<string, object?>? attributes = default,
+                Dictionary<string, object>? attributes = default,
                 string? version = default) : base(id, version)
     {
         Label = label?.Trim() ?? id.ToString();
