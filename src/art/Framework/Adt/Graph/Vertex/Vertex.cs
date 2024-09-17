@@ -1,19 +1,17 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-using UILab.Art.Framework.Core.Diagnostics;
+using UILab.Art.Framework.Core.Counter;
 using UILab.Art.Framework.Core.Domain;
 using UILab.Art.Framework.Core.Domain.Abstractions;
 
 namespace UILab.Art.Framework.Adt.Graph;
 
-public class Vertex<TValue> : EntityType<id>, IVisitable
+public abstract class Vertex : EntityType<id>, IVisitable
 {
-    public static readonly Vertex<TValue> Sentinel = new(0, "Vertex:Sentinel");
-
     public string Label { get; init; }
 
-    public TValue? Value { get; init; }
+    public object? Value { get; init; }
 
     public Flags Flags { get; init; }
 
@@ -21,20 +19,29 @@ public class Vertex<TValue> : EntityType<id>, IVisitable
 
     public Dictionary<string, object> Attributes { get; init; }
 
+    public ReferenceCounter ReferenceCounter { get; init; }
+
     public Vertex(id id,
                   string? label = default,
-                  TValue? value = default,
+                  object? value = default,
                   Flags flags = Flags.Clear,
                   Color color = Color.Unknown,
                   Dictionary<string, object>? attributes = default,
                   string? version = default) : base(id, version)
     {
-        Label = label?.Trim() ?? id.ToString();
+        Label = label?.Trim() ?? $"V:{id.ToString()}";
         Value = value;
         Flags = flags;
         Color = color;
         Attributes = attributes ?? new();
+        ReferenceCounter = new();
     }
+
+    public count AddReference() => ReferenceCounter.AddReference();
+
+    public bool CanRelease() => ReferenceCounter.CanRelease();
+
+    public count Release() => ReferenceCounter.Release();
 
     public override IEnumerable<object> GetEqualityComponents()
     {
@@ -45,9 +52,5 @@ public class Vertex<TValue> : EntityType<id>, IVisitable
             yield return Value;
     }
 
-    public TResult? Accept<TParam, TResult>(IVisitor<TParam, TResult> visitor, TParam? param = default)
-    {
-        Assert.NonNullReference(visitor, nameof(visitor));
-        return visitor.Visit(this, param);
-    }
+    public abstract TResult? Accept<TParam, TResult>(IVisitor visitor, TParam? param);
 }
