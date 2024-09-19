@@ -170,36 +170,6 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
         yield return (UndirectedVertex)Enumerable.Empty<UndirectedVertex>();
     }
 
-    ///// <summary>
-    ///// Gets all vertices which are predecessors of the vertex.
-    ///// </summary>
-    ///// <param name="vertex"></param>
-    //public abstract IEnumerable<TVertex> CollectPredecessors(TVertex vertex)
-    //{
-    //    Assert.NonNullReference(vertex, nameof(vertex));
-    //    yield return (TVertex)Enumerable.Empty<TVertex>();
-    //}
-
-    ///// <summary>
-    ///// Gets all vertices which are successors of the vertex.
-    ///// </summary>
-    ///// <param name="vertex"></param>
-    //public IEnumerable<TVertex> CollectSuccessors(TVertex vertex)
-    //{
-    //    Assert.NonNullReference(vertex, nameof(vertex));
-    //    yield return (TVertex)Enumerable.Empty<TVertex>();
-    //}
-
-    ///// <summary>
-    ///// Gets all vertices which are connected to the vertex via any edges.
-    ///// </summary>
-    ///// <param name="vertex"></param>
-    //public IEnumerable<TVertex> GetNeighbors(TVertex vertex)
-    //{
-    //    Assert.NonNullReference(vertex, nameof(vertex));
-    //    yield return (TVertex)Enumerable.Empty<TVertex>();
-    //}
-
     public override IEnumerable<object> GetEqualityComponents()
     {
         foreach(var component in base.GetEqualityComponents())

@@ -191,36 +191,29 @@ public static class DirectedHyperGraphAlgorithms
         return GetVertexOutNeighbors(graph, vertex).Union(GetVertexInNeighbors(graph, vertex));
     }
 
+    /// <summary>
+    /// Predecessors of a vertex 𝑣 in a directed hypergraph are the vertices in the source sets of hyperedges where 𝑣 is part of the target set.
+    /// They represent the vertices that "point to" 𝑣.
+    /// </summary>
+    public static IEnumerable<DirectedVertex> CollectPredecessors(DirectedHyperGraph graph, DirectedVertex vertex)
+    {
+        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(vertex, nameof(vertex));
 
+        return GetVertexInNeighbors(graph, vertex);
+    }
 
-    ///// <summary>
-    ///// Gets all vertices which are predecessors of the vertex.
-    ///// </summary>
-    ///// <param name="vertex"></param>
-    //public IEnumerable<TVertex> CollectPredecessors(TVertex vertex)
-    //{
-    //    Assert.NonNullReference(vertex, nameof(vertex));
-    //    yield return (TVertex)Enumerable.Empty<TVertex>();
-    //}
+    /// <summary>
+    /// Successors of a vertex 𝑣 in a directed hypergraph are the vertices in the target sets of hyperedges where 𝑣 is part of the source set.
+    /// They represent the vertices that 𝑣 "points to."
+    /// </summary>
+    public static IEnumerable<DirectedVertex> CollectSuccessors(DirectedHyperGraph graph, DirectedVertex vertex)
+    {
+        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(vertex, nameof(vertex));
 
-    ///// <summary>
-    ///// Gets all vertices which are successors of the vertex.
-    ///// </summary>
-    ///// <param name="vertex"></param>
-    //public IEnumerable<TVertex> CollectSuccessors(TVertex vertex)
-    //{
-    //    Assert.NonNullReference(vertex, nameof(vertex));
-    //    yield return (TVertex)Enumerable.Empty<TVertex>();
-    //}
-
-
-
-
-
-
-
-
-
+        return GetVertexOutNeighbors(graph, vertex);
+    }
 
     /// <summary>
     /// Edge degree in a directed hypergraph is the total number of vertices in both the source and target sets of the hyperedge.

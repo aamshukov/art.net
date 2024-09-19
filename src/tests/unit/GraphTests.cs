@@ -74,8 +74,6 @@ internal class GraphTests
     [Test]
     public async Task UndirectedHyperGraph_Create_Success()
     {
-        const string fileName = "UndirectedHyperGraph_Create_Success";
-
         UndirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
@@ -91,6 +89,7 @@ internal class GraphTests
         var edge2 = hyperGraph.CreateHyperEdge(vertices: [vertexB, vertexC]);
         hyperGraph.AddHyperEdge(edge2);
 
+        const string fileName = "UndirectedHyperGraph_Create_Success";
         await GraphvizSerialization.SerializeUndirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
     }
 
@@ -183,11 +182,12 @@ internal class GraphTests
         var edge5 = hyperGraph.CreateHyperEdge(domain: [vertex3, vertex5], codomain: [vertex6]);
         hyperGraph.AddHyperEdge(edge5);
 
-        await GraphvizSerialization.SerializeDirectedHyperGraph(DotDirectory, $"{new StackFrame(2, true).GetMethod()?.Name}.dot", hyperGraph);
+        const string fileName = "DirectedHyperGraph_Create_Success";
+        await GraphvizSerialization.SerializeDirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
     }
 
     [Test]
-    public void DirectedHyperGraph_Neighbors_Success()
+    public async Task DirectedHyperGraph_Neighbors_Success()
     {
         DirectedHyperGraph hyperGraph = new(1);
 
@@ -205,13 +205,54 @@ internal class GraphTests
         var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexB], codomain: [vertexD]);
         hyperGraph.AddHyperEdge(edge2);
 
+        const string fileName = "DirectedHyperGraph_Neighbors_Success";
+        await GraphvizSerialization.SerializeDirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
+
         var outNeighbors = DirectedHyperGraphAlgorithms.GetVertexOutNeighbors(hyperGraph, vertexA).ToArray();
         Assert.That(outNeighbors.SequenceEqual([vertexB, vertexC]), Is.True);
 
         var inNeighbors = DirectedHyperGraphAlgorithms.GetVertexInNeighbors(hyperGraph, vertexB).ToArray();
         Assert.That(inNeighbors.SequenceEqual([vertexA]), Is.True);
 
+        inNeighbors = DirectedHyperGraphAlgorithms.GetVertexInNeighbors(hyperGraph, vertexD).ToArray();
+        Assert.That(inNeighbors.SequenceEqual([vertexB]), Is.True);
+
         var neighbors = DirectedHyperGraphAlgorithms.GetVertexNeighbors(hyperGraph, vertexB).ToArray();
         Assert.That(neighbors.SequenceEqual([vertexD, vertexA]), Is.True);
+    }
+
+    [Test]
+    public async Task DirectedHyperGraph_Predecessors_Successors_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexA], codomain: [vertexB, vertexC]);
+        hyperGraph.AddHyperEdge(edge1);
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexB], codomain: [vertexD]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        const string fileName = "DirectedHyperGraph_Predecessors_Successors_Success";
+        await GraphvizSerialization.SerializeDirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
+
+        var predecessors = DirectedHyperGraphAlgorithms.CollectPredecessors(hyperGraph, vertexB).ToArray();
+        Assert.That(predecessors.SequenceEqual([vertexA]), Is.True);
+
+        predecessors = DirectedHyperGraphAlgorithms.CollectPredecessors(hyperGraph, vertexD).ToArray();
+        Assert.That(predecessors.SequenceEqual([vertexB]), Is.True);
+
+        var successors = DirectedHyperGraphAlgorithms.CollectSuccessors(hyperGraph, vertexA).ToArray();
+        Assert.That(successors.SequenceEqual([vertexB, vertexC]), Is.True);
+
+        successors = DirectedHyperGraphAlgorithms.CollectSuccessors(hyperGraph, vertexB).ToArray();
+        Assert.That(successors.SequenceEqual([vertexD]), Is.True);
     }
 }
