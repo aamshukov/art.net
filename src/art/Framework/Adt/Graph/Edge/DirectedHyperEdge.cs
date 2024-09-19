@@ -10,8 +10,6 @@ public class DirectedHyperEdge : HyperEdge<DirectedVertex>
 {
     /// <summary>
     /// Set of vertices: domain, tail, sender, source, etc.
-    /// If Direction is Undirectional all vertices are in the Domain only and Codomain is not considered.
-    /// If Direction is Directional or Bidirectional vertices are in Domain and in Codomain.
     /// </summary>
     public Dictionary<id, DirectedVertex> Domain { get; init; }
 

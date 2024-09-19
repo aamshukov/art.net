@@ -103,7 +103,7 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
         return false;
     }
 
-    public override DirectedVertex? RemoveVertex(id id)
+    public DirectedVertex? RemoveVertex(id id, bool weak)
     {
         foreach(DirectedHyperEdge hyperEdge in HyperEdges.Values)
         {
@@ -121,7 +121,7 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
         return base.RemoveVertex(id);
     }
 
-    public override bool TryRemoveVertex(id id, out DirectedVertex? vertex)
+    public bool TryRemoveVertex(id id, out DirectedVertex? vertex, bool weak)
     {
         foreach(DirectedHyperEdge hyperEdge in HyperEdges.Values)
         {

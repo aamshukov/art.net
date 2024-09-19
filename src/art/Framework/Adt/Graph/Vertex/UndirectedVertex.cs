@@ -24,6 +24,8 @@ public class UndirectedVertex : Vertex
         HyperEdges = hyperEdges?.ToDictionary(kvp => kvp.Id, kvp => kvp) ?? new();
     }
 
+    public bool IsEmpty() => HyperEdges.Count == 0;
+
     public override IEnumerable<object> GetEqualityComponents()
     {
         foreach(var component in base.GetEqualityComponents())

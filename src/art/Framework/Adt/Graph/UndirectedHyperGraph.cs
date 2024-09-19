@@ -101,7 +101,7 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
         return false;
     }
 
-    public override UndirectedVertex? RemoveVertex(id id)
+    public UndirectedVertex? RemoveVertex(id id, bool weak)
     {
         foreach(UndirectedHyperEdge hyperEdge in HyperEdges.Values)
         {
@@ -119,7 +119,7 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
         return base.RemoveVertex(id);
     }
 
-    public override bool TryRemoveVertex(id id, out UndirectedVertex? vertex)
+    public bool TryRemoveVertex(id id, out UndirectedVertex? vertex, bool weak)
     {
         foreach(UndirectedHyperEdge hyperEdge in HyperEdges.Values)
         {
@@ -147,16 +147,6 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
             foreach(UndirectedVertex vertex in edge.Vertices.Values)
                 vertex.HyperEdges.Remove(hyperEdge.Id);
         }
-    }
-
-    /// <summary>
-    /// Gets all vertices which are connected to the vertex via any edges.
-    /// </summary>
-    /// <param name="vertex"></param>
-    public IEnumerable<UndirectedVertex> GetNeighbors(UndirectedVertex vertex)
-    {
-        Assert.NonNullReference(vertex, nameof(vertex));
-        yield return (UndirectedVertex)Enumerable.Empty<UndirectedVertex>();
     }
 
     public override IEnumerable<object> GetEqualityComponents()

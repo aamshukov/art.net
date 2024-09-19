@@ -29,14 +29,14 @@ internal class GraphTests
 
         newVertex = hyperGraph.CreateVertex();
         hyperGraph.AddVertex(newVertex);
-        existingVertex = hyperGraph.RemoveVertex(newVertex.Id);
+        existingVertex = hyperGraph.RemoveVertex(newVertex.Id, weak: false);
         Assert.That(newVertex, Is.EqualTo(existingVertex));
 
         newVertex = hyperGraph.CreateVertex();
         hyperGraph.AddVertex(newVertex);
         Assert.Multiple(() =>
         {
-            Assert.That(hyperGraph.TryRemoveVertex(newVertex.Id, out UndirectedVertex? existingVertex2), Is.True);
+            Assert.That(hyperGraph.TryRemoveVertex(newVertex.Id, out UndirectedVertex? existingVertex2, weak: false), Is.True);
             Assert.That(newVertex, Is.EqualTo(existingVertex2));
         });
     }
@@ -92,12 +92,6 @@ internal class GraphTests
         hyperGraph.AddHyperEdge(edge2);
 
         await GraphvizSerialization.SerializeUndirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
-
-        //Assert.Multiple(() =>
-        //{
-        //    Assert.That(hyperGraph.RemoveVertex(vertexA.Id), Is.EqualTo(vertexA));
-        //    Assert.That(hyperGraph.TryRemoveVertex(vertexB.Id, out UndirectedVertex? existingVertexB), Is.True);
-        //});
     }
 
     [Test]
@@ -118,14 +112,14 @@ internal class GraphTests
 
         newVertex = hyperGraph.CreateVertex();
         hyperGraph.AddVertex(newVertex);
-        existingVertex = hyperGraph.RemoveVertex(newVertex.Id);
+        existingVertex = hyperGraph.RemoveVertex(newVertex.Id, weak: false);
         Assert.That(newVertex, Is.EqualTo(existingVertex));
 
         newVertex = hyperGraph.CreateVertex();
         hyperGraph.AddVertex(newVertex);
         Assert.Multiple(() =>
         {
-            Assert.That(hyperGraph.TryRemoveVertex(newVertex.Id, out DirectedVertex? existingVertex2), Is.True);
+            Assert.That(hyperGraph.TryRemoveVertex(newVertex.Id, out DirectedVertex? existingVertex2, weak: false), Is.True);
             Assert.That(newVertex, Is.EqualTo(existingVertex2));
         });
     }
@@ -190,5 +184,34 @@ internal class GraphTests
         hyperGraph.AddHyperEdge(edge5);
 
         await GraphvizSerialization.SerializeDirectedHyperGraph(DotDirectory, $"{new StackFrame(2, true).GetMethod()?.Name}.dot", hyperGraph);
+    }
+
+    [Test]
+    public void DirectedHyperGraph_Neighbors_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexA], codomain: [vertexB, vertexC]);
+        hyperGraph.AddHyperEdge(edge1);
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexB], codomain: [vertexD]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var outNeighbors = DirectedHyperGraphAlgorithms.GetVertexOutNeighbors(hyperGraph, vertexA).ToArray();
+        Assert.That(outNeighbors.SequenceEqual([vertexB, vertexC]), Is.True);
+
+        var inNeighbors = DirectedHyperGraphAlgorithms.GetVertexInNeighbors(hyperGraph, vertexB).ToArray();
+        Assert.That(inNeighbors.SequenceEqual([vertexA]), Is.True);
+
+        var neighbors = DirectedHyperGraphAlgorithms.GetVertexNeighbors(hyperGraph, vertexB).ToArray();
+        Assert.That(neighbors.SequenceEqual([vertexD, vertexA]), Is.True);
     }
 }

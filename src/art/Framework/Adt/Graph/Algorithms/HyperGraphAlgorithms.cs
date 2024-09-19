@@ -1,9 +1,7 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-using UILab.Art.Framework.Core.Domain;
-
-namespace UILab.Art.Framework.Adt.Graph.Algorithms;
+namespace UILab.Art.Framework.Adt.Graph;
 
 public static class HyperGraphAlgorithms
 {
@@ -51,14 +49,6 @@ public static class HyperGraphAlgorithms
     //    throw new NotImplementedException();
     //}
 
-    ///// <summary>
-    ///// Checks if the hypergraph is a k-uniform hypergraph.
-    ///// </summary>
-    ///// <param name="k"></param>
-    //public virtual bool IsUniform(size k = 0)
-    //{
-    //    return true;
-    //}
 
 
     ///// <summary>
@@ -90,35 +80,10 @@ public static class HyperGraphAlgorithms
     //    return matrix;
     //}
 
-    ///// <summary>
-    ///// Gets the number of edges incident to the vertex.
-    ///// </summary>
-    ///// <param name="vertex"></param>
-    //public count GetDegree(TVertex vertex)
-    //{
-    //    Assert.NonNullReference(vertex, nameof(vertex));
-    //    return 0;
-    //}
 
-    ///// <summary>
-    ///// Gets the number of incoming edges incident to the vertex.
-    ///// </summary>
-    ///// <param name="vertex"></param>
-    //public count GetInDegree(TVertex vertex)
-    //{
-    //    Assert.NonNullReference(vertex, nameof(vertex));
-    //    return 0;
-    //}
 
-    ///// <summary>
-    ///// Gets the number of outcoming edges incident to the vertex.
-    ///// </summary>
-    ///// <param name="vertex"></param>
-    //public count GetOutDegree(TVertex vertex)
-    //{
-    //    Assert.NonNullReference(vertex, nameof(vertex));
-    //    return 0;
-    //}
+
+
 
     ///// <summary>
     ///// Finds an edge that connects the vertex U to the vertex V.
@@ -144,35 +109,7 @@ public static class HyperGraphAlgorithms
     //    yield return (TEdge)Enumerable.Empty<TEdge>();
     //}
 
-    ///// <summary>
-    ///// Gets all vertices which are predecessors of the vertex.
-    ///// </summary>
-    ///// <param name="vertex"></param>
-    //public IEnumerable<TVertex> CollectPredecessors(TVertex vertex)
-    //{
-    //    Assert.NonNullReference(vertex, nameof(vertex));
-    //    yield return (TVertex)Enumerable.Empty<TVertex>();
-    //}
 
-    ///// <summary>
-    ///// Gets all vertices which are successors of the vertex.
-    ///// </summary>
-    ///// <param name="vertex"></param>
-    //public IEnumerable<TVertex> CollectSuccessors(TVertex vertex)
-    //{
-    //    Assert.NonNullReference(vertex, nameof(vertex));
-    //    yield return (TVertex)Enumerable.Empty<TVertex>();
-    //}
-
-    ///// <summary>
-    ///// Gets all vertices which are connected to the vertex via any edges.
-    ///// </summary>
-    ///// <param name="vertex"></param>
-    //public IEnumerable<TVertex> GetNeighbors(TVertex vertex)
-    //{
-    //    Assert.NonNullReference(vertex, nameof(vertex));
-    //    yield return (TVertex)Enumerable.Empty<TVertex>();
-    //}
 
     ///// <summary>
     ///// Calculates incidence matrix: V𝑛, E𝑚 then incidence matrix of size [𝑛, 𝑚].
@@ -202,14 +139,4 @@ public static class HyperGraphAlgorithms
 
     //    return matrix;
     //}
-
-    ///// <summary>
-    ///// Checks if the hypergraph is a k-uniform hypergraph.
-    ///// </summary>
-    ///// <param name="k"></param>
-    //public virtual bool IsUniform(size k = 0)
-    //{
-    //    return true;
-    //}
-
 }

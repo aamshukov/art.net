@@ -76,7 +76,7 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
         return result;
     }
 
-    public virtual TVertex? RemoveVertex(id id)
+    public TVertex? RemoveVertex(id id)
     {
         if(Vertices.TryGetValue(id, out TVertex? vertex))
         {
@@ -89,7 +89,7 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
         return vertex;
     }
 
-    public virtual bool TryRemoveVertex(id id, out TVertex? vertex)
+    public bool TryRemoveVertex(id id, out TVertex? vertex)
     {
         if(Vertices.TryGetValue(id, out vertex))
         {

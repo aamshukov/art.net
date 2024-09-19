@@ -34,6 +34,8 @@ public class DirectedVertex : Vertex
         OutHyperEdges = outHyperEdges?.ToDictionary(kvp => kvp.Id, kvp => kvp) ?? new();
     }
 
+    public bool IsEmpty() => InHyperEdges.Count == 0 && OutHyperEdges.Count == 0;
+
     public override IEnumerable<object> GetEqualityComponents()
     {
         foreach(var component in base.GetEqualityComponents())

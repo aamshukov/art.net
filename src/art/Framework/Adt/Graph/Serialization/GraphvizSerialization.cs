@@ -66,6 +66,14 @@ public static class GraphvizSerialization
             sb.Append($"{indent}\"{vertex.Label}\" node [shape = circle];{Environment.NewLine}");
         }
 
+        foreach(UndirectedVertex vertex in graph.Vertices.Values)
+        {
+            if(vertex.IsEmpty())
+            {
+                sb.Append($"{indent}\"{vertex.Label}\";{Environment.NewLine}");
+            }
+        }
+
         foreach(UndirectedHyperEdge edge in graph.HyperEdges.Values)
         {
             if(edge.Vertices.Count == 1)
@@ -105,6 +113,14 @@ public static class GraphvizSerialization
         foreach(DirectedVertex vertex in graph.Vertices.Values)
         {
             sb.Append($"{indent}\"{vertex.Label}\" node [shape = circle];{Environment.NewLine}");
+        }
+
+        foreach(DirectedVertex vertex in graph.Vertices.Values)
+        {
+            if(vertex.IsEmpty())
+            {
+                sb.Append($"{indent}\"{vertex.Label}\";{Environment.NewLine}");
+            }
         }
 
         foreach(DirectedHyperEdge edge in graph.HyperEdges.Values)
