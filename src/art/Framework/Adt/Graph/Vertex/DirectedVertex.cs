@@ -13,17 +13,17 @@ public class DirectedVertex : Vertex
     /// <summary>
     /// Incoming hyper edges / hyper arcs.
     /// </summary>
-    public Dictionary<id, HyperEdge<DirectedVertex>> InHyperEdges { get; init; }
+    public Dictionary<id, DirectedHyperEdge> InHyperEdges { get; init; }
 
     /// <summary>
     /// Outcoming hyper edges / hyper arcs.
     /// </summary>
-    public Dictionary<id, HyperEdge<DirectedVertex>> OutHyperEdges { get; init; }
+    public Dictionary<id, DirectedHyperEdge> OutHyperEdges { get; init; }
 
     public DirectedVertex(id id,
                           string? label = default,
-                          List<HyperEdge<DirectedVertex>>? inHyperEdges = default,
-                          List<HyperEdge<DirectedVertex>>? outHyperEdges = default,
+                          List<DirectedHyperEdge>? inHyperEdges = default,
+                          List<DirectedHyperEdge>? outHyperEdges = default,
                           object? value = default,
                           Flags flags = Flags.Clear,
                           Color color = Color.Unknown,

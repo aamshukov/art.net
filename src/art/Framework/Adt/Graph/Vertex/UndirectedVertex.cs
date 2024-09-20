@@ -10,11 +10,11 @@ public class UndirectedVertex : Vertex
 {
     public static readonly UndirectedVertex Sentinel = new(0, "UndirectedVertex:Sentinel");
 
-    public Dictionary<id, HyperEdge<UndirectedVertex>> HyperEdges { get; init; }
+    public Dictionary<id, UndirectedHyperEdge> HyperEdges { get; init; }
 
     public UndirectedVertex(id id,
                             string? label = default,
-                            List<HyperEdge<UndirectedVertex>>? hyperEdges = default,
+                            List<UndirectedHyperEdge>? hyperEdges = default,
                             object? value = default,
                             Flags flags = Flags.Clear,
                             Color color = Color.Unknown,

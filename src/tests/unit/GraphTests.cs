@@ -23,22 +23,12 @@ internal class GraphTests
         Assert.Multiple(() =>
         {
             Assert.That(newVertex, Is.EqualTo(existingVertex));
-            Assert.That(hyperGraph.TryGetVertex(newVertex.Id, out UndirectedVertex? existingVertex2), Is.True);
-            Assert.That(newVertex, Is.EqualTo(existingVertex2));
         });
 
         newVertex = hyperGraph.CreateVertex();
         hyperGraph.AddVertex(newVertex);
-        existingVertex = hyperGraph.RemoveVertex(newVertex.Id, weak: false);
+        existingVertex = hyperGraph.RemoveVertex(newVertex.Id, RemoveActionType.Weak);
         Assert.That(newVertex, Is.EqualTo(existingVertex));
-
-        newVertex = hyperGraph.CreateVertex();
-        hyperGraph.AddVertex(newVertex);
-        Assert.Multiple(() =>
-        {
-            Assert.That(hyperGraph.TryRemoveVertex(newVertex.Id, out UndirectedVertex? existingVertex2, weak: false), Is.True);
-            Assert.That(newVertex, Is.EqualTo(existingVertex2));
-        });
     }
 
     [Test]
@@ -53,22 +43,12 @@ internal class GraphTests
         Assert.Multiple(() =>
         {
             Assert.That(newEdge, Is.EqualTo(existingEdge));
-            Assert.That(hyperGraph.TryGetEdge(newEdge.Id, out UndirectedHyperEdge? existingEdge2), Is.True);
-            Assert.That(newEdge, Is.EqualTo(existingEdge2));
         });
 
         newEdge = hyperGraph.CreateHyperEdge();
         hyperGraph.AddHyperEdge(newEdge);
-        existingEdge = hyperGraph.RemoveHyperEdge(newEdge.Id);
+        existingEdge = hyperGraph.RemoveHyperEdge(newEdge.Id, RemoveActionType.Weak);
         Assert.That(newEdge, Is.EqualTo(existingEdge));
-
-        newEdge = hyperGraph.CreateHyperEdge();
-        hyperGraph.AddHyperEdge(newEdge);
-        Assert.Multiple(() =>
-        {
-            Assert.That(hyperGraph.TryRemoveHyperEdge(newEdge.Id, out UndirectedHyperEdge? existingEdge2), Is.True);
-            Assert.That(newEdge, Is.EqualTo(existingEdge2));
-        });
     }
 
     [Test]
@@ -105,22 +85,12 @@ internal class GraphTests
         Assert.Multiple(() =>
         {
             Assert.That(newVertex, Is.EqualTo(existingVertex));
-            Assert.That(hyperGraph.TryGetVertex(newVertex.Id, out DirectedVertex? existingVertex2), Is.True);
-            Assert.That(newVertex, Is.EqualTo(existingVertex2));
         });
 
         newVertex = hyperGraph.CreateVertex();
         hyperGraph.AddVertex(newVertex);
-        existingVertex = hyperGraph.RemoveVertex(newVertex.Id, weak: false);
+        existingVertex = hyperGraph.RemoveVertex(newVertex.Id, RemoveActionType.Weak);
         Assert.That(newVertex, Is.EqualTo(existingVertex));
-
-        newVertex = hyperGraph.CreateVertex();
-        hyperGraph.AddVertex(newVertex);
-        Assert.Multiple(() =>
-        {
-            Assert.That(hyperGraph.TryRemoveVertex(newVertex.Id, out DirectedVertex? existingVertex2, weak: false), Is.True);
-            Assert.That(newVertex, Is.EqualTo(existingVertex2));
-        });
     }
 
     [Test]
@@ -135,22 +105,12 @@ internal class GraphTests
         Assert.Multiple(() =>
         {
             Assert.That(newEdge, Is.EqualTo(existingEdge));
-            Assert.That(hyperGraph.TryGetEdge(newEdge.Id, out DirectedHyperEdge? existingEdge2), Is.True);
-            Assert.That(newEdge, Is.EqualTo(existingEdge2));
         });
 
         newEdge = hyperGraph.CreateHyperEdge();
         hyperGraph.AddHyperEdge(newEdge);
-        existingEdge = hyperGraph.RemoveHyperEdge(newEdge.Id);
+        existingEdge = hyperGraph.RemoveHyperEdge(newEdge.Id, RemoveActionType.Weak);
         Assert.That(newEdge, Is.EqualTo(existingEdge));
-
-        newEdge = hyperGraph.CreateHyperEdge();
-        hyperGraph.AddHyperEdge(newEdge);
-        Assert.Multiple(() =>
-        {
-            Assert.That(hyperGraph.TryRemoveHyperEdge(newEdge.Id, out DirectedHyperEdge? existingEdge2), Is.True);
-            Assert.That(newEdge, Is.EqualTo(existingEdge2));
-        });
     }
 
     [Test]
@@ -254,5 +214,459 @@ internal class GraphTests
 
         successors = DirectedHyperGraphAlgorithms.CollectSuccessors(hyperGraph, vertexB).ToArray();
         Assert.That(successors.SequenceEqual([vertexD]), Is.True);
+    }
+
+    [Test]
+    public void UndirectedHyperGraph_WeakVertexDelete1_Success()
+    {
+        UndirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+
+        var edge1 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexB]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexC]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(vertices: [vertexB, vertexC]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        var vertex = hyperGraph.RemoveVertex(vertexA.Id, RemoveActionType.Weak);
+        Assert.That(vertex, Is.EqualTo(vertexA));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Vertices.Values.SequenceEqual([vertexB]), Is.True);
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Vertices.Values.SequenceEqual([vertexC]), Is.True);
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[2].Vertices.Values.SequenceEqual([vertexB, vertexC]), Is.True);
+        });
+    }
+
+    [Test]
+    public void UndirectedHyperGraph_WeakVertexDelete2_Success()
+    {
+        UndirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+
+        var edge1 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexB]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexC]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(vertices: [vertexB, vertexC, vertexD]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        var vertex = hyperGraph.RemoveVertex(vertexA.Id, RemoveActionType.Weak);
+        Assert.That(vertex, Is.EqualTo(vertexA));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Vertices.Values.SequenceEqual([vertexB]), Is.True);
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Vertices.Values.SequenceEqual([vertexC]), Is.True);
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[2].Vertices.Values.SequenceEqual([vertexB, vertexC, vertexD]), Is.True);
+        });
+    }
+
+    [Test]
+    public void UndirectedHyperGraph_StrongVertexDelete1_Success()
+    {
+        UndirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+
+        var edge1 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexB]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexC]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(vertices: [vertexB, vertexD]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        var edge4 = hyperGraph.CreateHyperEdge(vertices: [vertexC, vertexD]);
+        hyperGraph.AddHyperEdge(edge4);
+
+        var vertex = hyperGraph.RemoveVertex(vertexA.Id, RemoveActionType.Strong);
+        Assert.That(vertex, Is.EqualTo(vertexA));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Vertices.Values.SequenceEqual([vertexB, vertexD]), Is.True);
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Vertices.Values.SequenceEqual([vertexC, vertexD]), Is.True);
+        });
+    }
+
+    [Test]
+    public void UndirectedHyperGraph_StrongVertexDelete2_Success()
+    {
+        UndirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+
+        var edge1 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexB]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexC]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(vertices: [vertexB, vertexC, vertexD]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        var vertex = hyperGraph.RemoveVertex(vertexA.Id, RemoveActionType.Strong);
+        Assert.That(vertex, Is.EqualTo(vertexA));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Vertices.Values.SequenceEqual([vertexB, vertexC, vertexD]), Is.True);
+        });
+    }
+
+    [Test]
+    public void DirectedHyperGraph_WeakVertexDelete1_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexA], codomain: [vertexB, vertexC]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexB], codomain: [vertexC]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var vertex = hyperGraph.RemoveVertex(vertexA.Id, RemoveActionType.Weak);
+        Assert.That(vertex, Is.EqualTo(vertexA));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Domain.Values.SequenceEqual([vertexB]), Is.True);
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Codomain.Values.SequenceEqual([vertexC]), Is.True);
+        });
+    }
+
+    [Test]
+    public void DirectedHyperGraph_WeakVertexDelete2_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexA, vertexB], codomain:[vertexC]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexB], codomain:[vertexA, vertexD]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(domain: [vertexC], codomain:[vertexD]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        var vertex = hyperGraph.RemoveVertex(vertexA.Id, RemoveActionType.Weak);
+        Assert.That(vertex, Is.EqualTo(vertexA));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Domain.Values.SequenceEqual([vertexB]), Is.True);
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Codomain.Values.SequenceEqual([vertexC]), Is.True);
+
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Domain.Values.SequenceEqual([vertexB]), Is.True);
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Codomain.Values.SequenceEqual([vertexD]), Is.True);
+
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[2].Domain.Values.SequenceEqual([vertexC]), Is.True);
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[2].Codomain.Values.SequenceEqual([vertexD]), Is.True);
+        });
+    }
+
+    [Test]
+    public void DirectedHyperGraph_StrongVertexDelete1_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexA, vertexB], codomain:[vertexC]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexB], codomain:[vertexA, vertexD]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(domain: [vertexC], codomain:[vertexD]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        var vertex = hyperGraph.RemoveVertex(vertexA.Id, RemoveActionType.Strong);
+        Assert.That(vertex, Is.EqualTo(vertexA));
+
+        Assert.That(hyperGraph.HyperEdges.Count, Is.EqualTo(1));
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Domain.Values.SequenceEqual([vertexC]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Codomain.Values.SequenceEqual([vertexD]), Is.True);
+    }
+
+    [Test]
+    public void DirectedHyperGraph_StrongVertexDelete2_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+        var vertexE = hyperGraph.CreateVertex(label: "E");
+        hyperGraph.AddVertex(vertexE);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexA, vertexB], codomain:[vertexC]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexC], codomain:[vertexA, vertexD]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(domain: [vertexB, vertexC], codomain:[vertexE]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        var edge4 = hyperGraph.CreateHyperEdge(domain: [vertexD], codomain:[vertexA]);
+        hyperGraph.AddHyperEdge(edge4);
+
+        var vertex = hyperGraph.RemoveVertex(vertexA.Id, RemoveActionType.Strong);
+        Assert.That(vertex, Is.EqualTo(vertexA));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(hyperGraph.HyperEdges.Count, Is.EqualTo(1));
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Domain.Values.SequenceEqual([vertexB, vertexC]), Is.True);
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Codomain.Values.SequenceEqual([vertexE]), Is.True);
+        });
+    }
+
+    [Test]
+    public void UndirectedHyperGraph_WeakEdgeDelete_Success()
+    {
+        UndirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+        var vertexE = hyperGraph.CreateVertex(label: "E");
+        hyperGraph.AddVertex(vertexE);
+
+        var edge1 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexB]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexC, vertexD]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(vertices: [vertexB, vertexC, vertexE]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        var edge = hyperGraph.RemoveHyperEdge(edge2.Id, RemoveActionType.Weak);
+        Assert.That(edge, Is.EqualTo(edge2));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(hyperGraph.Vertices.Values.SequenceEqual([vertexA, vertexB, vertexC, vertexD, vertexE]), Is.True);
+
+            Assert.That(hyperGraph.HyperEdges.Count, Is.EqualTo(2));
+
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0], Is.EqualTo(edge1));
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1], Is.EqualTo(edge3));
+
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Vertices.Values.SequenceEqual([vertexA, vertexB]), Is.True);
+            Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Vertices.Values.SequenceEqual([vertexB, vertexC, vertexE]), Is.True);
+        });
+    }
+
+    [Test]
+    public async Task UndirectedHyperGraph_StrongEdgeDelete_Success()
+    {
+        UndirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+        var vertexE = hyperGraph.CreateVertex(label: "E");
+        hyperGraph.AddVertex(vertexE);
+
+        var edge1 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexB]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexC, vertexD]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(vertices: [vertexB, vertexC, vertexE]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        string fileName = "UndirectedHyperGraph_StrongEdgeDelete_Success";
+        await GraphvizSerialization.SerializeUndirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
+
+        var edge = hyperGraph.RemoveHyperEdge(edge2.Id, RemoveActionType.Strong);
+        Assert.That(edge, Is.EqualTo(edge2));
+
+        fileName = "UndirectedHyperGraph_StrongEdgeDelete_Success-2";
+        await GraphvizSerialization.SerializeUndirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
+
+        Assert.That(hyperGraph.Vertices.Values.SequenceEqual([vertexA, vertexB, vertexC, vertexE]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Count, Is.EqualTo(2));
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0], Is.EqualTo(edge1));
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1], Is.EqualTo(edge3));
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Vertices.Values.SequenceEqual([vertexA, vertexB]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Vertices.Values.SequenceEqual([vertexB, vertexC, vertexE]), Is.True);
+    }
+
+    [Test]
+    public async Task DirectedHyperGraph_WeakEdgeDelete_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+        var vertexE = hyperGraph.CreateVertex(label: "E");
+        hyperGraph.AddVertex(vertexE);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexA, vertexB], codomain:[vertexC]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexC], codomain:[vertexA, vertexD]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(domain: [vertexB], codomain:[vertexE]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        string fileName = "DirectedHyperGraph_WeakEdgeDelete_Success";
+        await GraphvizSerialization.SerializeDirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
+
+        var edge = hyperGraph.RemoveHyperEdge(edge2.Id, RemoveActionType.Weak);
+        Assert.That(edge, Is.EqualTo(edge2));
+
+        fileName = "DirectedHyperGraph_WeakEdgeDelete_Success-2";
+        await GraphvizSerialization.SerializeDirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
+
+        Assert.That(hyperGraph.Vertices.Values.SequenceEqual([vertexA, vertexB, vertexC, vertexD, vertexE]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Count, Is.EqualTo(2));
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0], Is.EqualTo(edge1));
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1], Is.EqualTo(edge3));
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Domain.Values.SequenceEqual([vertexA, vertexB]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Codomain.Values.SequenceEqual([vertexC]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Domain.Values.SequenceEqual([vertexB]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Codomain.Values.SequenceEqual([vertexE]), Is.True);
+    }
+
+    [Test]
+    public async Task DirectedHyperGraph_StrongEdgeDelete_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+        var vertexE = hyperGraph.CreateVertex(label: "E");
+        hyperGraph.AddVertex(vertexE);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexA, vertexB], codomain:[vertexC]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexC], codomain:[vertexA, vertexD]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(domain: [vertexB], codomain:[vertexE]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        string fileName = "DirectedHyperGraph_StrongEdgeDelete_Success";
+        await GraphvizSerialization.SerializeDirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
+
+        var edge = hyperGraph.RemoveHyperEdge(edge2.Id, RemoveActionType.Strong);
+        Assert.That(edge, Is.EqualTo(edge2));
+
+        fileName = "DirectedHyperGraph_StrongEdgeDelete_Success-2";
+        await GraphvizSerialization.SerializeDirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
+
+        Assert.That(hyperGraph.Vertices.Values.SequenceEqual([vertexA, vertexB, vertexC, vertexE]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Count, Is.EqualTo(2));
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0], Is.EqualTo(edge1));
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1], Is.EqualTo(edge3));
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Domain.Values.SequenceEqual([vertexA, vertexB]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Codomain.Values.SequenceEqual([vertexC]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Domain.Values.SequenceEqual([vertexB]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Codomain.Values.SequenceEqual([vertexE]), Is.True);
     }
 }

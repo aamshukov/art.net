@@ -1,6 +1,7 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
+using System;
 using System.Text;
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
@@ -60,10 +61,12 @@ public static class GraphvizSerialization
         sb.Append($"{graphType}{Environment.NewLine}");
         sb.Append($"{{{Environment.NewLine}");
         sb.Append($"{indent}edge [dir=\"{edgeDir}\"];{Environment.NewLine}");
+        sb.Append($"{indent}node [margin=0 fontcolor=black fontsize=11 width=0.3 shape=circle style=filled forcelabels=true];{Environment.NewLine}");
 
         foreach(UndirectedVertex vertex in graph.Vertices.Values)
         {
-            sb.Append($"{indent}\"{vertex.Label}\" node [shape = circle];{Environment.NewLine}");
+            string description = ComposeVertexDescription<UndirectedVertex>(vertex);
+            sb.Append($"{indent}{description}{Environment.NewLine}");
         }
 
         foreach(UndirectedVertex vertex in graph.Vertices.Values)
@@ -109,10 +112,12 @@ public static class GraphvizSerialization
         sb.Append($"{graphType}{Environment.NewLine}");
         sb.Append($"{{{Environment.NewLine}");
         sb.Append($"{indent}edge [dir=\"{edgeDir}\"];{Environment.NewLine}");
+        sb.Append($"{indent}node [margin=0 fontcolor=black fontsize=11 width=0.3 shape=circle style=filled forcelabels=true];{Environment.NewLine}");
 
         foreach(DirectedVertex vertex in graph.Vertices.Values)
         {
-            sb.Append($"{indent}\"{vertex.Label}\" node [shape = circle];{Environment.NewLine}");
+            string description = ComposeVertexDescription<DirectedVertex>(vertex);
+            sb.Append($"{indent}{description}{Environment.NewLine}");
         }
 
         foreach(DirectedVertex vertex in graph.Vertices.Values)
@@ -156,6 +161,11 @@ public static class GraphvizSerialization
         sb.Append($"}}{Environment.NewLine}");
 
         return sb.ToString();
+    }
+
+    private static string ComposeVertexDescription<TVertex>(TVertex vertex) where TVertex : Vertex
+    {
+        return $"{vertex.Label} [label=\"{vertex.Label}({vertex.ReferenceCounter.Count})\"];";
     }
 }
 

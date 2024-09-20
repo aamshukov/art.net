@@ -24,7 +24,7 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
     }
 
     public UndirectedVertex CreateVertex(string? label = default,
-                                         List<HyperEdge<UndirectedVertex>>? hyperEdges = default,
+                                         List<UndirectedHyperEdge>? hyperEdges = default,
                                          object? value = default,
                                          Flags flags = Flags.Clear,
                                          Color color = Color.Unknown,
@@ -50,102 +50,111 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
         return default;
     }
 
-    public bool TryGetEdge(id id, out UndirectedHyperEdge? hyperEdge)
-    {
-        return HyperEdges.TryGetValue(id, out hyperEdge);
-    }
-
     public void AddHyperEdge(UndirectedHyperEdge hyperEdge)
     {
         Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
 
         HyperEdges.Add(hyperEdge.Id, hyperEdge);
-        hyperEdge.UpdateDependencies(link: true);
-    }
 
-    public bool TryAddHyperEdge(UndirectedHyperEdge hyperEdge)
-    {
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
-
-        bool result = !HyperEdges.ContainsKey(hyperEdge.Id);
-
-        if(result)
+        foreach(UndirectedVertex vertex in hyperEdge.Vertices.Values)
         {
-            AddHyperEdge(hyperEdge);
+            vertex.HyperEdges.Add(hyperEdge.Id, hyperEdge);
         }
-
-        return result;
     }
 
-    public UndirectedHyperEdge? RemoveHyperEdge(id id)
+    public UndirectedHyperEdge? RemoveHyperEdge(id id, RemoveActionType removeActionType)
     {
         if(HyperEdges.Remove(id, out UndirectedHyperEdge? hyperEdge))
         {
-            hyperEdge.UpdateDependencies(link: false);
-            UpdateDependencies(hyperEdge);
-            return hyperEdge;
-        }
-
-        return default;
-    }
-
-    public bool TryRemoveHyperEdge(id id, out UndirectedHyperEdge? hyperEdge)
-    {
-        if(HyperEdges.Remove(id, out hyperEdge))
-        {
-            hyperEdge.UpdateDependencies(link: false);
-            UpdateDependencies(hyperEdge);
-            return true;
-        }
-
-        return false;
-    }
-
-    public UndirectedVertex? RemoveVertex(id id, bool weak)
-    {
-        foreach(UndirectedHyperEdge hyperEdge in HyperEdges.Values)
-        {
-            hyperEdge.RemoveVertex(id);
-        }
-
-        foreach(UndirectedHyperEdge hyperEdge in HyperEdges.Values)
-        {
-            if(hyperEdge.Vertices.Count == 0)
+            // release this hyperedge's self-vertices
+            foreach(UndirectedVertex vertex in hyperEdge.Vertices.Values)
             {
-                RemoveHyperEdge(hyperEdge.Id);
+                hyperEdge.RemoveVertex(vertex.Id);
+            }
+
+            // release this hyperedge from other vertices
+            foreach(UndirectedVertex vertex in Vertices.Values)
+            {
+                if(vertex.HyperEdges.TryGetValue(hyperEdge.Id, out UndirectedHyperEdge? hyperEdgeToCleanup))
+                {
+                    if(ReferenceEquals(hyperEdgeToCleanup, hyperEdge))
+                        continue;
+
+                    hyperEdgeToCleanup.RemoveVertex(vertex.Id);
+                }
+            }
+
+            if(removeActionType == RemoveActionType.Weak)
+            {
+                // Weak-deleting an edge only removes that edge from the hypergraph.
+                // The vertices in the deleted edge remain part of the hypergraph.
+                // No other changes are made to the remaining edges or vertices.
+                // DO NOTHING!
+            }
+            else if(removeActionType == RemoveActionType.Strong)
+            {
+                // Strong-delete removes a hyperedge and weakly deletes all the vertices incident with this hyperedge.
+                // A vertex is incident with a hyperedge if it is one of the vertices that the hyperedge contains.
+                foreach(UndirectedVertex vertex in Vertices.Values)
+                {
+                    if(vertex.HyperEdges.TryGetValue(hyperEdge.Id, out UndirectedHyperEdge? hyperEdgeToCleanup))
+                    {
+                        if(ReferenceEquals(hyperEdgeToCleanup, hyperEdge))
+                            continue;
+
+                        RemoveVertex(vertex.Id, RemoveActionType.Weak);
+                    }
+                }
+
+                Cleanup();
             }
         }
 
-        return base.RemoveVertex(id);
+        return hyperEdge;
     }
 
-    public bool TryRemoveVertex(id id, out UndirectedVertex? vertex, bool weak)
+    public UndirectedVertex? RemoveVertex(id id, RemoveActionType removeActionType)
     {
-        foreach(UndirectedHyperEdge hyperEdge in HyperEdges.Values)
+        if(Vertices.TryGetValue(id, out UndirectedVertex? vertex))
         {
-            hyperEdge.RemoveVertex(id);
+            RemoveVertexInternal(id, removeActionType);
         }
 
-        foreach(UndirectedHyperEdge hyperEdge in HyperEdges.Values)
+        return vertex;
+    }
+
+    private void RemoveVertexInternal(id id, RemoveActionType removeActionType)
+    {
+        if(removeActionType == RemoveActionType.Weak)
         {
-            if(hyperEdge.Vertices.Count == 0)
+            // In an undirected hypergraph, weak vertex deletion refers to the removal of a vertex from the hypergraph
+            // along with the removal of the vertex from any hyperedges that contain it.
+            foreach(UndirectedHyperEdge hyperEdge in HyperEdges.Values)
             {
-                RemoveHyperEdge(hyperEdge.Id);
+                hyperEdge.RemoveVertex(id);
+            }
+
+            // However, the remaining part of the hyperedge (if non-empty) remains in the hypergraph.
+            foreach(UndirectedHyperEdge hyperEdge in HyperEdges.Values)
+            {
+                if(hyperEdge.Vertices.Count == 0)
+                {
+                    RemoveHyperEdge(hyperEdge.Id, RemoveActionType.Weak);
+                }
             }
         }
-
-        return base.TryRemoveVertex(id, out vertex);
-    }
-
-    private void UpdateDependencies(UndirectedHyperEdge hyperEdge)
-    {
-        foreach(UndirectedHyperEdge edge in HyperEdges.Values)
+        else if(removeActionType == RemoveActionType.Strong)
         {
-            if(ReferenceEquals(edge, hyperEdge))
-                continue;
-
-            foreach(UndirectedVertex vertex in edge.Vertices.Values)
-                vertex.HyperEdges.Remove(hyperEdge.Id);
+            // 1. ... strong deletion of v removes v and all edges that are incident to v from the hypergraph.
+            // 2. ... in a general (undirected) hypergraph, strong vertex deletion refers to the removal of a vertex
+            //        from the hypergraph along with any hyperedges that contain that vertex.
+            foreach(UndirectedHyperEdge hyperEdge in HyperEdges.Values)
+            {
+                if(hyperEdge.Vertices.ContainsKey(id))
+                {
+                    RemoveHyperEdge(hyperEdge.Id, RemoveActionType.Weak);
+                }
+            }
         }
     }
 

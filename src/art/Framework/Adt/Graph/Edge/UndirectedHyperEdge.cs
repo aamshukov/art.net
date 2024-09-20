@@ -28,11 +28,6 @@ public class UndirectedHyperEdge : HyperEdge<UndirectedVertex>
         return default;
     }
 
-    public bool TryGetVertex(id id, out UndirectedVertex? vertex)
-    {
-        return Vertices.TryGetValue(id, out vertex);
-    }
-
     public void AddVertex(UndirectedVertex vertex)
     {
         Assert.NonNullReference(vertex, nameof(vertex));
@@ -42,55 +37,15 @@ public class UndirectedHyperEdge : HyperEdge<UndirectedVertex>
         vertex.AddReference();
     }
 
-    public bool TryAddVertex(UndirectedVertex vertex)
-    {
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        bool result = !Vertices.ContainsKey(vertex.Id);
-
-        if(result)
-        {
-            Vertices.Add(vertex.Id, vertex);
-            vertex.AddReference();
-        }
-
-        return result;
-    }
-
     public UndirectedVertex? RemoveVertex(id id)
     {
         if(Vertices.Remove(id, out UndirectedVertex? vertex))
+        {
+            vertex.HyperEdges.Remove(Id); // unlink
             vertex.Release();
+        }
+
         return vertex;
-    }
-
-    public bool TryRemoveVertex(id id, out UndirectedVertex? vertex)
-    {
-        if(Vertices.Remove(id, out vertex))
-        {
-            vertex.Release();
-            return true;
-        }
-
-        return false;
-    }
-
-    public void UpdateDependencies(bool link)
-    {
-        if(link)
-        {
-            foreach(UndirectedVertex vertex in Vertices.Values)
-            {
-                vertex.HyperEdges.Add(Id, this);
-            }
-        }
-        else
-        {
-            foreach(UndirectedVertex vertex in Vertices.Values)
-            {
-                vertex.HyperEdges.Remove(Id);
-            }
-        }
     }
 
     public override IEnumerable<object> GetEqualityComponents()

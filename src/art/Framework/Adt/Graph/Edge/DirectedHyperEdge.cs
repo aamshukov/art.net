@@ -43,12 +43,6 @@ public class DirectedHyperEdge : HyperEdge<DirectedVertex>
         return default;
     }
 
-    public bool TryGetVertex(id id, out DirectedVertex? vertex, bool domain = true)
-    {
-        var vertices = domain ? Domain : Codomain;
-        return vertices.TryGetValue(id, out vertex);
-    }
-
     public void AddVertex(DirectedVertex vertex, bool domain = true)
     {
         Assert.NonNullReference(vertex, nameof(vertex));
@@ -60,71 +54,19 @@ public class DirectedHyperEdge : HyperEdge<DirectedVertex>
         vertex.AddReference();
     }
 
-    public bool TryAddVertex(DirectedVertex vertex, bool domain = true)
-    {
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        var vertices = domain ? Domain : Codomain;
-        bool result = !vertices.ContainsKey(vertex.Id);
-
-        if(result)
-        {
-            vertices.Add(vertex.Id, vertex);
-            vertex.AddReference();
-        }
-
-        return result;
-    }
-
     public DirectedVertex? RemoveVertex(id id, bool domain = true)
     {
         var vertices = domain ? Domain : Codomain;
 
         if(vertices.Remove(id, out DirectedVertex? vertex))
+        {
+            var hyperEdges = domain ? vertex.OutHyperEdges : vertex.InHyperEdges;
+
+            hyperEdges.Remove(Id); // unlink
             vertex.Release();
+        }
 
         return vertex;
-    }
-
-    public bool TryRemoveVertex(id id, out DirectedVertex? vertex, bool domain = true)
-    {
-        var vertices = domain ? Domain : Codomain;
-
-        if(vertices.Remove(id, out vertex))
-        {
-            vertex.Release();
-            return true;
-        }
-
-        return false;
-    }
-
-    public void UpdateDependencies(bool link)
-    {
-        if(link)
-        {
-            foreach(DirectedVertex vertex in Domain.Values)
-            {
-                vertex.OutHyperEdges.Add(Id, this);
-            }
-
-            foreach(DirectedVertex vertex in Codomain.Values)
-            {
-                vertex.InHyperEdges.Add(Id, this);
-            }
-        }
-        else
-        {
-            foreach(DirectedVertex vertex in Domain.Values)
-            {
-                vertex.OutHyperEdges.Remove(Id);
-            }
-
-            foreach(DirectedVertex vertex in Codomain.Values)
-            {
-                vertex.InHyperEdges.Remove(Id);
-            }
-        }
     }
 
     public override IEnumerable<object> GetEqualityComponents()

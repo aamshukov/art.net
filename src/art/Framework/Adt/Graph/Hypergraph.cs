@@ -49,31 +49,12 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
         return default;
     }
 
-    public bool TryGetVertex(id id, out TVertex? vertex)
-    {
-        return Vertices.TryGetValue(id, out vertex);
-    }
-
     public void AddVertex(TVertex vertex)
     {
         Assert.NonNullReference(vertex, nameof(vertex));
         Assert.Ensure(!Vertices.ContainsKey(vertex.Id), nameof(vertex));
 
         Vertices.Add(vertex.Id, vertex);
-    }
-
-    public bool TryAddVertex(TVertex vertex)
-    {
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        bool result = !Vertices.ContainsKey(vertex.Id);
-
-        if(result)
-        {
-            Vertices.Add(vertex.Id, vertex);
-        }
-
-        return result;
     }
 
     public TVertex? RemoveVertex(id id)
@@ -89,19 +70,14 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
         return vertex;
     }
 
-    public bool TryRemoveVertex(id id, out TVertex? vertex)
+    public void Cleanup()
     {
-        if(Vertices.TryGetValue(id, out vertex))
+        var verticesToRemove = Vertices.Values.Where(vertex => vertex.CanRelease()).Select(vertex => vertex.Id);
+
+        foreach(id id in verticesToRemove)
         {
-            if(vertex.CanRelease())
-            {
-                Vertices.Remove(id);
-            }
-
-            return true;
+            Vertices.Remove(id);
         }
-
-        return false;
     }
 
     public override IEnumerable<object> GetEqualityComponents()

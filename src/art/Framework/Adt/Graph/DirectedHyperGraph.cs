@@ -24,8 +24,8 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
     }
 
     public DirectedVertex CreateVertex(string? label = default,
-                                       List<HyperEdge<DirectedVertex>>? inHyperEdges = default,
-                                       List<HyperEdge<DirectedVertex>>? outHyperEdges = default,
+                                       List<DirectedHyperEdge>? inHyperEdges = default,
+                                       List<DirectedHyperEdge>? outHyperEdges = default,
                                        object? value = default,
                                        Flags flags = Flags.Clear,
                                        Color color = Color.Unknown,
@@ -36,11 +36,11 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
     }
 
     public DirectedHyperEdge CreateHyperEdge(string? label = default,
-                                              List<DirectedVertex>? domain = default,
-                                              List<DirectedVertex>? codomain = default,
-                                              Flags flags = Flags.Clear,
-                                              Dictionary<string, object>? attributes = default,
-                                              string? version = default)
+                                             List<DirectedVertex>? domain = default,
+                                             List<DirectedVertex>? codomain = default,
+                                             Flags flags = Flags.Clear,
+                                             Dictionary<string, object>? attributes = default,
+                                             string? version = default)
     {
         return new(HyperEdgeCounter.NextId(), label, domain, codomain, flags, attributes, version);
     }
@@ -52,110 +52,135 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
         return default;
     }
 
-    public bool TryGetEdge(id id, out DirectedHyperEdge? hyperEdge)
-    {
-        return HyperEdges.TryGetValue(id, out hyperEdge);
-    }
-
     public void AddHyperEdge(DirectedHyperEdge hyperEdge)
     {
         Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
 
         HyperEdges.Add(hyperEdge.Id, hyperEdge);
-        hyperEdge.UpdateDependencies(link: true);
-    }
 
-    public bool TryAddHyperEdge(DirectedHyperEdge hyperEdge)
-    {
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
-
-        bool result = !HyperEdges.ContainsKey(hyperEdge.Id);
-
-        if(result)
+        foreach(DirectedVertex vertex in hyperEdge.Domain.Values)
         {
-            AddHyperEdge(hyperEdge);
+            vertex.OutHyperEdges.Add(hyperEdge.Id, hyperEdge);
         }
 
-        return result;
+        foreach(DirectedVertex vertex in hyperEdge.Codomain.Values)
+        {
+            vertex.InHyperEdges.Add(hyperEdge.Id, hyperEdge);
+        }
     }
 
-    public DirectedHyperEdge? RemoveHyperEdge(id id)
+    public DirectedHyperEdge? RemoveHyperEdge(id id, RemoveActionType removeActionType)
     {
         if(HyperEdges.Remove(id, out DirectedHyperEdge? hyperEdge))
         {
-            hyperEdge.UpdateDependencies(link: false);
-            UpdateDependencies(hyperEdge);
-            return hyperEdge;
-        }
-
-        return default;
-    }
-
-    public bool TryRemoveHyperEdge(id id, out DirectedHyperEdge? hyperEdge)
-    {
-        if(HyperEdges.Remove(id, out hyperEdge))
-        {
-            hyperEdge.UpdateDependencies(link: false);
-            UpdateDependencies(hyperEdge);
-            return true;
-        }
-
-        return false;
-    }
-
-    public DirectedVertex? RemoveVertex(id id, bool weak)
-    {
-        foreach(DirectedHyperEdge hyperEdge in HyperEdges.Values)
-        {
-            hyperEdge.RemoveVertex(id);
-        }
-
-        foreach(DirectedHyperEdge hyperEdge in HyperEdges.Values)
-        {
-            if(hyperEdge.Domain.Count == 0 || hyperEdge.Codomain.Count == 0)
+            // release this hyperedge's self-vertices
+            foreach(DirectedVertex vertex in hyperEdge.Domain.Values)
             {
-                RemoveHyperEdge(hyperEdge.Id);
+                hyperEdge.RemoveVertex(vertex.Id, domain: true);
+            }
+
+            foreach(DirectedVertex vertex in hyperEdge.Codomain.Values)
+            {
+                hyperEdge.RemoveVertex(vertex.Id, domain: false);
+            }
+
+            // release this hyperedge from other vertices
+            foreach(DirectedVertex vertex in Vertices.Values)
+            {
+                if(vertex.InHyperEdges.TryGetValue(hyperEdge.Id, out DirectedHyperEdge? inHyperEdgeToCleanup))
+                {
+                    if(ReferenceEquals(inHyperEdgeToCleanup, hyperEdge))
+                        continue;
+
+                    inHyperEdgeToCleanup.RemoveVertex(vertex.Id, domain: false);
+                }
+
+                if(vertex.OutHyperEdges.TryGetValue(hyperEdge.Id, out DirectedHyperEdge? outHyperEdgeToCleanup))
+                {
+                    if(ReferenceEquals(outHyperEdgeToCleanup, hyperEdge))
+                        continue;
+
+                    outHyperEdgeToCleanup.RemoveVertex(vertex.Id, domain: true);
+                }
+            }
+
+            if(removeActionType == RemoveActionType.Weak)
+            {
+                // Weak-deleting an edge only removes that edge from the hypergraph.
+                // The vertices in the deleted edge (domain and codomain) remain part of the hypergraph.
+                // No other changes are made to the remaining edges or vertices.
+                // DO NOTHING!
+            }
+            else if(removeActionType == RemoveActionType.Strong)
+            {
+                // Strong-delete removes a hyperedge and all the vertices (domain and codomain) incident with hyperedge.
+                // A vertex is incident with a hyperedge if it is one of the vertices that the hyperedge contains.
+                foreach(DirectedVertex vertex in Vertices.Values)
+                {
+                    if(vertex.InHyperEdges.TryGetValue(hyperEdge.Id, out DirectedHyperEdge? inHyperEdgeToCleanup))
+                    {
+                        if(ReferenceEquals(inHyperEdgeToCleanup, hyperEdge))
+                            continue;
+
+                        RemoveVertex(vertex.Id, RemoveActionType.Weak);
+                    }
+
+                    if(vertex.OutHyperEdges.TryGetValue(hyperEdge.Id, out DirectedHyperEdge? outHyperEdgeToCleanup))
+                    {
+                        if(ReferenceEquals(outHyperEdgeToCleanup, hyperEdge))
+                            continue;
+
+                        RemoveVertex(vertex.Id, RemoveActionType.Weak);
+                    }
+                }
+
+                Cleanup();
             }
         }
 
-        return base.RemoveVertex(id);
+        return hyperEdge;
     }
 
-    public bool TryRemoveVertex(id id, out DirectedVertex? vertex, bool weak)
+    public DirectedVertex? RemoveVertex(id id, RemoveActionType removeActionType)
     {
-        foreach(DirectedHyperEdge hyperEdge in HyperEdges.Values)
+        if(Vertices.TryGetValue(id, out DirectedVertex? vertex))
         {
-            hyperEdge.RemoveVertex(id);
+            RemoveVertexInternal(id, removeActionType);
         }
 
-        foreach(DirectedHyperEdge hyperEdge in HyperEdges.Values)
-        {
-            if(hyperEdge.Domain.Count == 0 || hyperEdge.Codomain.Count == 0)
-            {
-                RemoveHyperEdge(hyperEdge.Id);
-            }
-        }
-
-        return base.TryRemoveVertex(id, out vertex);
+        return vertex;
     }
 
-    private void UpdateDependencies(DirectedHyperEdge hyperEdge)
+    private void RemoveVertexInternal(id id, RemoveActionType removeActionType)
     {
-        foreach(DirectedHyperEdge edge in HyperEdges.Values)
+        if(removeActionType == RemoveActionType.Weak)
         {
-            if(ReferenceEquals(edge, hyperEdge))
-                continue;
-
-            foreach(DirectedVertex vertex in edge.Domain.Values)
+            // 1. ... removes the vertex and keeps the remainder of the hyperedge, but since hyperedges have
+            //        source and target sets, the vertex is removed from both sets, ...
+            foreach(DirectedHyperEdge hyperEdge in HyperEdges.Values)
             {
-                vertex.InHyperEdges.Remove(hyperEdge.Id);
-                vertex.OutHyperEdges.Remove(hyperEdge.Id);
+                hyperEdge.RemoveVertex(id, domain: true);
+                hyperEdge.RemoveVertex(id, domain: false);
             }
 
-            foreach(DirectedVertex vertex in edge.Codomain.Values)
+            // ... and the hyperedge is retained only if both the updated source and target sets are non-empty.
+            foreach(DirectedHyperEdge hyperEdge in HyperEdges.Values)
             {
-                vertex.InHyperEdges.Remove(hyperEdge.Id);
-                vertex.OutHyperEdges.Remove(hyperEdge.Id);
+                if(hyperEdge.Domain.Count == 0 || hyperEdge.Codomain.Count == 0)
+                {
+                    RemoveHyperEdge(hyperEdge.Id, RemoveActionType.Weak);
+                }
+            }
+        }
+        else if(removeActionType == RemoveActionType.Strong)
+        {
+            // 1. ... removes the vertex and any hyperedges where the vertex appears either in the source set or the target set.
+            foreach(DirectedHyperEdge hyperEdge in HyperEdges.Values)
+            {
+                if(hyperEdge.Domain.ContainsKey(id) || hyperEdge.Codomain.ContainsKey(id))
+                {
+                    RemoveHyperEdge(hyperEdge.Id, RemoveActionType.Weak);
+                }
             }
         }
     }
