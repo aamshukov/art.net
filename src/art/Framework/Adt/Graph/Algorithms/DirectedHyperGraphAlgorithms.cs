@@ -11,75 +11,48 @@ namespace UILab.Art.Framework.Adt.Graph;
 public static class DirectedHyperGraphAlgorithms
 {
     /// <summary>
-    /// Gets the number of incoming edges incident to the vertex.
+    /// Gets the number of incoming edges incident to the u.
     /// If 𝑣 is in the target set of hyperedge 𝑒, we can say that 𝑒 is an incoming edge to 𝑣.
     /// </summary>
-    public static count GetVertexInDegree(DirectedHyperGraph graph, DirectedVertex vertex)
+    public static count GetVertexInDegree(DirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        count degree = 0;
-
-        foreach(DirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
-        {
-            if(hyperEdge.Codomain.ContainsKey(vertex.Id))
-            {
-                degree++;
-            }
-        }
-
-        return degree;
+        Assert.NonNullReference(u, nameof(u));
+        return u.InHyperEdges.Count;
     }
 
     /// <summary>
-    /// Gets the number of outcoming edges incident to the vertex.
+    /// Gets the number of outcoming edges incident to the u.
     /// If 𝑣 is in the source set of hyperedge 𝑒, we can say that 𝑒 is an outgoing edge from 𝑣.
     /// </summary>
-    public static count GetVertexOutDegree(DirectedHyperGraph graph, DirectedVertex vertex)
+    public static count GetVertexOutDegree(DirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        count degree = 0;
-
-        foreach(DirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
-        {
-            if(hyperEdge.Domain.ContainsKey(vertex.Id))
-            {
-                degree++;
-            }
-        }
-
-        return degree;
+        Assert.NonNullReference(u, nameof(u));
+        return u.OutHyperEdges.Count;
     }
 
     /// <summary>
-    /// Gets the number of edges incident to the vertex.
+    /// Gets the number of edges incident to the u.
     /// Vertex degree in a directed hypergraph can be split into in-degree and out-degree,
-    /// depending on whether the vertex is part of the target or source set of the hyperedges.
+    /// depending on whether the u is part of the target or source set of the hyperedges.
     /// </summary>
-    public static count GetVertexDegree(DirectedHyperGraph graph, DirectedVertex vertex)
+    public static count GetVertexDegree(DirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        return GetVertexInDegree(graph, vertex) + GetVertexOutDegree(graph, vertex);
+        Assert.NonNullReference(u, nameof(u));
+        return GetVertexInDegree(u) + GetVertexOutDegree(u);
     }
 
     /// <summary>
     /// Checks if two vertices are adjacent.
     /// There is a hyperedge 𝑒 such that 𝑢 is in the source (domain) set of 𝑒 and 𝑣 is in the target (codomain) set of 𝑒.
     /// </summary>
-    public static bool AreVerticesAdjacent(DirectedHyperGraph graph, DirectedVertex u, DirectedVertex v)
+    public static bool AreVerticesAdjacent(DirectedVertex u, DirectedVertex v)
     {
-        Assert.NonNullReference(graph, nameof(graph));
         Assert.NonNullReference(v, nameof(v));
         Assert.NonNullReference(u, nameof(u));
 
-        foreach(DirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
+        foreach(DirectedHyperEdge hyperEdge in u.OutHyperEdges.Values)
         {
-            if(hyperEdge.Domain.ContainsKey(v.Id) && hyperEdge.Codomain.ContainsKey(u.Id))
+            if(hyperEdge.Codomain.ContainsKey(u.Id))
             {
                 return true;
             }
@@ -88,71 +61,64 @@ public static class DirectedHyperGraphAlgorithms
         return false;
     }
 
-    public static IEnumerable<DirectedVertex> GetAdjacentVertices(DirectedHyperGraph graph, DirectedVertex u)
+    public static IEnumerable<DirectedVertex> GetAdjacentVertices(DirectedVertex u)
+    {
+        Assert.NonNullReference(u, nameof(u));
+
+        foreach(DirectedHyperEdge hyperEdge in u.OutHyperEdges.Values)
+        {
+            foreach(DirectedVertex v in hyperEdge.Codomain.Values)
+            {
+                if(ReferenceEquals(u, v))
+                    continue;
+
+                yield return v;
+            }
+        }
+    }
+
+    /// <summary>
+    /// A u is incident to a hyperedge if it belongs to the source or target set of that hyperedge.
+    /// </summary>
+    public static IEnumerable<DirectedHyperEdge> GetVertexIncidentHyperEdges(DirectedVertex u)
+    {
+        Assert.NonNullReference(u, nameof(u));
+
+        foreach(DirectedHyperEdge hyperEdge in u.InHyperEdges.Values)
+        {
+            yield return hyperEdge;
+        }
+
+        foreach(DirectedHyperEdge hyperEdge in u.OutHyperEdges.Values)
+        {
+            yield return hyperEdge;
+        }
+    }
+
+    public static bool IsVertexIsolated(DirectedVertex u)
+    {
+        Assert.NonNullReference(u, nameof(u));
+        return GetVertexDegree(u) == 0;
+    }
+
+    public static bool IsVertexPendant(DirectedVertex u)
+    {
+        Assert.NonNullReference(u, nameof(u));
+        return GetVertexDegree(u) == 1;
+    }
+
+    /// <summary>
+    /// Out-Neighbors (or Forward Neighbors): Vertices that are in the target sets of hyperedges where the u is part of the source set.
+    /// In other words, the out-neighbors of 𝑣 are the vertices that 𝑣 "points to" through the hyperedges in which 𝑣 is a source.
+    /// </summary>
+    public static IEnumerable<DirectedVertex> GetVertexInNeighbors(DirectedHyperGraph graph, DirectedVertex u)
     {
         Assert.NonNullReference(graph, nameof(graph));
         Assert.NonNullReference(u, nameof(u));
 
         foreach(DirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
         {
-            if(hyperEdge.Domain.ContainsKey(u.Id))
-            {
-                foreach(DirectedVertex v in hyperEdge.Codomain.Values)
-                {
-                    if(ReferenceEquals(u, v))
-                        continue;
-
-                    yield return v;
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// A vertex is incident to a hyperedge if it belongs to the source or target set of that hyperedge.
-    /// </summary>
-    public static IEnumerable<DirectedHyperEdge> GetVertexIncidentHyperEdges(DirectedHyperGraph graph, DirectedVertex vertex)
-    {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        foreach(DirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
-        {
-            if(hyperEdge.Domain.ContainsKey(vertex.Id) && hyperEdge.Codomain.ContainsKey(vertex.Id))
-            {
-                yield return hyperEdge;
-            }
-        }
-    }
-
-    public static bool IsVertexIsolated(DirectedHyperGraph graph, DirectedVertex vertex)
-    {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        return GetVertexDegree(graph, vertex) == 0;
-    }
-
-    public static bool IsVertexPendant(DirectedHyperGraph graph, DirectedVertex vertex)
-    {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        return GetVertexDegree(graph, vertex) == 1;
-    }
-
-    /// <summary>
-    /// Out-Neighbors (or Forward Neighbors): Vertices that are in the target sets of hyperedges where the vertex is part of the source set.
-    /// In other words, the out-neighbors of 𝑣 are the vertices that 𝑣 "points to" through the hyperedges in which 𝑣 is a source.
-    /// </summary>
-    public static IEnumerable<DirectedVertex> GetVertexInNeighbors(DirectedHyperGraph graph, DirectedVertex vertex)
-    {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        foreach(DirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
-        {
-            if(hyperEdge.Codomain.ContainsKey(vertex.Id))
+            if(hyperEdge.Codomain.ContainsKey(u.Id))
             {
                 foreach(DirectedVertex neighbor in hyperEdge.Domain.Values)
                 {
@@ -163,14 +129,17 @@ public static class DirectedHyperGraphAlgorithms
     }
 
     /// <summary>
-    ///  In-Neighbors (or Backward Neighbors): Vertices that are in the source sets of hyperedges where the vertex is part of the target set.
+    ///  In-Neighbors (or Backward Neighbors): Vertices that are in the source sets of hyperedges where the u is part of the target set.
     ///  The in-neighbors of 𝑣 are the vertices that "point to" 𝑣 through hyperedges in which 𝑣 is a target.
     /// </summary>
-    public static IEnumerable<DirectedVertex> GetVertexOutNeighbors(DirectedHyperGraph graph, DirectedVertex vertex)
+    public static IEnumerable<DirectedVertex> GetVertexOutNeighbors(DirectedHyperGraph graph, DirectedVertex u)
     {
+        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(u, nameof(u));
+
         foreach(DirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
         {
-            if(hyperEdge.Domain.ContainsKey(vertex.Id))
+            if(hyperEdge.Domain.ContainsKey(u.Id))
             {
                 foreach(DirectedVertex neighbor in hyperEdge.Codomain.Values)
                 {
@@ -181,38 +150,38 @@ public static class DirectedHyperGraphAlgorithms
     }
 
     /// <summary>
-    /// Total neighbors: The union of in-neighbors and out-neighbors, representing all vertices connected to the given vertex by directed hyperedges.
+    /// Total neighbors: The union of in-neighbors and out-neighbors, representing all vertices connected to the given u by directed hyperedges.
     /// </summary>
-    public static IEnumerable<DirectedVertex> GetVertexNeighbors(DirectedHyperGraph graph, DirectedVertex vertex)
+    public static IEnumerable<DirectedVertex> GetVertexNeighbors(DirectedHyperGraph graph, DirectedVertex u)
     {
         Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
+        Assert.NonNullReference(u, nameof(u));
 
-        return GetVertexOutNeighbors(graph, vertex).Union(GetVertexInNeighbors(graph, vertex));
+        return GetVertexOutNeighbors(graph, u).Union(GetVertexInNeighbors(graph, u));
     }
 
     /// <summary>
-    /// Predecessors of a vertex 𝑣 in a directed hypergraph are the vertices in the source sets of hyperedges where 𝑣 is part of the target set.
+    /// Predecessors of a u 𝑣 in a directed hypergraph are the vertices in the source sets of hyperedges where 𝑣 is part of the target set.
     /// They represent the vertices that "point to" 𝑣.
     /// </summary>
-    public static IEnumerable<DirectedVertex> CollectPredecessors(DirectedHyperGraph graph, DirectedVertex vertex)
+    public static IEnumerable<DirectedVertex> CollectPredecessors(DirectedHyperGraph graph, DirectedVertex u)
     {
         Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
+        Assert.NonNullReference(u, nameof(u));
 
-        return GetVertexInNeighbors(graph, vertex);
+        return GetVertexInNeighbors(graph, u);
     }
 
     /// <summary>
-    /// Successors of a vertex 𝑣 in a directed hypergraph are the vertices in the target sets of hyperedges where 𝑣 is part of the source set.
+    /// Successors of a u 𝑣 in a directed hypergraph are the vertices in the target sets of hyperedges where 𝑣 is part of the source set.
     /// They represent the vertices that 𝑣 "points to."
     /// </summary>
-    public static IEnumerable<DirectedVertex> CollectSuccessors(DirectedHyperGraph graph, DirectedVertex vertex)
+    public static IEnumerable<DirectedVertex> CollectSuccessors(DirectedHyperGraph graph, DirectedVertex u)
     {
         Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
+        Assert.NonNullReference(u, nameof(u));
 
-        return GetVertexOutNeighbors(graph, vertex);
+        return GetVertexOutNeighbors(graph, u);
     }
 
     /// <summary>
@@ -225,7 +194,7 @@ public static class DirectedHyperGraphAlgorithms
     }
 
     /// <summary>
-    /// In-adjacent edges: Two directed hyperedges share at least one vertex in their target sets.
+    /// In-adjacent edges: Two directed hyperedges share at least one u in their target sets.
     /// </summary>
     public static bool AreHyperEdgesInAdjacent(DirectedHyperEdge hyperEdge1, DirectedHyperEdge hyperEdge2)
     {
@@ -236,7 +205,7 @@ public static class DirectedHyperGraphAlgorithms
     }
 
     /// <summary>
-    /// Out-adjacent edges: Two directed hyperedges share at least one vertex in their source sets.
+    /// Out-adjacent edges: Two directed hyperedges share at least one u in their source sets.
     /// </summary>
     public static bool AreHyperEdgesOutAdjacent(DirectedHyperEdge hyperEdge1, DirectedHyperEdge hyperEdge2)
     {
@@ -247,7 +216,7 @@ public static class DirectedHyperGraphAlgorithms
     }
 
     /// <summary>
-    /// Mixed-adjacent edges: The target set of one hyperedge shares at least one vertex with the source set of another hyperedge, forming a potential flow between them.
+    /// Mixed-adjacent edges: The target set of one hyperedge shares at least one u with the source set of another hyperedge, forming a potential flow between them.
     /// </summary>
     public static bool AreHyperEdgesAdjacent(DirectedHyperEdge hyperEdge1, DirectedHyperEdge hyperEdge2)
     {
@@ -258,7 +227,7 @@ public static class DirectedHyperGraphAlgorithms
     }
 
     /// <summary>
-    /// A singleton edge in a directed hypergraph involves exactly one vertex in either the source set, target set, or both.
+    /// A singleton edge in a directed hypergraph involves exactly one u in either the source set, target set, or both.
     /// </summary>
     public static bool IsHyperEdgeSingleton(DirectedHyperEdge hyperEdge, SingletonEdgeType singletonEdgeType = SingletonEdgeType.SelfLoop)
     {
@@ -274,7 +243,7 @@ public static class DirectedHyperGraphAlgorithms
     }
 
     /// <summary>
-    /// In-degree k-regular: Every vertex is in the target set of exactly k hyperedges.
+    /// In-degree k-regular: Every u is in the target set of exactly k hyperedges.
     /// </summary>
     public static bool IsInRegular(DirectedHyperGraph graph, size k = 2)
     {
@@ -282,7 +251,7 @@ public static class DirectedHyperGraphAlgorithms
 
         foreach(DirectedVertex vertex in graph.Vertices.Values)
         {
-            if(GetVertexInDegree(graph, vertex) != k)
+            if(GetVertexInDegree(vertex) != k)
             {
                 return false;
             }
@@ -292,7 +261,7 @@ public static class DirectedHyperGraphAlgorithms
     }
 
     /// <summary>
-    /// Out-degree k-regular: Every vertex is in the source set of exactly k hyperedges.
+    /// Out-degree k-regular: Every u is in the source set of exactly k hyperedges.
     /// </summary>
     public static bool IsOutRegular(DirectedHyperGraph graph, size k = 2)
     {
@@ -300,7 +269,7 @@ public static class DirectedHyperGraphAlgorithms
 
         foreach(DirectedVertex vertex in graph.Vertices.Values)
         {
-            if(GetVertexOutDegree(graph, vertex) != k)
+            if(GetVertexOutDegree(vertex) != k)
             {
                 return false;
             }
@@ -310,7 +279,7 @@ public static class DirectedHyperGraphAlgorithms
     }
 
     /// <summary>
-    /// A k-regular directed hypergraph requires that each vertex has exactly k hyperedges entering and exactly k hyperedges leaving.
+    /// A k-regular directed hypergraph requires that each u has exactly k hyperedges entering and exactly k hyperedges leaving.
     /// </summary>
     public static bool IsRegular(DirectedHyperGraph graph, size k = 2)
     {
@@ -318,7 +287,7 @@ public static class DirectedHyperGraphAlgorithms
 
         foreach(DirectedVertex vertex in graph.Vertices.Values)
         {
-            if(GetVertexInDegree(graph, vertex) != k || GetVertexOutDegree(graph, vertex) != k)
+            if(GetVertexInDegree(vertex) != k || GetVertexOutDegree(vertex) != k)
             {
                 return false;
             }

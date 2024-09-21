@@ -8,40 +8,27 @@ namespace UILab.Art.Framework.Adt.Graph;
 public static class UndirectedHyperGraphAlgorithms
 {
     /// <summary>
-    /// Gets the number of edges incident to the vertex.
+    /// Gets the number of edges incident to the u.
     /// </summary>
-    public static count GetVertexDegree(UndirectedHyperGraph graph, UndirectedVertex vertex)
+    public static count GetVertexDegree(UndirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        count degree = 0;
-
-        foreach(UndirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
-        {
-            if(hyperEdge.Vertices.ContainsKey(vertex.Id))
-            {
-                degree++;
-            }
-        }
-
-        return degree;
+        Assert.NonNullReference(u, nameof(u));
+        return u.HyperEdges.Count;
     }
 
     /// <summary>
     /// Two vertices are edge-adjacent if they both belong to the same hyperedge, meaning they share a common connection through that hyperedge.
     /// </summary>
-    public static bool AreVerticesAdjacent(UndirectedHyperGraph graph, UndirectedVertex u, UndirectedVertex v)
+    public static bool AreVerticesAdjacent(UndirectedVertex u, UndirectedVertex v)
     {
-        Assert.NonNullReference(graph, nameof(graph));
         Assert.NonNullReference(v, nameof(v));
         Assert.NonNullReference(u, nameof(u));
 
         bool adjacent = false;
 
-        foreach(UndirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
+        foreach(UndirectedHyperEdge hyperEdge in u.HyperEdges.Values)
         {
-            if(hyperEdge.Vertices.ContainsKey(v.Id) && hyperEdge.Vertices.ContainsKey(u.Id))
+            if(hyperEdge.Vertices.ContainsKey(v.Id))
             {
                 adjacent = true;
                 break;
@@ -51,68 +38,54 @@ public static class UndirectedHyperGraphAlgorithms
         return adjacent;
     }
 
-    public static IEnumerable<UndirectedVertex> GetAdjacentVertices(UndirectedHyperGraph graph, UndirectedVertex u)
+    public static IEnumerable<UndirectedVertex> GetAdjacentVertices(UndirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
         Assert.NonNullReference(u, nameof(u));
 
-        foreach(UndirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
+        foreach(UndirectedHyperEdge hyperEdge in u.HyperEdges.Values)
         {
-            if(hyperEdge.Vertices.ContainsKey(u.Id))
+            foreach(UndirectedVertex v in hyperEdge.Vertices.Values)
             {
-                foreach(UndirectedVertex v in hyperEdge.Vertices.Values)
-                {
-                    if(ReferenceEquals(u, v))
-                        continue;
+                if(ReferenceEquals(u, v))
+                    continue;
 
-                    yield return v;
-                }
+                yield return v;
             }
         }
     }
 
     /// <summary>
-    /// A vertex is incident to a hyperedge if it belongs to the set of vertices that the hyperedge connects.
+    /// A u is incident to a hyperedge if it belongs to the set of vertices that the hyperedge connects.
     /// </summary>
-    public static IEnumerable<UndirectedHyperEdge> GetVertexIncidentHyperEdges(UndirectedHyperGraph graph, UndirectedVertex vertex)
+    public static IEnumerable<UndirectedHyperEdge> GetVertexIncidentHyperEdges(UndirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
+        Assert.NonNullReference(u, nameof(u));
 
-        foreach(UndirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
+        foreach(UndirectedHyperEdge hyperEdge in u.HyperEdges.Values)
         {
-            if(hyperEdge.Vertices.ContainsKey(vertex.Id))
-            {
-                yield return hyperEdge;
-            }
+            yield return hyperEdge;
         }
     }
 
-    public static bool IsVertexIsolated(UndirectedHyperGraph graph, UndirectedVertex vertex)
+    public static bool IsVertexIsolated(UndirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        return GetVertexDegree(graph, vertex) == 0;
+        Assert.NonNullReference(u, nameof(u));
+        return GetVertexDegree(u) == 0;
     }
 
-    public static bool IsVertexPendant(UndirectedHyperGraph graph, UndirectedVertex vertex)
+    public static bool IsVertexPendant(UndirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        return GetVertexDegree(graph, vertex) == 1;
+        Assert.NonNullReference(u, nameof(u));
+        return GetVertexDegree(u) == 1;
     }
 
     /// <summary>
-    /// Gets all vertices which are connected to the vertex via any edges.
+    /// Gets all vertices which are connected to the u via any edges.
     /// </summary>
-    public static IEnumerable<UndirectedVertex> GetVertexNeighbors(UndirectedHyperGraph graph, UndirectedVertex vertex)
+    public static IEnumerable<UndirectedVertex> GetVertexNeighbors(UndirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(vertex, nameof(vertex));
-
-        return GetAdjacentVertices(graph, vertex);
+        Assert.NonNullReference(u, nameof(u));
+        return GetAdjacentVertices(u);
     }
 
     public static count GetHyperEdgeDegree(UndirectedHyperEdge hyperEdge)
@@ -145,7 +118,7 @@ public static class UndirectedHyperGraphAlgorithms
 
         foreach(UndirectedVertex vertex in graph.Vertices.Values)
         {
-            if(GetVertexDegree(graph, vertex) != k)
+            if(GetVertexDegree(vertex) != k)
             {
                 return false;
             }

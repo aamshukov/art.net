@@ -80,6 +80,22 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
         }
     }
 
+    public void ResetFlags()
+    {
+        foreach(TVertex vertex in Vertices.Values)
+        {
+            vertex.Flags = Flags.Clear;
+        }
+    }
+
+    public void ResetColor()
+    {
+        foreach(TVertex vertex in Vertices.Values)
+        {
+            vertex.Color = Color.Unknown;
+        }
+    }
+
     public override IEnumerable<object> GetEqualityComponents()
     {
         foreach(var component in base.GetEqualityComponents())
