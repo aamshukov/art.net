@@ -1,7 +1,6 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-using System.Linq;
 using System.Text;
 using UILab.Art.Framework.Core.Diagnostics;
 
