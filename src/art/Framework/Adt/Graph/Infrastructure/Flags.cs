@@ -4,7 +4,7 @@
 namespace UILab.Art.Framework.Adt.Graph;
 
 [Flags]
-public enum Flags : ulong
+public enum Flags : flag
 {
     Clear = 0x0000_0000_0000_0000,
     Dirty = 0x0000_0000_0000_0001,

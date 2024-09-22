@@ -9,10 +9,10 @@ public sealed class Diagnostics
 {
     public IEnumerable<Status> Diagnostic { get; init; }
 
-    [SuppressMessage("Critical Code Smell", "S3265:Non-flags enums should not be used in bitwise operations", Justification = "<Pending>")]
+    [SuppressMessage("Critical Code Smell", "S3265:Non-flag enums should not be used in bitwise operations", Justification = "<Pending>")]
     public IEnumerable<Status> Warnings => Diagnostic.Where(s => (s.CustomCode & StatusCode.WARNING_MASK) == StatusCode.ERROR_MASK);
 
-    [SuppressMessage("Critical Code Smell", "S3265:Non-flags enums should not be used in bitwise operations", Justification = "<Pending>")]
+    [SuppressMessage("Critical Code Smell", "S3265:Non-flag enums should not be used in bitwise operations", Justification = "<Pending>")]
     public IEnumerable<Status> Errors => Diagnostic.Where(s => ((s.CustomCode & StatusCode.ERROR_MASK) == StatusCode.ERROR_MASK) ||
                                                                ((s.CustomCode & StatusCode.FATAL_ERROR_MASK) == StatusCode.FATAL_ERROR_MASK));
     public Diagnostics()

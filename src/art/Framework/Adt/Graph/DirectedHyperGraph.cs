@@ -10,7 +10,7 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
 {
     public Dictionary<id, DirectedHyperEdge> HyperEdges { get; init; }
 
-    private Counter HyperEdgeCounter { get; init; }
+    protected Counter HyperEdgeCounter { get; init; }
 
     public DirectedHyperGraph(id id,
                               string? label = default,
@@ -33,6 +33,19 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
                                        string? version = default)
     {
         return new(VertexCounter.NextId(), label, inHyperEdges, outHyperEdges, value, flags, color, attributes, version);
+    }
+
+    public DirectedVertex CloneVertex(DirectedVertex vertex)
+    {
+        return new(VertexCounter.NextId(),
+                   $"{vertex.Label}:cloned",
+                   vertex.InHyperEdges.Values.ToList(),
+                   vertex.OutHyperEdges.Values.ToList(),
+                   vertex.Value,
+                   vertex.Flags | Flags.Synthetic,
+                   vertex.Color,
+                   vertex.Attributes,
+                   vertex.Version);
     }
 
     public DirectedHyperEdge CreateHyperEdge(string? label = default,

@@ -10,7 +10,7 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
 {
     public Dictionary<id, UndirectedHyperEdge> HyperEdges { get; init; }
 
-    private Counter HyperEdgeCounter { get; init; }
+    protected Counter HyperEdgeCounter { get; init; }
 
     public UndirectedHyperGraph(id id,
                                 string? label = default,
@@ -32,6 +32,18 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
                                          string? version = default)
     {
         return new(VertexCounter.NextId(), label, hyperEdges, value, flags, color, attributes, version);
+    }
+
+    public UndirectedVertex CloneVertex(UndirectedVertex vertex)
+    {
+        return new(VertexCounter.NextId(),
+                   $"{vertex.Label}:cloned",
+                   vertex.HyperEdges.Values.ToList(),
+                   vertex.Value,
+                   vertex.Flags | Flags.Synthetic,
+                   vertex.Color,
+                   vertex.Attributes,
+                   vertex.Version);
     }
 
     public UndirectedHyperEdge CreateHyperEdge(string? label = default,

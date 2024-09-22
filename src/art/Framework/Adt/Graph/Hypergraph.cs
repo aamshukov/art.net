@@ -80,11 +80,11 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
         }
     }
 
-    public void ResetFlags()
+    public void ResetFlags(Flags flag, Flags add, Flags remove)
     {
         foreach(TVertex vertex in Vertices.Values)
         {
-            vertex.Flags = Flags.Clear;
+            vertex.Flags = (Flags)DomainHelper.ModifyFlags((flag)vertex.Flags, (flag)add, (flag)remove);
         }
     }
 

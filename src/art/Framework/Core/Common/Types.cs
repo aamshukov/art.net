@@ -8,6 +8,6 @@ global using size = int;
 global using count = int;
 global using offset = int;
 global using location = int; // position, locus, location ...
-global using flags = ulong;
+global using flag = ulong;
 global using color = float;
 #pragma warning restore CS8981

@@ -1,6 +1,8 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
+using System.Linq;
+using System.Text;
 using UILab.Art.Framework.Core.Diagnostics;
 
 namespace UILab.Art.Framework.Adt.Graph;
@@ -12,7 +14,7 @@ public static class DirectedHyperGraphAlgorithms
 {
     /// <summary>
     /// Gets the number of incoming edges incident to the u.
-    /// If 𝑣 is in the target set of hyperedge 𝑒, we can say that 𝑒 is an incoming edge to 𝑣.
+    /// If 𝑣 is in the target set of hyperedge 𝑒, we can say that 𝑒 is an incoming hyperEdge to 𝑣.
     /// </summary>
     public static count GetVertexInDegree(DirectedVertex u)
     {
@@ -22,7 +24,7 @@ public static class DirectedHyperGraphAlgorithms
 
     /// <summary>
     /// Gets the number of outcoming edges incident to the u.
-    /// If 𝑣 is in the source set of hyperedge 𝑒, we can say that 𝑒 is an outgoing edge from 𝑣.
+    /// If 𝑣 is in the source set of hyperedge 𝑒, we can say that 𝑒 is an outgoing hyperEdge from 𝑣.
     /// </summary>
     public static count GetVertexOutDegree(DirectedVertex u)
     {
@@ -227,7 +229,7 @@ public static class DirectedHyperGraphAlgorithms
     }
 
     /// <summary>
-    /// A singleton edge in a directed hypergraph involves exactly one u in either the source set, target set, or both.
+    /// A singleton hyperEdge in a directed hypergraph involves exactly one u in either the source set, target set, or both.
     /// </summary>
     public static bool IsHyperEdgeSingleton(DirectedHyperEdge hyperEdge, SingletonEdgeType singletonEdgeType = SingletonEdgeType.SelfLoop)
     {
@@ -335,5 +337,116 @@ public static class DirectedHyperGraphAlgorithms
         }
 
         return true;
+    }
+
+    public static bool IsLeaf(DirectedVertex u)
+    {
+        count degree = GetVertexOutDegree(u);
+        return degree == 1 || degree == 0;
+    }
+
+    public static DirectedVertex ContractHyperEdge(DirectedHyperGraph graph, DirectedHyperEdge contractedHyperEdge)
+    {
+        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(contractedHyperEdge, nameof(contractedHyperEdge));
+
+        var domain = contractedHyperEdge.Domain.Values;
+        var codomain = contractedHyperEdge.Codomain.Values;
+
+        var contractedHyperEdgeVertices = domain.Union(codomain);
+
+        // Merge the source and target vertices.
+        // Create a new vertex 𝑣𝑒 to represent all vertices in 𝑆(𝑒)∪𝑇(𝑒) (i.e., both the source and target vertices in the hyperedge).
+        DirectedVertex contractedVertex = MergeVertices(graph, domain, codomain);
+
+        graph.AddVertex(contractedVertex);
+        
+        // Replace all occurrences of the vertices in 𝑆(𝑒)∪𝑇(𝑒), (the vertices in the contracted hyperedge) with 𝑣𝑒.
+        foreach(DirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
+        {
+            if(ReferenceEquals(hyperEdge, contractedHyperEdge))
+                continue;
+
+            ReplaceVertices(contractedHyperEdgeVertices, hyperEdge, domain: true);
+            ReplaceVertices(contractedHyperEdgeVertices, hyperEdge, domain: false);
+
+            void ReplaceVertices(IEnumerable<DirectedVertex> contractedHyperEdgeVertices,
+                                 DirectedHyperEdge hyperEdge,
+                                 bool domain)
+            {
+                var edgeVertices = domain ? hyperEdge.Domain.Values : hyperEdge.Codomain.Values;
+
+                List<DirectedVertex> verticesToRemove = new();
+
+                foreach(DirectedVertex vertex in edgeVertices)
+                {
+                    if(contractedHyperEdgeVertices.Contains(vertex))
+                    {
+                        verticesToRemove.Add(vertex);
+                    }
+                }
+
+                if(verticesToRemove.Count > 0)
+                {
+                    // If any hyperedges involve both a source and target vertex from 𝑆(𝑒)∪𝑇(𝑒), they collapse into a self-loop at 𝑣𝑒.
+                    // This happens automatically as we remove all vertices in case they are the same as in the contracting hyperedge.
+                    foreach(DirectedVertex vertex in verticesToRemove)
+                    {
+                        hyperEdge.RemoveVertex(vertex.Id, domain);
+                    }
+
+                    hyperEdge.AddVertex(contractedVertex, domain);
+                }
+            }
+        }
+
+        // Remove the original hyperedge 𝑒 after contraction.
+        graph.RemoveHyperEdge(contractedHyperEdge.Id, RemoveActionType.Weak);
+
+        graph.Cleanup();
+
+        return contractedVertex;
+    }
+
+    private static DirectedVertex MergeVertices(DirectedHyperGraph graph,
+                                                IEnumerable<DirectedVertex> domain,
+                                                IEnumerable<DirectedVertex> codomain)
+    {
+        StringBuilder sb = new("V");
+
+        foreach(DirectedVertex vertex in domain)
+        {
+            sb.Append($":{vertex.Label}(d)");
+        }
+
+        foreach(DirectedVertex vertex in codomain)
+        {
+            sb.Append($":{vertex.Label}(c)");
+        }
+
+        DirectedVertex contractedVertex = graph.CreateVertex(label: sb.ToString());
+        return contractedVertex;
+    }
+
+    public static IEnumerable<DirectedVertex> GetSelfLoopVertices(DirectedHyperEdge hyperEdge)
+    {
+        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+
+        if(hyperEdge.Domain.Count == 1 && hyperEdge.Codomain.Count == 1)
+        {
+            if(hyperEdge.Domain.First().Value.Id == hyperEdge.Codomain.First().Value.Id)
+            {
+                yield return hyperEdge.Domain.First().Value;
+            }
+        }
+        else
+        {
+            var grouppedVertices = hyperEdge.Domain.Values.IntersectBy(hyperEdge.Codomain.Values.Select(u => u.Id), v => v.Id);
+
+            foreach(var vertex in grouppedVertices)
+            {
+                yield return vertex;
+            }
+        }
     }
 }

@@ -785,4 +785,348 @@ internal class HyperGraphTests
         var outNeighborsE = DirectedHyperGraphAlgorithms.GetVertexOutNeighbors(hyperGraph, vertexE).ToArray();
         Assert.That(outNeighborsE.SequenceEqual([]), Is.True);
     }
+
+    [Test]
+    public void UndirectedGraph_Algorithms_ContractHyperEdge_Success()
+    {
+        UndirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+        var vertexE = hyperGraph.CreateVertex(label: "E");
+        hyperGraph.AddVertex(vertexE);
+
+        var edge1 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexB, vertexC]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(vertices: [vertexB, vertexD]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(vertices: [vertexC, vertexE]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        var contractedVertex = UndirectedHyperGraphAlgorithms.ContractHyperEdge(hyperGraph, edge1);
+
+        Assert.That(hyperGraph.Vertices.Values.SequenceEqual([vertexD, vertexE, contractedVertex]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Count, Is.EqualTo(2));
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Vertices.Values.SequenceEqual([contractedVertex, vertexD]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Vertices.Values.SequenceEqual([contractedVertex, vertexE]), Is.True);
+    }
+
+    [Test]
+    public void DirectedGraph_Algorithms_ContractHyperEdge1_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+        var vertexE = hyperGraph.CreateVertex(label: "E");
+        hyperGraph.AddVertex(vertexE);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexA, vertexB], codomain:[vertexC]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexB], codomain:[vertexD]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(domain: [vertexC], codomain:[vertexE]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        var contractedVertex = DirectedHyperGraphAlgorithms.ContractHyperEdge(hyperGraph, edge1);
+
+        Assert.That(hyperGraph.Vertices.Values.SequenceEqual([vertexD, vertexE, contractedVertex]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Count, Is.EqualTo(2));
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Domain.Values.SequenceEqual([contractedVertex]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Codomain.Values.SequenceEqual([vertexD]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Domain.Values.SequenceEqual([contractedVertex]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Codomain.Values.SequenceEqual([vertexE]), Is.True);
+    }
+
+    [Test]
+    public void DirectedGraph_Algorithms_ContractHyperEdge2_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+        var vertexE = hyperGraph.CreateVertex(label: "E");
+        hyperGraph.AddVertex(vertexE);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexA], codomain:[vertexB, vertexC]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexC], codomain:[vertexD]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(domain: [vertexB, vertexD], codomain:[vertexE]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        var contractedVertex = DirectedHyperGraphAlgorithms.ContractHyperEdge(hyperGraph, edge1);
+
+        Assert.That(hyperGraph.Vertices.Values.SequenceEqual([vertexD, vertexE, contractedVertex]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Count, Is.EqualTo(2));
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Domain.Values.SequenceEqual([contractedVertex]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Codomain.Values.SequenceEqual([vertexD]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Domain.Values.SequenceEqual([contractedVertex, vertexD]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Codomain.Values.SequenceEqual([vertexE]), Is.True);
+    }
+
+    [Test]
+    public void DirectedGraph_Algorithms_ContractHyperEdge3_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexP = hyperGraph.CreateVertex(label: "P");
+        hyperGraph.AddVertex(vertexP);
+        var vertexQ = hyperGraph.CreateVertex(label: "Q");
+        hyperGraph.AddVertex(vertexQ);
+        var vertexR = hyperGraph.CreateVertex(label: "R");
+        hyperGraph.AddVertex(vertexR);
+        var vertexS = hyperGraph.CreateVertex(label: "S");
+        hyperGraph.AddVertex(vertexS);
+        var vertexT = hyperGraph.CreateVertex(label: "T");
+        hyperGraph.AddVertex(vertexT);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexP, vertexQ], codomain:[vertexR, vertexS]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexR], codomain:[vertexT]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(domain: [vertexS], codomain:[vertexP]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        var contractedVertex = DirectedHyperGraphAlgorithms.ContractHyperEdge(hyperGraph, edge1);
+
+        Assert.That(hyperGraph.Vertices.Values.SequenceEqual([vertexT, contractedVertex]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Count, Is.EqualTo(2));
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Domain.Values.SequenceEqual([contractedVertex]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Codomain.Values.SequenceEqual([vertexT]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Domain.Values.SequenceEqual([contractedVertex]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Codomain.Values.SequenceEqual([contractedVertex]), Is.True);
+    }
+
+    [Test]
+    public async Task DirectedGraph_Algorithms_ContractHyperEdge4_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1); // disconnected hypergraph
+
+        var vertexX = hyperGraph.CreateVertex(label: "X");
+        hyperGraph.AddVertex(vertexX);
+        var vertexY = hyperGraph.CreateVertex(label: "Y");
+        hyperGraph.AddVertex(vertexY);
+        var vertexZ = hyperGraph.CreateVertex(label: "Z");
+        hyperGraph.AddVertex(vertexZ);
+        var vertexW = hyperGraph.CreateVertex(label: "W");
+        hyperGraph.AddVertex(vertexW);
+        var vertexV1 = hyperGraph.CreateVertex(label: "V1");
+        hyperGraph.AddVertex(vertexV1);
+        var vertexV2 = hyperGraph.CreateVertex(label: "V2");
+        hyperGraph.AddVertex(vertexV2);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexX, vertexY], codomain:[vertexZ, vertexW]);
+        hyperGraph.AddHyperEdge(edge1);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexZ], codomain:[vertexV1]);
+        hyperGraph.AddHyperEdge(edge2);
+
+        var edge3 = hyperGraph.CreateHyperEdge(domain: [vertexW], codomain:[vertexV2]);
+        hyperGraph.AddHyperEdge(edge3);
+
+        const string fileName = "DirectedGraph_Algorithms_ContractHyperEdge4_Success";
+        await GraphvizSerialization.SerializeDirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
+
+        var contractedVertex = DirectedHyperGraphAlgorithms.ContractHyperEdge(hyperGraph, edge1);
+
+        Assert.That(hyperGraph.Vertices.Values.SequenceEqual([vertexV1, vertexV2, contractedVertex]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Count, Is.EqualTo(2));
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Domain.Values.SequenceEqual([contractedVertex]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[0].Codomain.Values.SequenceEqual([vertexV1]), Is.True);
+
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Domain.Values.SequenceEqual([contractedVertex]), Is.True);
+        Assert.That(hyperGraph.HyperEdges.Values.ToArray()[1].Codomain.Values.SequenceEqual([vertexV2]), Is.True);
+    }
+
+    [Test]
+    public void UndirectedGraph_Algorithms_GetSelfLoopVertices1_Success()
+    {
+        UndirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+        var vertexD = hyperGraph.CreateVertex(label: "D");
+        hyperGraph.AddVertex(vertexD);
+        var vertexE = hyperGraph.CreateVertex(label: "E");
+        hyperGraph.AddVertex(vertexE);
+
+        var edge1 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexB, vertexC]);
+        var selfLoopVertices = UndirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge1).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([]), Is.True);
+
+        var edge2 = hyperGraph.CreateHyperEdge(vertices: [vertexB, vertexD]);
+        selfLoopVertices = UndirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge2).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([]), Is.True);
+
+        var edge3 = hyperGraph.CreateHyperEdge(vertices: [vertexA]);
+        selfLoopVertices = UndirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge3).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([vertexA]), Is.True);
+    }
+
+    [Test]
+    public void UndirectedGraph_Algorithms_GetSelfLoopVertices2_Success()
+    {
+        UndirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexAc = hyperGraph.CloneVertex(vertexA); //??
+        hyperGraph.AddVertex(vertexAc);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+
+        var edge1 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexB, vertexC]);
+        var selfLoopVertices = UndirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge1).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([]), Is.True);
+
+        var edge2 = hyperGraph.CreateHyperEdge(vertices: [vertexB]);
+        selfLoopVertices = UndirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge2).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([vertexB]), Is.True);
+
+        // vertexA, vertexA is prohibitted, no duplications
+        //var edge3 = hyperGraph.CreateHyperEdge(vertices: [vertexA, vertexA]);
+        //selfLoopVertices = UndirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge3).ToArray();
+        //Assert.That(selfLoopVertices.SequenceEqual([vertexA]), Is.True);
+    }
+
+    [Test]
+    public void DirectedGraph_Algorithms_GetSelfLoopVertices1_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexA = hyperGraph.CreateVertex(label: "A");
+        hyperGraph.AddVertex(vertexA);
+        var vertexB = hyperGraph.CreateVertex(label: "B");
+        hyperGraph.AddVertex(vertexB);
+        var vertexC = hyperGraph.CreateVertex(label: "C");
+        hyperGraph.AddVertex(vertexC);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexA], codomain:[vertexA]);
+        var selfLoopVertices = DirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge1).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([vertexA]), Is.True);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexB], codomain:[vertexC]);
+        selfLoopVertices = DirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge2).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([]), Is.True);
+    }
+
+    [Test]
+    public void DirectedGraph_Algorithms_GetSelfLoopVertices2_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexX = hyperGraph.CreateVertex(label: "X");
+        hyperGraph.AddVertex(vertexX);
+        var vertexY = hyperGraph.CreateVertex(label: "Y");
+        hyperGraph.AddVertex(vertexY);
+        var vertexZ = hyperGraph.CreateVertex(label: "Z");
+        hyperGraph.AddVertex(vertexZ);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexX], codomain:[vertexY, vertexZ]);
+        var selfLoopVertices = DirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge1).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([]), Is.True);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexZ], codomain:[vertexZ]);
+        selfLoopVertices = DirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge2).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([vertexZ]), Is.True);
+    }
+
+    [Test]
+    public void DirectedGraph_Algorithms_GetSelfLoopVertices3_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexP = hyperGraph.CreateVertex(label: "P");
+        hyperGraph.AddVertex(vertexP);
+        var vertexQ = hyperGraph.CreateVertex(label: "Q");
+        hyperGraph.AddVertex(vertexQ);
+        var vertexR = hyperGraph.CreateVertex(label: "R");
+        hyperGraph.AddVertex(vertexR);
+        var vertexS = hyperGraph.CreateVertex(label: "S");
+        hyperGraph.AddVertex(vertexS);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexP], codomain:[vertexQ]);
+        var selfLoopVertices = DirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge1).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([]), Is.True);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexQ], codomain:[vertexQ]);
+        selfLoopVertices = DirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge2).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([vertexQ]), Is.True);
+
+        var edge3 = hyperGraph.CreateHyperEdge(domain: [vertexR, vertexS], codomain:[vertexS]);
+        selfLoopVertices = DirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge3).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([vertexS]), Is.True);
+
+        var edge4 = hyperGraph.CreateHyperEdge(domain: [vertexS], codomain:[vertexR, vertexS]);
+        selfLoopVertices = DirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge4).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([vertexS]), Is.True);
+    }
+
+    [Test]
+    public void DirectedGraph_Algorithms_GetSelfLoopVertices4_Success()
+    {
+        DirectedHyperGraph hyperGraph = new(1);
+
+        var vertexX = hyperGraph.CreateVertex(label: "X");
+        hyperGraph.AddVertex(vertexX);
+        var vertexY = hyperGraph.CreateVertex(label: "Y");
+        hyperGraph.AddVertex(vertexY);
+        var vertexZ = hyperGraph.CreateVertex(label: "Z");
+        hyperGraph.AddVertex(vertexZ);
+        var vertexW = hyperGraph.CreateVertex(label: "W");
+        hyperGraph.AddVertex(vertexW);
+
+        var edge1 = hyperGraph.CreateHyperEdge(domain: [vertexX, vertexY], codomain:[vertexZ]);
+        var selfLoopVertices = DirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge1).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([]), Is.True);
+
+        var edge2 = hyperGraph.CreateHyperEdge(domain: [vertexZ, vertexW], codomain:[vertexZ, vertexW]);
+        selfLoopVertices = DirectedHyperGraphAlgorithms.GetSelfLoopVertices(edge2).ToArray();
+        Assert.That(selfLoopVertices.SequenceEqual([vertexZ, vertexW]), Is.True);
+    }
 }

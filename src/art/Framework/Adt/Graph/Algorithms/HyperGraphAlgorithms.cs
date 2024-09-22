@@ -11,11 +11,6 @@ public static class HyperGraphAlgorithms
     //    return false;
     //}
 
-    //public static bool IsLeaf<TVertex>(TVertex vertex)
-    //    where TVertex : EntityType<id>
-    //{
-    //    return false;
-    //}
 
     //public static bool IsBHyperEdge<TVertex, TEdge>(HyperEdge<TVertex> hyperEdge)
     //    where TVertex : EntityType<id>

@@ -1,6 +1,7 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
+using System.Text;
 using UILab.Art.Framework.Core.Diagnostics;
 
 namespace UILab.Art.Framework.Adt.Graph;
@@ -17,7 +18,7 @@ public static class UndirectedHyperGraphAlgorithms
     }
 
     /// <summary>
-    /// Two vertices are edge-adjacent if they both belong to the same hyperedge, meaning they share a common connection through that hyperedge.
+    /// Two vertices are hyperEdge-adjacent if they both belong to the same hyperedge, meaning they share a common connection through that hyperedge.
     /// </summary>
     public static bool AreVerticesAdjacent(UndirectedVertex u, UndirectedVertex v)
     {
@@ -145,5 +146,91 @@ public static class UndirectedHyperGraphAlgorithms
         return true;
     }
 
-    /// ContractHyperEdge()
+    public static bool IsLeaf(UndirectedVertex u)
+    {
+        count degree = GetVertexDegree(u);
+        return degree == 1 || degree == 0;
+    }
+
+    public static UndirectedVertex ContractHyperEdge(UndirectedHyperGraph graph, UndirectedHyperEdge contractedHyperEdge)
+    {
+        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(contractedHyperEdge, nameof(contractedHyperEdge));
+
+        var vertices = contractedHyperEdge.Vertices.Values;
+
+        // Merge all vertices in 𝑒 into a single vertex 𝑣𝑒.
+        UndirectedVertex contractedVertex = MergeVertices(graph, vertices);
+
+        graph.AddVertex(contractedVertex);
+        
+        // Any hyperedges that included one or more vertices from 𝑒 are updated to include 𝑣𝑒 instead of the individual vertices.
+        foreach(UndirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
+        {
+            if(ReferenceEquals(hyperEdge, contractedHyperEdge))
+                continue;
+
+            List<UndirectedVertex> verticesToRemove = new();
+
+            foreach(UndirectedVertex vertex in hyperEdge.Vertices.Values)
+            {
+                if(vertices.Contains(vertex))
+                {
+                    verticesToRemove.Add(vertex);
+                }
+            }
+
+            if(verticesToRemove.Count > 0)
+            {
+                // If a hyperedge includes all the vertices of 𝑒, after contraction, it collapses to 𝑣𝑒.
+                // This happens automatically as we remove all vertices in case they are the same as in the contracting hyperedge.
+                foreach(UndirectedVertex vertex in verticesToRemove)
+                {
+                    hyperEdge.RemoveVertex(vertex.Id);
+                }
+
+                hyperEdge.AddVertex(contractedVertex);
+            }
+        }
+
+        // Remove the original hyperedge 𝑒 after contraction.
+        graph.RemoveHyperEdge(contractedHyperEdge.Id, RemoveActionType.Weak);
+
+        graph.Cleanup();
+
+        return contractedVertex;
+    }
+
+    private static UndirectedVertex MergeVertices(UndirectedHyperGraph graph, IEnumerable<UndirectedVertex> vertices)
+    {
+        StringBuilder sb = new("V");
+
+        foreach(UndirectedVertex vertex in vertices)
+        {
+            sb.Append($":{vertex.Label}");
+        }
+
+        UndirectedVertex contractedVertex = graph.CreateVertex(label: sb.ToString());
+        return contractedVertex;
+
+    }
+
+    public static IEnumerable<UndirectedVertex> GetSelfLoopVertices(UndirectedHyperEdge hyperEdge)
+    {
+        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+
+        if(hyperEdge.Vertices.Count == 1)
+        {
+            yield return hyperEdge.Vertices.First().Value;
+        }
+        else
+        {
+            var grouppedVertices = hyperEdge.Vertices.Values.GroupBy(v => v.Id).Where(g => g.Count() > 1).SelectMany(g => g);
+
+            foreach(var vertex in grouppedVertices)
+            {
+                yield return vertex;
+            }
+        }
+    }
 }

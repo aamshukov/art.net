@@ -6,13 +6,13 @@ using UILab.Art.Framework.Core.Domain.Abstractions;
 
 namespace UILab.Art.Framework.Adt.Graph;
 
-public class Visitor<TVertex, TEdge> : IVisitor
+public class GraphVisitor<TVertex, TEdge> : IVisitor
     where TVertex : Vertex
     where TEdge : HyperEdge<TVertex>
 {
     public HyperGraph<TVertex, TEdge> Graph { get; init; }
 
-    public Visitor(HyperGraph<TVertex, TEdge> graph)
+    public GraphVisitor(HyperGraph<TVertex, TEdge> graph)
     {
         Assert.NonNullReference(graph, nameof(graph));
         Graph = graph;
