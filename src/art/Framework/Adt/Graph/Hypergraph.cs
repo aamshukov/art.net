@@ -13,9 +13,9 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
 {
     public string Label { get; init; }
 
-    public Flags Flags { get; init; }
+    public Flags Flags { get; set; }
 
-    public Color Color { get; init; }
+    public Color Color { get; set; }
 
     public Dictionary<string, object> Attributes { get; init; }
 
@@ -80,11 +80,11 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
         }
     }
 
-    public void ResetFlags(Flags flag, Flags add, Flags remove)
+    public void ResetFlags(Flags add = Flags.Clear, Flags remove = Flags.Clear)
     {
         foreach(TVertex vertex in Vertices.Values)
         {
-            vertex.Flags = (Flags)DomainHelper.ModifyFlags((flag)vertex.Flags, (flag)add, (flag)remove);
+            vertex.Flags = HyperGraphAlgorithms.ModifyFlags(vertex.Flags, add, remove);
         }
     }
 

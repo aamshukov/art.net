@@ -1,6 +1,10 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using UILab.Art.Framework.Core.Diagnostics;
+
 namespace UILab.Art.Framework.Adt.Graph;
 
 /// <summary>
@@ -8,6 +12,45 @@ namespace UILab.Art.Framework.Adt.Graph;
 /// </summary>
 public static class HyperGraphAlgorithms
 {
+    public static Flags ModifyFlags(Flags flags, Flags add = Flags.Clear, Flags remove = Flags.Clear)
+    {
+        return flags & ~remove | add;
+    }
+
+    public static void ReadNxGraph(string nxFilePath, out List<id> vertices, out List<List<id>> edges)
+    {
+        Assert.NonEmptyString(nxFilePath, nameof(nxFilePath));
+
+        var jContent = File.ReadAllText(nxFilePath);
+        var jToken = (JToken)JsonConvert.DeserializeObject(jContent)!;
+
+        var jNodes = jToken.SelectToken("nodes")!;
+
+        vertices = new();
+        edges = new();
+
+        foreach(var jNode in jNodes)
+        {
+            var vertexId = jNode.Value<int>("id");
+            vertices.Add(vertexId);
+        }
+
+        var jAdjacencies = jToken.SelectToken("adjacency")!;
+
+        foreach(var jAdjEdges in jAdjacencies)
+        {
+            List<id> adjVertexIds = new();
+
+            foreach(var jEdge in jAdjEdges)
+            {
+                var vertexId = jEdge.Value<int>("id");
+                adjVertexIds.Add(vertexId);
+            }
+
+            edges.Add(adjVertexIds);
+        }
+    }
+
     //public static bool IsRoot<TVertex>(TVertex vertex)
     //    where TVertex : EntityType<id>
     //{
@@ -96,7 +139,7 @@ public static class HyperGraphAlgorithms
     //}
 
     ///// <summary>
-    ///// Finds all edges that connects the vertex U to the vertex V.
+    ///// Finds all edgeIds that connects the vertex U to the vertex V.
     ///// </summary>
     ///// <param name="u"></param>
     ///// <param name="v"></param>

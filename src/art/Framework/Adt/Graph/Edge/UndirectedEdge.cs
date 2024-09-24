@@ -11,24 +11,21 @@ public class UndirectedEdge : UndirectedHyperEdge
     /// <summary>
     /// Gets the first element of the vertices, mimics graph's endpoint.
     /// </summary>
-    public UndirectedVertex U { get; init; }
+    public UndirectedVertex? U { get; init; }
 
     /// <summary>
     /// Gets the second element of the vertices, mimics graph's endpoint.
     /// </summary>
-    public UndirectedVertex V { get; init; }
+    public UndirectedVertex? V { get; init; }
 
     public UndirectedEdge(id id,
-                          UndirectedVertex u,
-                          UndirectedVertex v,
+                          UndirectedVertex? u = default,
+                          UndirectedVertex? v = default,
                           string? label = default,
                           Flags flags = Flags.Clear,
                           Dictionary<string, object>? attributes = default,
                           string? version = default) : base(id, label, [u, v], flags, attributes, version)
     {
-        Assert.NonNullReference(u, nameof(u));
-        Assert.NonNullReference(v, nameof(v));
-
         U = u;
         V = v;
     }

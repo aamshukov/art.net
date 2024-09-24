@@ -17,7 +17,7 @@ public class UndirectedHyperEdge : HyperEdge<UndirectedVertex>
                                Dictionary<string, object>? attributes = default,
                                string? version = default) : base(id, label, flags, attributes, version)
     {
-        Vertices = vertices?.ToDictionary(kvp => kvp.Id, kvp => kvp) ?? new();
+        Vertices = vertices?.Where(v => v is not null).ToDictionary(kvp => kvp.Id, kvp => kvp) ?? new();
         Vertices.Values.ToList().ForEach(vertex => vertex.AddReference());
     }
 

@@ -11,24 +11,21 @@ public class DirectedEdge : DirectedHyperEdge
     /// <summary>
     /// Gets the first element of the vertices, mimics graph's endpoint.
     /// </summary>
-    public DirectedVertex U { get; init; }
+    public DirectedVertex? U { get; init; }
 
     /// <summary>
     /// Gets the second element of the vertices, mimics graph's endpoint.
     /// </summary>
-    public DirectedVertex V { get; init; }
+    public DirectedVertex? V { get; init; }
 
     public DirectedEdge(id id,
-                        DirectedVertex u,
-                        DirectedVertex v,
+                        DirectedVertex? u = default,
+                        DirectedVertex? v = default,
                         string? label = default,
                         Flags flags = Flags.Clear,
                         Dictionary<string, object>? attributes = default,
-                        string? version = default) : base(id, label, domain: [u], codomain: [v], flags, attributes, version)
+                        string? version = default) : base(id, label, domain: [u], codomain: [v is null ? u : v], flags, attributes, version)
     {
-        Assert.NonNullReference(u, nameof(u));
-        Assert.NonNullReference(v, nameof(v));
-
         U = u;
         V = v;
     }

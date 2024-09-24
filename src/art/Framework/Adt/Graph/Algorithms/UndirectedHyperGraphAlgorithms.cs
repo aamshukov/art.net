@@ -236,4 +236,76 @@ public static class UndirectedHyperGraphAlgorithms
             }
         }
     }
+
+    public static IEnumerable<UndirectedVertex> Dfs(UndirectedHyperGraph graph, UndirectedVertex u, bool preorder = true)
+    {
+        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(u, nameof(u));
+
+        Stack<UndirectedVertex> stack = new();
+
+        stack.Push(u);
+
+        while(stack.Count > 0)
+        {
+            UndirectedVertex v = stack.Pop();
+
+            if((v.Flags & Flags.Visited) == Flags.Visited)
+                continue;
+
+            v.Flags = HyperGraphAlgorithms.ModifyFlags(v.Flags, add: Flags.Visited);
+
+            if(preorder)
+                yield return v;
+
+            foreach(UndirectedVertex v_adjacence in UndirectedHyperGraphAlgorithms.GetAdjacentVertices(v))
+            {
+                if((v_adjacence.Flags & Flags.Visited) != Flags.Visited)
+                {
+                    stack.Push(v_adjacence);
+                }
+            }
+
+            if(!preorder) // postorder
+                yield return v;
+        }
+
+        graph.ResetFlags(remove: Flags.Visited);
+    }
+
+    public static IEnumerable<UndirectedVertex> Bfs(UndirectedHyperGraph graph, UndirectedVertex u, bool preorder = true)
+    {
+        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(u, nameof(u));
+
+        Queue<UndirectedVertex> queue = new();
+
+        queue.Enqueue(u);
+
+        while(queue.Count > 0)
+        {
+            UndirectedVertex v = queue.Dequeue();
+
+            if((v.Flags & Flags.Visited) == Flags.Visited)
+                continue;
+
+            v.Flags = HyperGraphAlgorithms.ModifyFlags(v.Flags, add: Flags.Visited);
+
+            if(preorder)
+                yield return v;
+
+            foreach(UndirectedVertex v_adjacence in UndirectedHyperGraphAlgorithms.GetAdjacentVertices(v))
+            {
+                if((v_adjacence.Flags & Flags.Visited) != Flags.Visited)
+                {
+                    queue.Enqueue(v_adjacence);
+                }
+            }
+
+            if(!preorder) // postorder
+                yield return v;
+        }
+
+        graph.ResetFlags(remove: Flags.Visited);
+    }
 }

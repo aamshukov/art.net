@@ -26,10 +26,10 @@ public class DirectedHyperEdge : HyperEdge<DirectedVertex>
                              Dictionary<string, object>? attributes = default,
                              string? version = default) : base(id, label, flags, attributes, version)
     {
-        Domain = domain?.ToDictionary(kvp => kvp.Id, kvp => kvp) ?? new();
+        Domain = domain?.Where(v => v is not null).ToDictionary(kvp => kvp.Id, kvp => kvp) ?? new();
         Domain.Values.ToList().ForEach(vertex => vertex.AddReference());
 
-        Codomain = codomain?.ToDictionary(kvp => kvp.Id, kvp => kvp) ?? new();
+        Codomain = codomain?.Where(v => v is not null).ToDictionary(kvp => kvp.Id, kvp => kvp) ?? new();
         Codomain.Values.ToList().ForEach(vertex => vertex.AddReference());
     }
 

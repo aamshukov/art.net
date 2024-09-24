@@ -11,7 +11,7 @@ public abstract class HyperEdge<TVertex> : EntityType<id>, IVisitable
 {
     public string Label { get; init; }
 
-    public Flags Flags { get; init; }
+    public Flags Flags { get; set; }
 
     public Dictionary<string, object> Attributes { get; init; }
 

@@ -670,7 +670,7 @@ internal class HyperGraphTests
     }
 
     [Test]
-    public void UndirectedGraph_Algorithms_Success()
+    public void UndirectedHyperGraph_Algorithms_Success()
     {
         UndirectedHyperGraph hyperGraph = new(1);
 
@@ -787,7 +787,7 @@ internal class HyperGraphTests
     }
 
     [Test]
-    public void UndirectedGraph_Algorithms_ContractHyperEdge_Success()
+    public void UndirectedHyperGraph_Algorithms_ContractHyperEdge_Success()
     {
         UndirectedHyperGraph hyperGraph = new(1);
 
@@ -821,7 +821,7 @@ internal class HyperGraphTests
     }
 
     [Test]
-    public void DirectedGraph_Algorithms_ContractHyperEdge1_Success()
+    public void DirectedHyperGraph_Algorithms_ContractHyperEdge1_Success()
     {
         DirectedHyperGraph hyperGraph = new(1);
 
@@ -859,7 +859,7 @@ internal class HyperGraphTests
     }
 
     [Test]
-    public void DirectedGraph_Algorithms_ContractHyperEdge2_Success()
+    public void DirectedHyperGraph_Algorithms_ContractHyperEdge2_Success()
     {
         DirectedHyperGraph hyperGraph = new(1);
 
@@ -897,7 +897,7 @@ internal class HyperGraphTests
     }
 
     [Test]
-    public void DirectedGraph_Algorithms_ContractHyperEdge3_Success()
+    public void DirectedHyperGraph_Algorithms_ContractHyperEdge3_Success()
     {
         DirectedHyperGraph hyperGraph = new(1);
 
@@ -935,7 +935,7 @@ internal class HyperGraphTests
     }
 
     [Test]
-    public async Task DirectedGraph_Algorithms_ContractHyperEdge4_Success()
+    public async Task DirectedHyperGraph_Algorithms_ContractHyperEdge4_Success()
     {
         DirectedHyperGraph hyperGraph = new(1); // disconnected hypergraph
 
@@ -961,7 +961,7 @@ internal class HyperGraphTests
         var edge3 = hyperGraph.CreateHyperEdge(domain: [vertexW], codomain:[vertexV2]);
         hyperGraph.AddHyperEdge(edge3);
 
-        const string fileName = "DirectedGraph_Algorithms_ContractHyperEdge4_Success";
+        const string fileName = "DirectedHyperGraph_Algorithms_ContractHyperEdge4_Success";
         await GraphvizSerialization.SerializeDirectedHyperGraph(DotDirectory, $"{fileName}.dot", hyperGraph);
 
         var contractedVertex = DirectedHyperGraphAlgorithms.ContractHyperEdge(hyperGraph, edge1);
@@ -978,7 +978,7 @@ internal class HyperGraphTests
     }
 
     [Test]
-    public void UndirectedGraph_Algorithms_GetSelfLoopVertices1_Success()
+    public void UndirectedHyperGraph_Algorithms_GetSelfLoopVertices1_Success()
     {
         UndirectedHyperGraph hyperGraph = new(1);
 
@@ -1007,7 +1007,7 @@ internal class HyperGraphTests
     }
 
     [Test]
-    public void UndirectedGraph_Algorithms_GetSelfLoopVertices2_Success()
+    public void UndirectedHyperGraph_Algorithms_GetSelfLoopVertices2_Success()
     {
         UndirectedHyperGraph hyperGraph = new(1);
 
@@ -1035,7 +1035,7 @@ internal class HyperGraphTests
     }
 
     [Test]
-    public void DirectedGraph_Algorithms_GetSelfLoopVertices1_Success()
+    public void DirectedHyperGraph_Algorithms_GetSelfLoopVertices1_Success()
     {
         DirectedHyperGraph hyperGraph = new(1);
 
@@ -1056,7 +1056,7 @@ internal class HyperGraphTests
     }
 
     [Test]
-    public void DirectedGraph_Algorithms_GetSelfLoopVertices2_Success()
+    public void DirectedHyperGraph_Algorithms_GetSelfLoopVertices2_Success()
     {
         DirectedHyperGraph hyperGraph = new(1);
 
@@ -1077,7 +1077,7 @@ internal class HyperGraphTests
     }
 
     [Test]
-    public void DirectedGraph_Algorithms_GetSelfLoopVertices3_Success()
+    public void DirectedHyperGraph_Algorithms_GetSelfLoopVertices3_Success()
     {
         DirectedHyperGraph hyperGraph = new(1);
 
@@ -1108,7 +1108,7 @@ internal class HyperGraphTests
     }
 
     [Test]
-    public void DirectedGraph_Algorithms_GetSelfLoopVertices4_Success()
+    public void DirectedHyperGraph_Algorithms_GetSelfLoopVertices4_Success()
     {
         DirectedHyperGraph hyperGraph = new(1);
 

@@ -70,8 +70,8 @@ public static class DirectedHyperGraphAlgorithms
         {
             foreach(DirectedVertex v in hyperEdge.Codomain.Values)
             {
-                if(ReferenceEquals(u, v))
-                    continue;
+                //if(ReferenceEquals(u, v))
+                //    continue;
 
                 yield return v;
             }
@@ -447,5 +447,77 @@ public static class DirectedHyperGraphAlgorithms
                 yield return vertex;
             }
         }
+    }
+
+    public static IEnumerable<DirectedVertex> Dfs(DirectedHyperGraph graph, DirectedVertex u, bool preorder = true)
+    {
+        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(u, nameof(u));
+
+        Stack<DirectedVertex> stack = new();
+
+        stack.Push(u);
+
+        while(stack.Count > 0)
+        {
+            DirectedVertex v = stack.Pop();
+
+            if((v.Flags & Flags.Visited) == Flags.Visited)
+                continue;
+
+            v.Flags = HyperGraphAlgorithms.ModifyFlags(v.Flags, add: Flags.Visited);
+
+            if(preorder)
+                yield return v;
+
+            foreach(DirectedVertex v_adjacence in DirectedHyperGraphAlgorithms.GetAdjacentVertices(v))
+            {
+                if((v_adjacence.Flags & Flags.Visited) != Flags.Visited)
+                {
+                    stack.Push(v_adjacence);
+                }
+            }
+
+            if(!preorder) // postorder
+                yield return v;
+        }
+
+        graph.ResetFlags(remove: Flags.Visited);
+    }
+
+    public static IEnumerable<DirectedVertex> Bfs(DirectedHyperGraph graph, DirectedVertex u, bool preorder = true)
+    {
+        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(u, nameof(u));
+
+        Queue<DirectedVertex> queue = new();
+
+        queue.Enqueue(u);
+
+        while(queue.Count > 0)
+        {
+            DirectedVertex v = queue.Dequeue();
+
+            if((v.Flags & Flags.Visited) == Flags.Visited)
+                continue;
+
+            v.Flags = HyperGraphAlgorithms.ModifyFlags(v.Flags, add: Flags.Visited);
+
+            if(preorder)
+                yield return v;
+
+            foreach(DirectedVertex v_adjacence in DirectedHyperGraphAlgorithms.GetAdjacentVertices(v))
+            {
+                if((v_adjacence.Flags & Flags.Visited) != Flags.Visited)
+                {
+                    queue.Enqueue(v_adjacence);
+                }
+            }
+
+            if(!preorder) // postorder
+                yield return v;
+        }
+
+        graph.ResetFlags(remove: Flags.Visited);
     }
 }

@@ -16,17 +16,14 @@ public class UndirectedGraph : UndirectedHyperGraph
     {
     }
 
-    public UndirectedEdge CreateEdge(UndirectedVertex u,
-                                     UndirectedVertex v,
+    public UndirectedEdge CreateEdge(UndirectedVertex? u = default,
+                                     UndirectedVertex? v = default,
                                      string? label = default,
                                      Flags flags = Flags.Clear,
                                      Dictionary<string, object>? attributes = default,
                                      string? version = default)
     {
-        Assert.NonNullReference(u, nameof(u));
-        Assert.NonNullReference(v, nameof(v));
-
-        return new(HyperEdgeCounter.NextId(),  u, v, label, flags, attributes, version);
+        return new(HyperEdgeCounter.NextId(), u, v, label, flags, attributes, version);
     }
 
     public UndirectedEdge? GetEdge(id id)

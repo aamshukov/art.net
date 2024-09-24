@@ -10,7 +10,10 @@ namespace UILab.Art.Framework.Adt.Graph;
 
 public static class GraphvizSerialization
 {
-    public async static Task SerializeUndirectedHyperGraph(string filePath, string fileName, UndirectedHyperGraph graph)
+    public async static Task SerializeUndirectedHyperGraph(string filePath,
+                                                           string fileName,
+                                                           UndirectedHyperGraph graph,
+                                                           bool showSelfLoops = true)
     {
         Assert.NonEmptyString(filePath, nameof(filePath));
         Assert.NonEmptyString(fileName, nameof(fileName));
@@ -29,7 +32,10 @@ public static class GraphvizSerialization
         outputFile.Close();
     }
 
-    public async static Task SerializeDirectedHyperGraph(string filePath, string fileName, DirectedHyperGraph graph)
+    public async static Task SerializeDirectedHyperGraph(string filePath,
+                                                         string fileName,
+                                                         DirectedHyperGraph graph,
+                                                         bool showSelfLoops = true)
     {
         Assert.NonEmptyString(filePath, nameof(filePath));
         Assert.NonEmptyString(fileName, nameof(fileName));
@@ -48,7 +54,7 @@ public static class GraphvizSerialization
         outputFile.Close();
     }
 
-    private static string GenerateGraphvizContent(UndirectedHyperGraph graph)
+    private static string GenerateGraphvizContent(UndirectedHyperGraph graph, bool showSelfLoops = true)
     {
         string indent = DomainHelper.GetIndent(4);
 
@@ -81,7 +87,16 @@ public static class GraphvizSerialization
         {
             if(edge.Vertices.Count == 1)
             {
-                sb.Append($"{indent}\"{edge.Vertices.Values.First().Label}\";{Environment.NewLine}");
+                var label = edge.Vertices.Values.First().Label;
+
+                if(showSelfLoops)
+                {
+                    sb.Append($"{indent}\"{label}\" {edgeType} \"{label}\" [label=\"{edge.Label}\"];{Environment.NewLine}");
+                }
+                else
+                {
+                    sb.Append($"{indent}\"{label}\";{Environment.NewLine}");
+                }
             }
             else
             {
@@ -99,7 +114,7 @@ public static class GraphvizSerialization
         return sb.ToString();
     }
 
-    public static string GenerateDigraphvizContent(DirectedHyperGraph graph, bool linkDomainVertices = false)
+    public static string GenerateDigraphvizContent(DirectedHyperGraph graph, bool linkDomainVertices = false, bool showSelfLoops = true)
     {
         string indent = DomainHelper.GetIndent(4);
 
@@ -135,7 +150,16 @@ public static class GraphvizSerialization
                 // link domain's vertices
                 if(edge.Domain.Count == 1)
                 {
-                    sb.Append($"{indent}\"{edge.Domain[0].Label}\";{Environment.NewLine}");
+                    var label = edge.Domain[0].Label;
+
+                    if(showSelfLoops)
+                    {
+                        sb.Append($"{indent}\"{label}\" {edgeType} \"{label}\" [label=\"{edge.Label}\"];{Environment.NewLine}");
+                    }
+                    else
+                    {
+                        sb.Append($"{indent}\"{label}\";{Environment.NewLine}");
+                    }
                 }
                 else
                 {

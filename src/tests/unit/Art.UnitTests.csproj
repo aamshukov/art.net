@@ -87,4 +87,8 @@
     <Using Include="NUnit.Framework" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Nx\" />
+  </ItemGroup>
+
 </Project>

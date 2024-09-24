@@ -16,17 +16,14 @@ public class DirectedGraph : DirectedHyperGraph
     {
     }
 
-    public DirectedEdge CreateEdge(DirectedVertex u,
-                                   DirectedVertex v,
+    public DirectedEdge CreateEdge(DirectedVertex? u = default,
+                                   DirectedVertex? v = default,
                                    string? label = default,
                                    Flags flags = Flags.Clear,
                                    Dictionary<string, object>? attributes = default,
                                    string? version = default)
     {
-        Assert.NonNullReference(u, nameof(u));
-        Assert.NonNullReference(v, nameof(v));
-
-        return new(HyperEdgeCounter.NextId(),  u, v, label, flags, attributes, version);
+        return new(HyperEdgeCounter.NextId(), u, v, label, flags, attributes, version);
     }
 
     public DirectedEdge? GetEdge(id id)
