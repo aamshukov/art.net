@@ -17,21 +17,39 @@ public static class HyperGraphAlgorithms
         return flags & ~remove | add;
     }
 
-    public static void ReadNxGraph(string nxFilePath, out List<id> vertices, out List<List<id>> edges)
+    public static void ReadNxGraph(string nxFilePath,
+                                   string nxFileName,
+                                   out string label,
+                                   out bool digraph,
+                                   out List<id> vertices,
+                                   out List<List<id>> endPoints)
     {
         Assert.NonEmptyString(nxFilePath, nameof(nxFilePath));
 
-        var jContent = File.ReadAllText(nxFilePath);
-        var jToken = (JToken)JsonConvert.DeserializeObject(jContent)!;
+        var jContent = File.ReadAllText(Path.Combine(nxFilePath, nxFileName));
+        var jToken = (JToken)JsonConvert.DeserializeObject(jContent,
+                                                           new JsonSerializerSettings
+                                                           {
+                                                               MissingMemberHandling = MissingMemberHandling.Ignore,
+                                                               NullValueHandling = NullValueHandling.Include,
+                                                               DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                                                               Formatting = Formatting.Indented,
+                                                               DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                                                               DateTimeZoneHandling = DateTimeZoneHandling.RoundtripKind,
+                                                               DateParseHandling = DateParseHandling.DateTimeOffset,
+                                                               StringEscapeHandling = StringEscapeHandling.EscapeHtml
+                                                           })!;
 
         var jNodes = jToken.SelectToken("nodes")!;
 
+        label = Path.GetFileNameWithoutExtension(nxFileName);
+        digraph = jToken.SelectToken("directed")?.ToString() == "True";
         vertices = new();
-        edges = new();
+        endPoints = new();
 
         foreach(var jNode in jNodes)
         {
-            var vertexId = jNode.Value<int>("id");
+            var vertexId = jNode.Value<int>("id") + 1;
             vertices.Add(vertexId);
         }
 
@@ -43,11 +61,11 @@ public static class HyperGraphAlgorithms
 
             foreach(var jEdge in jAdjEdges)
             {
-                var vertexId = jEdge.Value<int>("id");
+                var vertexId = jEdge.Value<int>("id") + 1;
                 adjVertexIds.Add(vertexId);
             }
 
-            edges.Add(adjVertexIds);
+            endPoints.Add(adjVertexIds);
         }
     }
 

@@ -1,7 +1,6 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-using System;
 using System.Text;
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
@@ -189,7 +188,7 @@ public static class GraphvizSerialization
 
     private static string ComposeVertexDescription<TVertex>(TVertex vertex) where TVertex : Vertex
     {
-        return $"{vertex.Label} [label=\"{vertex.Label}({vertex.ReferenceCounter.Count})\"];";
+        return $"\"{vertex.Label}\" [label=\"{vertex.Label}({vertex.ReferenceCounter.Count})\"];";
     }
 }
 

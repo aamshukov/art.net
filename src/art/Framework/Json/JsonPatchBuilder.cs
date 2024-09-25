@@ -80,7 +80,6 @@ public class JsonPatchBuilder : IJsonPatchBuilder
                                                         DateTimeZoneHandling = DateTimeZoneHandling.RoundtripKind,
                                                         DateParseHandling = DateParseHandling.DateTimeOffset,
                                                         StringEscapeHandling = StringEscapeHandling.EscapeHtml,
-
                                                     });
         return string.IsNullOrWhiteSpace(script) ? EmptyDocument : script;
     }

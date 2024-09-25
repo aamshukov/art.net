@@ -2,6 +2,7 @@
 // UI Lab Inc. Arthur Amshukov .
 //..............................
 using UILab.Art.Framework.Adt.Graph;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UILab.Art.Tests;
 
@@ -537,12 +538,87 @@ internal class GraphTests
     }
 
     [Test]
-    public void Graph_Algorithms_Nx_Graphs_Success()
+    public async Task Graph_Algorithms_Nx_Graphs_Success()
     {
-        HyperGraphAlgorithms.ReadNxGraph(Path.Combine(DotDirectory, "Nx--complete_graph.0.txt"),
-                                                      out List<index> vertices,
-                                                      out List<List<index>> edges);
+        foreach(string fileName in Directory.GetFiles(@"Data\Nx", "Nx--*", SearchOption.TopDirectoryOnly))
+        {
+            Console.WriteLine($"Nx graph file: {fileName}");
 
-        UndirectedGraph graph = UndirectedGraphAlgorithms.BuildGraph(vertices, edges);
+            HyperGraphAlgorithms.ReadNxGraph(Path.GetDirectoryName(fileName)!,
+                                             Path.GetFileName(fileName),
+                                             out string label,
+                                             out bool digraph,
+                                             out List<index> vertices,
+                                             out List<List<index>> endPoints);
+            if(digraph)
+            {
+                DirectedGraph graph = DirectedGraphAlgorithms.BuildGraph(label, vertices, endPoints);
+
+                await GraphvizSerialization.SerializeDirectedHyperGraph(DotDirectory, $"{label}.dot", graph);
+
+
+                foreach(var vertex in graph.Vertices.Values)
+                {
+                    var dfs1 = DirectedHyperGraphAlgorithms.Dfs(graph, vertex, preorder: true).ToArray();
+                    Array.Sort(dfs1, (u, v) => u.Id.CompareTo(v.Id));
+                    var dfs2 = DirectedHyperGraphAlgorithms.Dfs(graph, vertex, preorder: false).ToArray();
+                    Array.Sort(dfs2, (u, v) => u.Id.CompareTo(v.Id));
+                    var bfs1 = DirectedHyperGraphAlgorithms.Bfs(graph, vertex, preorder: true).ToArray();
+                    Array.Sort(bfs1, (u, v) => u.Id.CompareTo(v.Id));
+                    var bfs2 = DirectedHyperGraphAlgorithms.Bfs(graph, vertex, preorder: false).ToArray();
+                    Array.Sort(bfs2, (u, v) => u.Id.CompareTo(v.Id));
+
+                    Assert.That(dfs1.SequenceEqual(dfs2), Is.True);
+                    Assert.That(dfs1.SequenceEqual(bfs1), Is.True);
+                    Assert.That(dfs1.SequenceEqual(bfs2), Is.True);
+
+                    Assert.That(dfs2.SequenceEqual(dfs1), Is.True);
+                    Assert.That(dfs2.SequenceEqual(bfs1), Is.True);
+                    Assert.That(dfs2.SequenceEqual(bfs2), Is.True);
+
+                    Assert.That(bfs1.SequenceEqual(dfs2), Is.True);
+                    Assert.That(bfs1.SequenceEqual(dfs2), Is.True);
+                    Assert.That(bfs1.SequenceEqual(bfs2), Is.True);
+
+                    Assert.That(bfs2.SequenceEqual(dfs1), Is.True);
+                    Assert.That(bfs2.SequenceEqual(dfs2), Is.True);
+                    Assert.That(bfs2.SequenceEqual(bfs1), Is.True);
+                }
+            }
+            else
+            {
+                UndirectedGraph graph = UndirectedGraphAlgorithms.BuildGraph(label, vertices, endPoints);
+
+                await GraphvizSerialization.SerializeUndirectedHyperGraph(DotDirectory, $"{label}.dot", graph);
+
+                foreach(var vertex in graph.Vertices.Values)
+                {
+                    var dfs1 = UndirectedHyperGraphAlgorithms.Dfs(graph, vertex, preorder: true).ToArray();
+                    Array.Sort(dfs1, (u, v) => u.Id.CompareTo(v.Id));
+                    var dfs2 = UndirectedHyperGraphAlgorithms.Dfs(graph, vertex, preorder: false).ToArray();
+                    Array.Sort(dfs2, (u, v) => u.Id.CompareTo(v.Id));
+                    var bfs1 = UndirectedHyperGraphAlgorithms.Bfs(graph, vertex, preorder: true).ToArray();
+                    Array.Sort(bfs1, (u, v) => u.Id.CompareTo(v.Id));
+                    var bfs2 = UndirectedHyperGraphAlgorithms.Bfs(graph, vertex, preorder: false).ToArray();
+                    Array.Sort(bfs2, (u, v) => u.Id.CompareTo(v.Id));
+
+                    Assert.That(dfs1.SequenceEqual(dfs2), Is.True);
+                    Assert.That(dfs1.SequenceEqual(bfs1), Is.True);
+                    Assert.That(dfs1.SequenceEqual(bfs2), Is.True);
+
+                    Assert.That(dfs2.SequenceEqual(dfs1), Is.True);
+                    Assert.That(dfs2.SequenceEqual(bfs1), Is.True);
+                    Assert.That(dfs2.SequenceEqual(bfs2), Is.True);
+
+                    Assert.That(bfs1.SequenceEqual(dfs2), Is.True);
+                    Assert.That(bfs1.SequenceEqual(dfs2), Is.True);
+                    Assert.That(bfs1.SequenceEqual(bfs2), Is.True);
+
+                    Assert.That(bfs2.SequenceEqual(dfs1), Is.True);
+                    Assert.That(bfs2.SequenceEqual(dfs2), Is.True);
+                    Assert.That(bfs2.SequenceEqual(bfs1), Is.True);
+                }
+            }
+        }
     }
 }

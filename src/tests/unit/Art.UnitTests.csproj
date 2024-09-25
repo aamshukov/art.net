@@ -27,6 +27,41 @@
     <None Remove="Data\Document_InsertDeleteText_FromFile_Test.txt" />
     <None Remove="Data\dog.txt" />
     <None Remove="Data\human.txt" />
+    <None Remove="Data\Nx\Nx--balanced_tree.0.txt" />
+    <None Remove="Data\Nx\Nx--barbell_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--binomial_tree.0.txt" />
+    <None Remove="Data\Nx\Nx--bull_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--chordal_cycle_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--chvatal_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--circulant_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--circular_ladder_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--complete_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--cubical_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--cycle_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--desargues_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--diamond_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--dodecahedral_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--dorogovtsev_goltsev_mendes_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--empty_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--frucht_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--full_rary_tree.0.txt" />
+    <None Remove="Data\Nx\Nx--heawood_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--hoffman_singleton_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--house_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--house_x_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--icosahedral_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--krackhardt_kite_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--ladder_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--lollipop_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--moebius_kantor_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--null_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--paley_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--path_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--star_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--tadpole_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--trivial_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--turan_graph.0.txt" />
+    <None Remove="Data\Nx\Nx--wheel_graph.0.txt" />
     <None Remove="Data\v54.1.p1_1240K_public.anno.txt" />
   </ItemGroup>
 
@@ -50,6 +85,111 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\human.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--balanced_tree.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--barbell_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--binomial_tree.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--bull_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--chordal_cycle_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--chvatal_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--circulant_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--circular_ladder_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--complete_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--cubical_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--cycle_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--desargues_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--diamond_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--dodecahedral_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--dorogovtsev_goltsev_mendes_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--empty_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--frucht_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--full_rary_tree.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--heawood_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--hoffman_singleton_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--house_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--house_x_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--icosahedral_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--krackhardt_kite_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--ladder_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--lollipop_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--moebius_kantor_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--null_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--paley_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--path_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--star_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--tadpole_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--trivial_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--turan_graph.0.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Nx\Nx--wheel_graph.0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\v54.1.p1_1240K_public.anno.txt">
@@ -85,10 +225,6 @@
 
   <ItemGroup>
     <Using Include="NUnit.Framework" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\Nx\" />
   </ItemGroup>
 
 </Project>
