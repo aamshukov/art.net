@@ -50,7 +50,7 @@ public class Tree : Vertex
         Kids.Remove(kid);
     }
 
-    public void RemoveAtKid(index index)
+    public void RemoveKidAt(index index)
     {
         Assert.Ensure(0 <= index && index < Kids.Count, nameof(index));
 
