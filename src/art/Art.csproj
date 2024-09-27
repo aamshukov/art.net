@@ -24,6 +24,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Arcturus\Frontend\Semantics\TypeChecking\**" />
+    <Compile Remove="Arcturus\Frontend\Semantics\TypeInference\**" />
+    <EmbeddedResource Remove="Arcturus\Frontend\Semantics\TypeChecking\**" />
+    <EmbeddedResource Remove="Arcturus\Frontend\Semantics\TypeInference\**" />
+    <None Remove="Arcturus\Frontend\Semantics\TypeChecking\**" />
+    <None Remove="Arcturus\Frontend\Semantics\TypeInference\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="8.0.8" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
@@ -31,6 +40,25 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
     <PackageReference Include="System.Text.Json" Version="8.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Arcturus\Backend\Codegen\Amd64\" />
+    <Folder Include="Arcturus\Backend\ControlFlowAnalysis\" />
+    <Folder Include="Arcturus\Backend\DataFlowAnalysis\" />
+    <Folder Include="Arcturus\Backend\Optimization\Passes\" />
+    <Folder Include="Arcturus\Controller\" />
+    <Folder Include="Arcturus\Frontend\Fsa\" />
+    <Folder Include="Arcturus\Frontend\Grammar\" />
+    <Folder Include="Arcturus\Frontend\LexicalAnalyzer\Tokenizer\" />
+    <Folder Include="Arcturus\Frontend\Parser\LRk\" />
+    <Folder Include="Arcturus\Frontend\Parser\Backtracking\RecursiveDescent\" />
+    <Folder Include="Arcturus\Frontend\Parser\Backtracking\Packrat\" />
+    <Folder Include="Arcturus\Frontend\Parser\Earley\" />
+    <Folder Include="Arcturus\Frontend\Parser\LLk\" />
+    <Folder Include="Arcturus\Frontend\Parser\Glr\" />
+    <Folder Include="Arcturus\Frontend\Parser\Precedence\" />
+    <Folder Include="Arcturus\Ir\SymTable\Scope\" />
   </ItemGroup>
 
 </Project>

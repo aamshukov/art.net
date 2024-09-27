@@ -30,6 +30,7 @@ public sealed class Piece : EntityType<id>
     {
         foreach(var component in base.GetEqualityComponents())
             yield return component;
+
         yield return Span;
         yield return ContentType;
         // ignore LineMappings, might be large

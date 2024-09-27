@@ -100,6 +100,7 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
     {
         foreach(var component in base.GetEqualityComponents())
             yield return component;
+
         yield return Label;
         yield return Vertices;
     }

@@ -445,6 +445,7 @@ public class Document : EntityType<string>, IDocument, IDisposable, IAsyncDispos
     {
         foreach(var component in base.GetEqualityComponents())
             yield return component;
+
         yield return Source;
         yield return BufferSize;
         // ignore PieceTable, might be large

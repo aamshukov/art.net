@@ -57,6 +57,7 @@ public class Buffer<T> : EntityType<id>
     {
         foreach(var component in base.GetEqualityComponents())
             yield return component;
+
         yield return Size;
         yield return Capacity;
         // ignore Data, might be large

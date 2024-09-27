@@ -200,6 +200,7 @@ public class Content<T> : EntityType<string>, IContent<T>
     {
         foreach(var component in base.GetEqualityComponents())
             yield return component;
+
         yield return Source;
         yield return BufferSize;
         // ignore Contents, might be large

@@ -1,0 +1,6 @@
+﻿//..............................
+// UI Lab Inc. Arthur Amshukov .
+//..............................
+namespace UILab.Art.Arcturus.Type;
+
+public record TypeArrayBound(size LowerBound = 0, size UpperBound = size.MaxValue);

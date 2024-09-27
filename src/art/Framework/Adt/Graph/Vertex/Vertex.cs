@@ -47,7 +47,9 @@ public abstract class Vertex : EntityType<id>, IVisitable
     {
         foreach(var component in base.GetEqualityComponents())
             yield return component;
+
         yield return Label;
+
         if(Value is not null)
             yield return Value;
     }

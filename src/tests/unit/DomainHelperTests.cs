@@ -22,6 +22,7 @@ internal class DomainHelperTests
         {
             foreach(var component in base.GetEqualityComponents())
                 yield return component;
+
             yield return PropA1;
             yield return PropA2;
         }
@@ -41,6 +42,7 @@ internal class DomainHelperTests
         {
             foreach(var component in base.GetEqualityComponents())
                 yield return component;
+
             yield return PropB1;
             yield return PropB2;
         }
