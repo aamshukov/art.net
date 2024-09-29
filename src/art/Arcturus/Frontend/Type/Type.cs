@@ -6,7 +6,7 @@ using UILab.Art.Framework.Adt.Tree;
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain.Abstractions;
 
-namespace UILab.Art.Arcturus.Type;
+namespace UILab.Art.Arcturus.Typing;
 
 public abstract class Type : Tree
 {

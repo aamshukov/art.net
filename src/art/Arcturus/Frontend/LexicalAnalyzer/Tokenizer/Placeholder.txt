@@ -1,4 +1,0 @@
-See corresponding projects (C++/Python/C#):
-https://github.com/aamshukov/arcturus
-https://github.com/aamshukov/art
-https://github.com/aamshukov/frontend

@@ -5,9 +5,9 @@ using UILab.Art.Arcturus.Infrastructure;
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain.Abstractions;
 
-namespace UILab.Art.Arcturus.Type;
+namespace UILab.Art.Arcturus.Typing;
 
-public abstract class TypeArray : Type
+public class TypeArray : Type
 {
     public Type UnderlyingType { get; init; }
 

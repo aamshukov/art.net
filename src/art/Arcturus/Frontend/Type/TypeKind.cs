@@ -1,7 +1,7 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
-namespace UILab.Art.Arcturus.Type;
+namespace UILab.Art.Arcturus.Typing;
 
 [Flags]
 public enum TypeKind : flag
@@ -9,13 +9,13 @@ public enum TypeKind : flag
     BuiltinMask   = 0x1000_0000_0000_0000,
     ScalarMask    = 0x0000_0001_0000_0000,
     ArrayMask     = 0x0000_0010_0000_0000,
-    CompositeMask = 0x0000_0100_0000_0000,    // struct, record, tuple, enum, etc.
-    SubtypeMask   = 0x0000_1000_0000_0000,    // sub-type, slice, span, range, etc.
-    CallableMask  = 0x0001_0000_0000_0000,    // fn, proc, lambda, slosure,
-                                              // anonymous function/procedure, etc.
+    CompositeMask = 0x0000_0100_0000_0000,   // struct, record, tuple, enum, etc.
+    SubtypeMask   = 0x0000_1000_0000_0000,   // sub-type, slice, span, range, etc.
+    CallableMask  = 0x0001_0000_0000_0000,   // fn, proc, lambda, slosure,
+                                             // anonymous function/procedure, etc.
     GenericMask   = 0x0010_0000_0000_0000,
 
-    Unknown             =  0,
+    Unknown             =  0,                // initial value for type inference algorithms
 
     Integer             = 1 | BuiltinMask,   //  int, integer
     Real                = 2 | BuiltinMask,   //  real, float, double

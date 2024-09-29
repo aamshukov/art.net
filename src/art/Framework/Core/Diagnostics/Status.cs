@@ -7,6 +7,8 @@ namespace UILab.Art.Framework.Core.Diagnostics;
 
 public sealed class Status
 {
+    public static readonly Status Sentinel = new();
+
     public string Origin { get; init; }
 
     public string OriginId { get; init; }

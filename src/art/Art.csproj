@@ -50,7 +50,6 @@
     <Folder Include="Arcturus\Controller\" />
     <Folder Include="Arcturus\Frontend\Fsa\" />
     <Folder Include="Arcturus\Frontend\Grammar\" />
-    <Folder Include="Arcturus\Frontend\LexicalAnalyzer\Tokenizer\" />
     <Folder Include="Arcturus\Frontend\Parser\LRk\" />
     <Folder Include="Arcturus\Frontend\Parser\Backtracking\RecursiveDescent\" />
     <Folder Include="Arcturus\Frontend\Parser\Backtracking\Packrat\" />
@@ -58,7 +57,7 @@
     <Folder Include="Arcturus\Frontend\Parser\LLk\" />
     <Folder Include="Arcturus\Frontend\Parser\Glr\" />
     <Folder Include="Arcturus\Frontend\Parser\Precedence\" />
-    <Folder Include="Arcturus\Ir\SymTable\Scope\" />
+    <Folder Include="Arcturus\SymTable\Scope\" />
   </ItemGroup>
 
 </Project>
