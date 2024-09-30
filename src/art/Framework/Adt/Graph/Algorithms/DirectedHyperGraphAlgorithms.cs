@@ -462,7 +462,7 @@ public static class DirectedHyperGraphAlgorithms
         {
             DirectedVertex v = stack.Pop();
 
-            if((v.Flags & Flags.Visited) == Flags.Visited)
+            if(v.Flags.Has(Flags.Visited))
                 continue;
 
             v.Flags = HyperGraphAlgorithms.ModifyFlags(v.Flags, add: Flags.Visited);
@@ -472,7 +472,7 @@ public static class DirectedHyperGraphAlgorithms
 
             foreach(DirectedVertex v_adjacence in DirectedHyperGraphAlgorithms.GetAdjacentVertices(v))
             {
-                if((v_adjacence.Flags & Flags.Visited) != Flags.Visited)
+                if(v_adjacence.Flags.HasNot(Flags.Visited))
                 {
                     stack.Push(v_adjacence);
                 }
@@ -498,7 +498,7 @@ public static class DirectedHyperGraphAlgorithms
         {
             DirectedVertex v = queue.Dequeue();
 
-            if((v.Flags & Flags.Visited) == Flags.Visited)
+            if(v.Flags.Has(Flags.Visited))
                 continue;
 
             v.Flags = HyperGraphAlgorithms.ModifyFlags(v.Flags, add: Flags.Visited);
@@ -508,7 +508,7 @@ public static class DirectedHyperGraphAlgorithms
 
             foreach(DirectedVertex v_adjacence in DirectedHyperGraphAlgorithms.GetAdjacentVertices(v))
             {
-                if((v_adjacence.Flags & Flags.Visited) != Flags.Visited)
+                if(v_adjacence.Flags.HasNot(Flags.Visited))
                 {
                     queue.Enqueue(v_adjacence);
                 }

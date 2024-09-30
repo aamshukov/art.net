@@ -17,6 +17,16 @@ public static class HyperGraphAlgorithms
         return flags & ~remove | add;
     }
 
+    public static bool Has(this Flags self, Flags other)
+    {
+        return (self & other) == other;
+    }
+
+    public static bool HasNot(this Flags self, Flags other)
+    {
+        return (self & other) != other;
+    }
+
     public static void ReadNxGraph(string nxFilePath,
                                    string nxFileName,
                                    out string label,
