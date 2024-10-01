@@ -1,6 +1,7 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
+using System.Diagnostics.CodeAnalysis;
 using UILab.Art.Framework.Core.Counter;
 using UILab.Art.Framework.Core.Diagnostics;
 
@@ -11,6 +12,10 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
     public Dictionary<id, DirectedHyperEdge> HyperEdges { get; init; }
 
     protected Counter HyperEdgeCounter { get; init; }
+
+    public event HyperEdgeEventHandler<DirectedHyperEdge>? HyperEdgeAdded;
+
+    public event HyperEdgeEventHandler<DirectedHyperEdge>? HyperEdgeRemoved;
 
     public DirectedHyperGraph(id id,
                               string? label = default,
@@ -80,6 +85,14 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
         {
             vertex.InHyperEdges.Add(hyperEdge.Id, hyperEdge);
         }
+
+        OnHyperEdgeAdd(hyperEdge);
+    }
+
+    protected virtual void OnHyperEdgeAdd(DirectedHyperEdge hyperEdge)
+    {
+        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        HyperEdgeAdded?.Invoke(hyperEdge);
     }
 
     public DirectedHyperEdge? RemoveHyperEdge(id id, RemoveActionType removeActionType)
@@ -149,9 +162,17 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
 
                 Cleanup();
             }
+
+            OnHyperEdgeRemoved(hyperEdge);
         }
 
         return hyperEdge;
+    }
+
+    protected virtual void OnHyperEdgeRemoved(DirectedHyperEdge hyperEdge)
+    {
+        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        HyperEdgeRemoved?.Invoke(hyperEdge);
     }
 
     public DirectedVertex? RemoveVertex(id id, RemoveActionType removeActionType)
@@ -212,5 +233,48 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
     {
         foreach(var component in base.GetEqualityComponents())
             yield return component;
+    }
+
+    [SuppressMessage("Minor Code Smell", "S2486:Generic exceptions should not be ignored", Justification = "<Pending>")]
+    [SuppressMessage("Major Code Smell", "S108:Nested blocks of code should not be left empty", Justification = "<Pending>")]
+    [SuppressMessage("Major Code Smell", "S1066:Mergeable \"if\" statements should be combined", Justification = "<Pending>")]
+    protected override void Dispose(bool disposing)
+    {
+        if(!Disposed)
+        {
+            lock(syncRoot)
+            {
+                try
+                {
+                    if(!Disposed)
+                    {
+                        // managed resources
+                        if(disposing)
+                        {
+                            if(HyperEdgeAdded is not null)
+                            {
+                                Delegate.RemoveAll(HyperEdgeAdded, HyperEdgeAdded);
+                                HyperEdgeAdded = null;
+                            }
+
+                            if(HyperEdgeRemoved is not null)
+                            {
+                                Delegate.RemoveAll(HyperEdgeRemoved, HyperEdgeRemoved);
+                                HyperEdgeRemoved = null;
+                            }
+                        }
+
+                        // unmanaged resources
+                    }
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    base.Dispose(disposing);
+                }
+            }
+        }
     }
 }

@@ -13,7 +13,7 @@ internal class HyperGraphTests
     [Test]
     public void UndirectedHyperGraph_Create_Vertex_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         UndirectedVertex newVertex = hyperGraph.CreateVertex();
         hyperGraph.AddVertex(newVertex);
@@ -33,7 +33,7 @@ internal class HyperGraphTests
     [Test]
     public void UndirectedHyperGraph_Create_HyperEdge_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         UndirectedHyperEdge newEdge = hyperGraph.CreateHyperEdge();
         hyperGraph.AddHyperEdge(newEdge);
@@ -53,7 +53,7 @@ internal class HyperGraphTests
     [Test]
     public async Task UndirectedHyperGraph_Create_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -75,7 +75,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_Create_Vertex_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         DirectedVertex newVertex = hyperGraph.CreateVertex();
         hyperGraph.AddVertex(newVertex);
@@ -95,7 +95,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_Create_HyperEdge_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         DirectedHyperEdge newEdge = hyperGraph.CreateHyperEdge();
         hyperGraph.AddHyperEdge(newEdge);
@@ -115,7 +115,29 @@ internal class HyperGraphTests
     [Test]
     public async Task DirectedHyperGraph_Create_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
+
+        count n = 0;
+
+        hyperGraph.VertexAdded += (DirectedVertex vertex) =>
+        {
+            n++;
+        };
+
+        hyperGraph.VertexAdded += (DirectedVertex vertex) =>
+        {
+            n++;
+        };
+
+        hyperGraph.VertexRemoved += (DirectedVertex vertex) =>
+        {
+            n++;
+        };
+
+        hyperGraph.VertexRemoved += (DirectedVertex vertex) =>
+        {
+            n++;
+        };
 
         var vertex1 = hyperGraph.CreateVertex(label: "1");
         hyperGraph.AddVertex(vertex1);
@@ -148,7 +170,7 @@ internal class HyperGraphTests
     [Test]
     public async Task DirectedHyperGraph_Neighbors_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -183,7 +205,7 @@ internal class HyperGraphTests
     [Test]
     public async Task DirectedHyperGraph_Predecessors_Successors_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -218,7 +240,7 @@ internal class HyperGraphTests
     [Test]
     public void UndirectedHyperGraph_WeakVertexDelete1_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -250,7 +272,7 @@ internal class HyperGraphTests
     [Test]
     public void UndirectedHyperGraph_WeakVertexDelete2_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -284,7 +306,7 @@ internal class HyperGraphTests
     [Test]
     public void UndirectedHyperGraph_StrongVertexDelete1_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -320,7 +342,7 @@ internal class HyperGraphTests
     [Test]
     public void UndirectedHyperGraph_StrongVertexDelete2_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -352,7 +374,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_WeakVertexDelete1_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -380,7 +402,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_WeakVertexDelete2_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -419,7 +441,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_StrongVertexDelete1_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -450,7 +472,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_StrongVertexDelete2_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -489,7 +511,7 @@ internal class HyperGraphTests
     [Test]
     public void UndirectedHyperGraph_WeakEdgeDelete_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -531,7 +553,7 @@ internal class HyperGraphTests
     [Test]
     public async Task UndirectedHyperGraph_StrongEdgeDelete_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -576,7 +598,7 @@ internal class HyperGraphTests
     [Test]
     public async Task DirectedHyperGraph_WeakEdgeDelete_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -624,7 +646,7 @@ internal class HyperGraphTests
     [Test]
     public async Task DirectedHyperGraph_StrongEdgeDelete_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -672,7 +694,7 @@ internal class HyperGraphTests
     [Test]
     public void UndirectedHyperGraph_Algorithms_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -733,7 +755,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_GetVertexInNeighbors_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -789,7 +811,7 @@ internal class HyperGraphTests
     [Test]
     public void UndirectedHyperGraph_Algorithms_ContractHyperEdge_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -823,7 +845,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_Algorithms_ContractHyperEdge1_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -861,7 +883,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_Algorithms_ContractHyperEdge2_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -899,7 +921,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_Algorithms_ContractHyperEdge3_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexP = hyperGraph.CreateVertex(label: "P");
         hyperGraph.AddVertex(vertexP);
@@ -937,7 +959,7 @@ internal class HyperGraphTests
     [Test]
     public async Task DirectedHyperGraph_Algorithms_ContractHyperEdge4_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1); // disconnected hypergraph
+        using DirectedHyperGraph hyperGraph = new(1); // disconnected hypergraph
 
         var vertexX = hyperGraph.CreateVertex(label: "X");
         hyperGraph.AddVertex(vertexX);
@@ -980,7 +1002,7 @@ internal class HyperGraphTests
     [Test]
     public void UndirectedHyperGraph_Algorithms_GetSelfLoopVertices1_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -1009,7 +1031,7 @@ internal class HyperGraphTests
     [Test]
     public void UndirectedHyperGraph_Algorithms_GetSelfLoopVertices2_Success()
     {
-        UndirectedHyperGraph hyperGraph = new(1);
+        using UndirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -1037,7 +1059,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_Algorithms_GetSelfLoopVertices1_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexA = hyperGraph.CreateVertex(label: "A");
         hyperGraph.AddVertex(vertexA);
@@ -1058,7 +1080,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_Algorithms_GetSelfLoopVertices2_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexX = hyperGraph.CreateVertex(label: "X");
         hyperGraph.AddVertex(vertexX);
@@ -1079,7 +1101,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_Algorithms_GetSelfLoopVertices3_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexP = hyperGraph.CreateVertex(label: "P");
         hyperGraph.AddVertex(vertexP);
@@ -1110,7 +1132,7 @@ internal class HyperGraphTests
     [Test]
     public void DirectedHyperGraph_Algorithms_GetSelfLoopVertices4_Success()
     {
-        DirectedHyperGraph hyperGraph = new(1);
+        using DirectedHyperGraph hyperGraph = new(1);
 
         var vertexX = hyperGraph.CreateVertex(label: "X");
         hyperGraph.AddVertex(vertexX);

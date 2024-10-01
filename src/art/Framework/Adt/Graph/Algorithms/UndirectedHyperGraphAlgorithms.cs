@@ -237,7 +237,11 @@ public static class UndirectedHyperGraphAlgorithms
         }
     }
 
-    public static IEnumerable<UndirectedVertex> Dfs(UndirectedHyperGraph graph, UndirectedVertex u, bool preorder = true)
+    public static IEnumerable<UndirectedVertex> Dfs(UndirectedHyperGraph graph,
+                                                    UndirectedVertex u,
+                                                    bool preorder = true,
+                                                    IObserver<UndirectedVertex>? observer = default)
+
     {
         Assert.NonNullReference(graph, nameof(graph));
         Assert.NonNullReference(u, nameof(u));
@@ -256,7 +260,10 @@ public static class UndirectedHyperGraphAlgorithms
             v.Flags = HyperGraphAlgorithms.ModifyFlags(v.Flags, add: Flags.Visited);
 
             if(preorder)
+            {
+                observer?.OnNext(v);
                 yield return v;
+            }
 
             foreach(UndirectedVertex v_adjacence in UndirectedHyperGraphAlgorithms.GetAdjacentVertices(v))
             {
@@ -267,13 +274,21 @@ public static class UndirectedHyperGraphAlgorithms
             }
 
             if(!preorder) // postorder
+            {
+                observer?.OnNext(v);
                 yield return v;
+            }
         }
+
+        observer?.OnCompleted();
 
         graph.ResetFlags(remove: Flags.Visited);
     }
 
-    public static IEnumerable<UndirectedVertex> Bfs(UndirectedHyperGraph graph, UndirectedVertex u, bool preorder = true)
+    public static IEnumerable<UndirectedVertex> Bfs(UndirectedHyperGraph graph,
+                                                    UndirectedVertex u,
+                                                    bool preorder = true,
+                                                    IObserver<UndirectedVertex>? observer = default)
     {
         Assert.NonNullReference(graph, nameof(graph));
         Assert.NonNullReference(u, nameof(u));
@@ -292,7 +307,10 @@ public static class UndirectedHyperGraphAlgorithms
             v.Flags = HyperGraphAlgorithms.ModifyFlags(v.Flags, add: Flags.Visited);
 
             if(preorder)
+            {
+                observer?.OnNext(v);
                 yield return v;
+            }
 
             foreach(UndirectedVertex v_adjacence in UndirectedHyperGraphAlgorithms.GetAdjacentVertices(v))
             {
@@ -303,8 +321,13 @@ public static class UndirectedHyperGraphAlgorithms
             }
 
             if(!preorder) // postorder
+            {
+                observer?.OnNext(v);
                 yield return v;
+            }
         }
+
+        observer?.OnCompleted();
 
         graph.ResetFlags(remove: Flags.Visited);
     }

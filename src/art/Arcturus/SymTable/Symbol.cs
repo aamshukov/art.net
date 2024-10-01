@@ -3,9 +3,9 @@
 //..............................
 using UILab.Art.Arcturus.Infrastructure;
 using UILab.Art.Arcturus.LexicalAnalyzer.Tokenizer;
+using UILab.Art.Framework.Core.DesignPatterns.Visitor.Abstractions;
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
-using UILab.Art.Framework.Core.Domain.Abstractions;
 using Type = UILab.Art.Arcturus.Typing.Type;
 
 namespace UILab.Art.Arcturus.SymTable;

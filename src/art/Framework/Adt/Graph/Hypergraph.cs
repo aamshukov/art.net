@@ -1,16 +1,19 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
+using System.Diagnostics.CodeAnalysis;
 using UILab.Art.Framework.Core.Counter;
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
 
 namespace UILab.Art.Framework.Adt.Graph;
 
-public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
+public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>, IDisposable, IAsyncDisposable
     where TVertex : Vertex
     where TEdge : HyperEdge<TVertex>
 {
+    protected readonly object syncRoot = new();
+
     public string Label { get; init; }
 
     public Flags Flags { get; set; }
@@ -24,6 +27,12 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
     public Dictionary<id, TVertex> Vertices { get; init; }
 
     protected Counter VertexCounter { get; init; }
+
+    public event VertexEventHandler<TVertex>? VertexAdded;
+
+    public event VertexEventHandler<TVertex>? VertexRemoved;
+
+    public bool Disposed { get; private set; }
 
     public HyperGraph(id id,
                       string? label = default,
@@ -42,6 +51,8 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
         VertexCounter = new();
     }
 
+    public Type VertexType => typeof(TVertex);
+
     public TVertex? GetVertex(id id)
     {
         if(Vertices.TryGetValue(id, out TVertex? vertex))
@@ -55,6 +66,13 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
         Assert.Ensure(!Vertices.ContainsKey(vertex.Id), nameof(vertex));
 
         Vertices.Add(vertex.Id, vertex);
+        OnVertexAdded(vertex);
+    }
+
+    protected virtual void OnVertexAdded(TVertex vertex)
+    {
+        Assert.NonNullReference(vertex, nameof(vertex));
+        VertexAdded?.Invoke(vertex);
     }
 
     public TVertex? RemoveVertex(id id)
@@ -64,10 +82,17 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
             if(vertex.CanRelease())
             {
                 Vertices.Remove(id);
+                OnVertexRemoved(vertex);
             }
         }
 
         return vertex;
+    }
+
+    protected virtual void OnVertexRemoved(TVertex vertex)
+    {
+        Assert.NonNullReference(vertex, nameof(vertex));
+        VertexRemoved?.Invoke(vertex);
     }
 
     public void Cleanup()
@@ -103,5 +128,97 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>
 
         yield return Label;
         yield return Vertices;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await DisposeAsyncCore().ConfigureAwait(false);
+
+        Dispose(disposing: false);
+        GC.SuppressFinalize(this);
+    }
+
+    [SuppressMessage("Minor Code Smell", "S2486:Generic exceptions should not be ignored", Justification = "<Pending>")]
+    [SuppressMessage("Major Code Smell", "S108:Nested blocks of code should not be left empty", Justification = "<Pending>")]
+    protected virtual async ValueTask DisposeAsyncCore()
+    {
+        try
+        {
+            if(!Disposed)
+            {
+                // managed resources
+                if(VertexAdded is not null)
+                {
+                    Delegate.RemoveAll(VertexAdded, VertexAdded);
+                    VertexAdded = null;
+                }
+
+                if(VertexRemoved is not null)
+                {
+                    Delegate.RemoveAll(VertexRemoved, VertexRemoved);
+                    VertexRemoved = null;
+                }
+
+                // unmanaged resources
+            }
+        }
+        catch
+        {
+        }
+        finally
+        {
+            Disposed = true;
+        }
+
+        await ValueTask.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    [SuppressMessage("Minor Code Smell", "S2486:Generic exceptions should not be ignored", Justification = "<Pending>")]
+    [SuppressMessage("Major Code Smell", "S108:Nested blocks of code should not be left empty", Justification = "<Pending>")]
+    [SuppressMessage("Major Code Smell", "S1066:Mergeable \"if\" statements should be combined", Justification = "<Pending>")]
+    protected virtual void Dispose(bool disposing)
+    {
+        if(!Disposed)
+        {
+            lock(syncRoot)
+            {
+                try
+                {
+                    if(!Disposed)
+                    {
+                        // managed resources
+                        if(disposing)
+                        {
+                            if(VertexAdded is not null)
+                            {
+                                Delegate.RemoveAll(VertexAdded, VertexAdded);
+                                VertexAdded = null;
+                            }
+
+                            if(VertexRemoved is not null)
+                            {
+                                Delegate.RemoveAll(VertexRemoved, VertexRemoved);
+                                VertexRemoved = null;
+                            }
+                        }
+
+                        // unmanaged resources
+                    }
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    Disposed = true;
+                }
+            }
+        }
     }
 }

@@ -57,6 +57,7 @@
     <Folder Include="Arcturus\Frontend\Parser\LLk\" />
     <Folder Include="Arcturus\Frontend\Parser\Glr\" />
     <Folder Include="Arcturus\Frontend\Parser\Precedence\" />
+    <Folder Include="Framework\Core\DesignPatterns\Observer\Abstractions\" />
   </ItemGroup>
 
 </Project>

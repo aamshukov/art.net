@@ -27,6 +27,18 @@ public sealed class Token : ValueType
     /// </summary>
     public string Literal { get; init; }
 
+    /// <summary>
+    /// Roslyn:
+    /// Gets trivia that appears before the token.
+    /// </summary>
+    public string LeadingTrivia { get; init; }
+
+    /// <summary>
+    /// Roslyn:
+    /// Gets trivia that appears after the token.
+    /// </summary>
+    public string TrailingTrivia { get; init; }
+
     public enum TokenFlags : flag
     {
         Clear     = 0x00,
@@ -47,6 +59,8 @@ public sealed class Token : ValueType
                  size length,
                  id source,
                  string? literal = default,
+                 string? leadingTrivia = default,
+                 string? trailingTrivia = default,
                  TokenFlags flags = TokenFlags.Clear,
                  string? version = default) : base(version)
     {
@@ -55,6 +69,8 @@ public sealed class Token : ValueType
         Length = length;
         Source = source;
         Literal = literal?.Trim() ?? string.Empty;
+        LeadingTrivia = leadingTrivia?.Trim() ?? string.Empty;
+        TrailingTrivia = trailingTrivia?.Trim() ?? string.Empty;
         Flags = flags;
     }
 

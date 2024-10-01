@@ -2,8 +2,8 @@
 // UI Lab Inc. Arthur Amshukov .
 //..............................
 using UILab.Art.Arcturus.Infrastructure;
+using UILab.Art.Framework.Core.DesignPatterns.Visitor.Abstractions;
 using UILab.Art.Framework.Core.Diagnostics;
-using UILab.Art.Framework.Core.Domain.Abstractions;
 
 namespace UILab.Art.Arcturus.Ir.Instructions;
 

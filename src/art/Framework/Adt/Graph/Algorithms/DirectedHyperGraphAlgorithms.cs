@@ -449,7 +449,10 @@ public static class DirectedHyperGraphAlgorithms
         }
     }
 
-    public static IEnumerable<DirectedVertex> Dfs(DirectedHyperGraph graph, DirectedVertex u, bool preorder = true)
+    public static IEnumerable<DirectedVertex> Dfs(DirectedHyperGraph graph,
+                                                  DirectedVertex u,
+                                                  bool preorder = true,
+                                                  IObserver<DirectedVertex>? observer = default)
     {
         Assert.NonNullReference(graph, nameof(graph));
         Assert.NonNullReference(u, nameof(u));
@@ -468,7 +471,10 @@ public static class DirectedHyperGraphAlgorithms
             v.Flags = HyperGraphAlgorithms.ModifyFlags(v.Flags, add: Flags.Visited);
 
             if(preorder)
+            {
+                observer?.OnNext(v);
                 yield return v;
+            }
 
             foreach(DirectedVertex v_adjacence in DirectedHyperGraphAlgorithms.GetAdjacentVertices(v))
             {
@@ -479,13 +485,21 @@ public static class DirectedHyperGraphAlgorithms
             }
 
             if(!preorder) // postorder
+            {
+                observer?.OnNext(v);
                 yield return v;
+            }
         }
+
+        observer?.OnCompleted();
 
         graph.ResetFlags(remove: Flags.Visited);
     }
 
-    public static IEnumerable<DirectedVertex> Bfs(DirectedHyperGraph graph, DirectedVertex u, bool preorder = true)
+    public static IEnumerable<DirectedVertex> Bfs(DirectedHyperGraph graph,
+                                                  DirectedVertex u,
+                                                  bool preorder = true,
+                                                  IObserver<DirectedVertex>? observer = default)
     {
         Assert.NonNullReference(graph, nameof(graph));
         Assert.NonNullReference(u, nameof(u));
@@ -504,7 +518,10 @@ public static class DirectedHyperGraphAlgorithms
             v.Flags = HyperGraphAlgorithms.ModifyFlags(v.Flags, add: Flags.Visited);
 
             if(preorder)
+            {
+                observer?.OnNext(v);
                 yield return v;
+            }
 
             foreach(DirectedVertex v_adjacence in DirectedHyperGraphAlgorithms.GetAdjacentVertices(v))
             {
@@ -515,8 +532,13 @@ public static class DirectedHyperGraphAlgorithms
             }
 
             if(!preorder) // postorder
+            {
+                observer?.OnNext(v);
                 yield return v;
+            }
         }
+
+        observer?.OnCompleted();
 
         graph.ResetFlags(remove: Flags.Visited);
     }

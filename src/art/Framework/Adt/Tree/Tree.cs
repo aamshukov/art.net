@@ -2,8 +2,8 @@
 // UI Lab Inc. Arthur Amshukov .
 //..............................
 using UILab.Art.Framework.Adt.Graph;
+using UILab.Art.Framework.Core.DesignPatterns.Visitor.Abstractions;
 using UILab.Art.Framework.Core.Diagnostics;
-using UILab.Art.Framework.Core.Domain.Abstractions;
 
 namespace UILab.Art.Framework.Adt.Tree;
 
