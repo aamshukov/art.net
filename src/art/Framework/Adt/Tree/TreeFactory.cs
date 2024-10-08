@@ -15,14 +15,22 @@ public sealed class TreeFactory
         TreeCounter = new();
     }
 
-    public Tree CreateTree(Tree? papa = default,
-                           string? label = default,
-                           object? value = default,
-                           Flags flags = Flags.Clear,
-                           Color color = Color.Unknown,
-                           Dictionary<string, object>? attributes = default,
-                           string? version = default)
+    public id GetNextId() => TreeCounter.NextId();
+
+    public TTree CreateTree<TTree>(Tree? papa = default,
+                                   string? label = default,
+                                   object? value = default,
+                                   Flags flags = Flags.Clear,
+                                   Color color = Color.Unknown,
+                                   Dictionary<string, object>? attributes = default,
+                                   string? version = default)
     {
-        return new(TreeCounter.NextId(), papa, label, value, flags, color, attributes, version);
+        return (TTree)Activator.CreateInstance(type: typeof(TTree),
+                                               args: [GetNextId(), papa, label, value, flags, color, attributes, version])!;
+    }
+
+    public TTree CreateTree<TTree>(object[] args)
+    {
+        return (TTree)Activator.CreateInstance(type: typeof(TTree), args: args)!;
     }
 }

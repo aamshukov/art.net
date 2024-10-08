@@ -19,7 +19,7 @@ public enum UniformType
     /// Target-set k-uniform: Each hyperedge has exactly k vertices in its target set.
     /// For every hyperedge 𝑒 = (𝑆,𝑇), the size of the target set ∣𝑇∣ is equal to k.
     /// </summary>
-    TargetSet = 1,
+    TargetSet = 2,
 
     /// <summary>
     /// Fully k-uniform: Each hyperedge has exactly k vertices in both the source and target sets.

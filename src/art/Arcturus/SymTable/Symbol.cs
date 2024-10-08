@@ -12,6 +12,8 @@ namespace UILab.Art.Arcturus.SymTable;
 
 public abstract class Symbol : EntityType<id>, IVisitable
 {
+    public SymbolKind Kind { get; init; }
+
     public string Name { get; init; }
 
     public string SyntheticName { get; set; }
@@ -48,6 +50,7 @@ public abstract class Symbol : EntityType<id>, IVisitable
     public Dictionary<string, object> Metadata { get; init; }
 
     public Symbol(id id,
+                  SymbolKind kind,
                   Type type,
                   Symbol? papa = default,
                   string? label = default,
@@ -57,6 +60,7 @@ public abstract class Symbol : EntityType<id>, IVisitable
     {
         Assert.NonNullReference(type, nameof(type));
 
+        Kind = kind;
         Name = label?.Trim() ?? $"S:{id.ToString()}";
         SyntheticName = Name;
         SyntheticId = 0;

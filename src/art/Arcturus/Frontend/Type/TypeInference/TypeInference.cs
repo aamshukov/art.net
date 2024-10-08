@@ -21,15 +21,15 @@ public sealed class TypeInference
     {
     }
 
-    private void AssignTypenames(IEnumerable<Type> types)
+    private void AssignTypenames(IEnumerable<Symbol> symbols, TypeEnvironment environment)
     {
     }
 
-    private void GenerateConstrains(IEnumerable<Type> types)
+    private void GenerateConstrains(IEnumerable<Symbol> symbols, TypeEnvironment environment)
     {
     }
 
-    private void Unify(IEnumerable<Type> types)
+    private void Unify(IEnumerable<Symbol> symbols, TypeEnvironment environment)
     {
     }
 
