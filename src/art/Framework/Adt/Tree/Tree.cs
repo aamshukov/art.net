@@ -9,7 +9,9 @@ namespace UILab.Art.Framework.Adt.Tree;
 
 public class Tree : Vertex
 {
-    public Tree? Papa { get; set; }
+    public static readonly Tree Sentinel = new(id: 0, label: "Tree:Sentinel");
+
+    public Tree Papa { get; set; }
 
     public List<Tree> Kids { get; init; }
 
@@ -22,7 +24,7 @@ public class Tree : Vertex
                 Dictionary<string, object>? attributes = default,
                 string? version = default) : base(id, label, value, flags, color, attributes, version)
     {
-        Papa = papa;
+        Papa = papa ?? Sentinel;
         Kids = new();
     }
 
@@ -46,7 +48,7 @@ public class Tree : Vertex
     {
         Assert.NonNullReference(kid, nameof(kid));
 
-        kid.Papa = default;
+        kid.Papa = Sentinel;
         Kids.Remove(kid);
     }
 
@@ -54,7 +56,7 @@ public class Tree : Vertex
     {
         Assert.Ensure(0 <= index && index < Kids.Count, nameof(index));
 
-        Kids[index].Papa = default;
+        Kids[index].Papa = Sentinel;
         Kids.RemoveAt(index);
     }
 

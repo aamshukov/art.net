@@ -12,7 +12,7 @@ namespace UILab.Art.Framework.Adt.Tree;
 /// </summary>
 /// <typeparam name="TKey"></typeparam>
 public abstract class AvlTree<TKey> : BinaryTree<TKey>
-     where TKey: IComparable<TKey>
+     where TKey : IComparable<TKey>
 {
     public AvlTree(id id,
                    Tree? papa = default,
@@ -25,20 +25,22 @@ public abstract class AvlTree<TKey> : BinaryTree<TKey>
     {
     }
 
-    public override BinaryTree<TKey> Insert(BinaryTree<TKey> tree, BinaryTree<TKey>? root)
+    public static AvlTree<TKey> Insert(AvlTree<TKey> tree, AvlTree<TKey>? root)
     {
         Assert.NonNullReference(tree, nameof(tree));
 
-        base.Insert(tree, root);
+        //?? implement AVL tree logic.
+        BinaryTree<TKey>.Insert(tree, root);
 
         return root!;
     }
 
-    public override BinaryTree<TKey> Delete(BinaryTree<TKey> tree, BinaryTree<TKey>? root)
+    public static AvlTree<TKey> Delete(TKey key, AvlTree<TKey>? root)
     {
-        Assert.NonNullReference(tree, nameof(tree));
+        Assert.NonNullReference(key, nameof(key));
 
-        base.Delete(tree, root);
+        //?? implement AVL tree logic.
+        BinaryTree<TKey>.Delete(key, root);
 
         return root!;
     }

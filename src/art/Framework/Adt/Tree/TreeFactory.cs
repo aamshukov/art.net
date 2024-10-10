@@ -29,7 +29,7 @@ public sealed class TreeFactory
                                                args: [GetNextId(), papa, label, value, flags, color, attributes, version])!;
     }
 
-    public TTree CreateTree<TTree>(object[] args)
+    public TTree CreateTree<TTree>(object[] args) where TTree: notnull
     {
         return (TTree)Activator.CreateInstance(type: typeof(TTree), args: args)!;
     }

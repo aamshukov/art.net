@@ -12,7 +12,7 @@ namespace UILab.Art.Framework.Adt.Tree;
 /// </summary>
 /// <typeparam name="TKey"></typeparam>
 public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
-     where TKey: IComparable<TKey>
+     where TKey : IComparable<TKey>
 {
     public RedBlackTree(id id,
                         Tree? papa = default,
@@ -25,20 +25,22 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
     {
     }
 
-    public override BinaryTree<TKey> Insert(BinaryTree<TKey> tree, BinaryTree<TKey>? root)
+    public static RedBlackTree<TKey> Insert(RedBlackTree<TKey> tree, RedBlackTree<TKey>? root)
     {
         Assert.NonNullReference(tree, nameof(tree));
 
-        base.Insert(tree, root);
+        //?? implement RedBlack tree logic.
+        BinaryTree<TKey>.Insert(tree, root);
 
         return root!;
     }
 
-    public override BinaryTree<TKey> Delete(BinaryTree<TKey> tree, BinaryTree<TKey>? root)
+    public static RedBlackTree<TKey> Delete(TKey key, RedBlackTree<TKey>? root)
     {
-        Assert.NonNullReference(tree, nameof(tree));
+        Assert.NonNullReference(key, nameof(key));
 
-        base.Delete(tree, root);
+        //?? implement RedBlack tree logic.
+        BinaryTree<TKey>.Delete(key, root);
 
         return root!;
     }

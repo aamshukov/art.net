@@ -32,7 +32,7 @@ public sealed class PieceTree : RedBlackTree<index>
         ContentType = contentType;
     }
 
-    protected override index GetKey()
+    public override index GetKey()
     {
         return Span.Start;
     }
