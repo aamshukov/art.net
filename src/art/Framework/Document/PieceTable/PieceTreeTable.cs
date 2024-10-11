@@ -9,7 +9,7 @@ namespace UILab.Art.Framework.Document;
 
 public sealed class PieceTreeTable : ValueType
 {
-    public PieceTree Pieces { get; init; }
+    public PieceTree? Pieces { get; init; }
 
     public size TabSize { get; init; }
 
@@ -33,7 +33,7 @@ public sealed class PieceTreeTable : ValueType
         Assert.NonNullReference(workingContent, nameof(workingContent));
         Assert.Ensure(tabSize >= 0, nameof(tabSize));
 
-        Pieces = PieceTree.Sentinel;
+        Pieces = default;
 
         OriginalContent = originalContent;
         WorkingContent = workingContent;

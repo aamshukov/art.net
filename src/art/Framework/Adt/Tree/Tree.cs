@@ -1,19 +1,19 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
+using System.Diagnostics;
 using UILab.Art.Framework.Adt.Graph;
 using UILab.Art.Framework.Core.DesignPatterns.Visitor.Abstractions;
 using UILab.Art.Framework.Core.Diagnostics;
 
 namespace UILab.Art.Framework.Adt.Tree;
 
+[DebuggerDisplay("Label = " + "{Label}")]
 public class Tree : Vertex
 {
-    public static readonly Tree Sentinel = new(id: 0, label: "Tree:Sentinel");
+    public Tree? Papa { get; set; }
 
-    public Tree Papa { get; set; }
-
-    public List<Tree> Kids { get; init; }
+    public List<Tree?> Kids { get; init; }
 
     public Tree(id id,
                 Tree? papa = default,
@@ -24,31 +24,31 @@ public class Tree : Vertex
                 Dictionary<string, object>? attributes = default,
                 string? version = default) : base(id, label, value, flags, color, attributes, version)
     {
-        Papa = papa ?? Sentinel;
+        Papa = papa;
         Kids = new();
     }
 
-    public void AddKid(Tree kid)
+    public void AddKid(Tree? kid)
     {
-        Assert.NonNullReference(kid, nameof(kid));
+        if(kid is not null)
+            kid.Papa = this;
 
-        kid.Papa = this;
         Kids.Add(kid);
     }
 
-    public void InsertKid(index index, Tree kid)
+    public void InsertKid(index index, Tree? kid)
     {
-        Assert.NonNullReference(kid, nameof(kid));
+        if(kid is not null)
+            kid.Papa = this;
 
-        kid.Papa = this;
         Kids.Insert(index, kid);
     }
 
-    public void RemoveKid(Tree kid)
+    public void RemoveKid(Tree? kid)
     {
-        Assert.NonNullReference(kid, nameof(kid));
+        if(kid is not null)
+            kid.Papa = default;
 
-        kid.Papa = Sentinel;
         Kids.Remove(kid);
     }
 
@@ -56,7 +56,11 @@ public class Tree : Vertex
     {
         Assert.Ensure(0 <= index && index < Kids.Count, nameof(index));
 
-        Kids[index].Papa = Sentinel;
+        Tree? kid = Kids[index];
+
+        if(kid is not null)
+            kid.Papa = default;
+
         Kids.RemoveAt(index);
     }
 

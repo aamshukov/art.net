@@ -25,19 +25,19 @@ public abstract class AvlTree<TKey> : BinaryTree<TKey>
     {
     }
 
-    public static AvlTree<TKey> Insert(AvlTree<TKey> tree, AvlTree<TKey>? root)
+    public static bool Insert(AvlTree<TKey> tree, AvlTree<TKey> root)
     {
         Assert.NonNullReference(tree, nameof(tree));
+        Assert.NonNullReference(root, nameof(root));
 
         //?? implement AVL tree logic.
-        BinaryTree<TKey>.Insert(tree, root);
-
-        return root!;
+        return BinaryTree<TKey>.Insert(tree, root);
     }
 
-    public static AvlTree<TKey> Delete(TKey key, AvlTree<TKey>? root)
+    public static AvlTree<TKey> Delete(TKey key, AvlTree<TKey> root)
     {
         Assert.NonNullReference(key, nameof(key));
+        Assert.NonNullReference(root, nameof(root));
 
         //?? implement AVL tree logic.
         BinaryTree<TKey>.Delete(key, root);

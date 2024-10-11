@@ -8,8 +8,6 @@ namespace UILab.Art.Framework.Document;
 
 public sealed class PieceTree : RedBlackTree<index>
 {
-    public static new readonly PieceTree Sentinel = new(0, Span.Sentinel, ContentType.Sentinel);
-
     public Span Span { get; init; }
 
     /// <summary>

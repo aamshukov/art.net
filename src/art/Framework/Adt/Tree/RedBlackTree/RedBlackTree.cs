@@ -25,19 +25,19 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
     {
     }
 
-    public static RedBlackTree<TKey> Insert(RedBlackTree<TKey> tree, RedBlackTree<TKey>? root)
+    public static bool Insert(RedBlackTree<TKey> tree, RedBlackTree<TKey> root)
     {
         Assert.NonNullReference(tree, nameof(tree));
+        Assert.NonNullReference(root, nameof(root));
 
         //?? implement RedBlack tree logic.
-        BinaryTree<TKey>.Insert(tree, root);
-
-        return root!;
+        return BinaryTree<TKey>.Insert(tree, root);
     }
 
-    public static RedBlackTree<TKey> Delete(TKey key, RedBlackTree<TKey>? root)
+    public static RedBlackTree<TKey> Delete(TKey key, RedBlackTree<TKey> root)
     {
         Assert.NonNullReference(key, nameof(key));
+        Assert.NonNullReference(root, nameof(root));
 
         //?? implement RedBlack tree logic.
         BinaryTree<TKey>.Delete(key, root);

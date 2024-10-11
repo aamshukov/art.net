@@ -8,9 +8,10 @@ namespace UILab.Art.Framework.Adt.Tree;
 
 public static class TreeAlgorithms
 {
-    public static IEnumerable<Tree> Dfs(Tree tree, bool preorder = true)
+    public static IEnumerable<Tree> Dfs(Tree tree, TreeTraversal treeTraversal = TreeTraversal.Preorder)
     {
         Assert.NonNullReference(tree, nameof(tree));
+        Assert.Ensure(treeTraversal == TreeTraversal.Preorder || treeTraversal == TreeTraversal.Postorder, nameof(treeTraversal));
 
         Stack<Tree> stack = new();
 
@@ -25,23 +26,23 @@ public static class TreeAlgorithms
 
             node.Flags = HyperGraphAlgorithms.ModifyFlags(node.Flags, add: Flags.Visited);
 
-            if(preorder)
+            if(treeTraversal == TreeTraversal.Preorder)
                 yield return node;
 
-            foreach(Tree kid in node.Kids)
+            foreach(Tree? kid in node.Kids)
             {
-                if((kid.Flags & Flags.Visited) != Flags.Visited)
+                if(kid is not null && (kid.Flags & Flags.Visited) != Flags.Visited)
                 {
                     stack.Push(kid);
                 }
             }
 
-            if(!preorder) // postorder
+            if(treeTraversal == TreeTraversal.Postorder)
                 yield return node;
         }
     }
 
-    public static IEnumerable<Tree> Bfs(Tree tree, bool preorder = true)
+    public static IEnumerable<Tree> Bfs(Tree tree, TreeTraversal treeTraversal = TreeTraversal.Preorder)
     {
         Assert.NonNullReference(tree, nameof(tree));
 
@@ -58,18 +59,18 @@ public static class TreeAlgorithms
 
             node.Flags = HyperGraphAlgorithms.ModifyFlags(node.Flags, add: Flags.Visited);
 
-            if(preorder)
+            if(treeTraversal == TreeTraversal.Preorder)
                 yield return node;
 
-            foreach(Tree kid in node.Kids)
+            foreach(Tree? kid in node.Kids)
             {
-                if((kid.Flags & Flags.Visited) != Flags.Visited)
+                if(kid is not null && (kid.Flags & Flags.Visited) != Flags.Visited)
                 {
                     queue.Enqueue(kid);
                 }
             }
 
-            if(!preorder) // postorder
+            if(treeTraversal == TreeTraversal.Postorder)
                 yield return node;
         }
     }

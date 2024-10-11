@@ -19,41 +19,52 @@ public abstract class BinaryTree<TKey> : Tree
                       Dictionary<string, object>? attributes = default,
                       string? version = default) : base(id, papa, label, value, flags, color, attributes, version)
     {
-        AddKid(Sentinel); // left
-        AddKid(Sentinel); // right
+        AddKid(default); // left
+        AddKid(default); // right
     }
 
-    public BinaryTree<TKey> Left
+    public BinaryTree<TKey>? Left
     {
-        get { return (BinaryTree<TKey>)Kids[0]; }
+        get { return (BinaryTree<TKey>?)Kids[0]; }
         set { Kids[0] = value; }
     }
 
-    public BinaryTree<TKey> Right
+    public BinaryTree<TKey>? Right
     {
-        get { return (BinaryTree<TKey>)Kids[1]; }
+        get { return (BinaryTree<TKey>?)Kids[1]; }
         set { Kids[1] = value; }
     }
 
-    public bool Leaf => Left == Sentinel && Right == Sentinel;
+    public bool Leaf => Left is null && Right is null;
+
+    public BinaryTree<TKey> Root()
+    {
+        BinaryTree<TKey>? root = this;
+
+        while(root is not null && root.Papa is not null)
+        {
+            root = (BinaryTree<TKey>?)root.Papa;
+        }
+
+        return root ?? this;
+    }
 
     public void Reset()
     {
-        Papa = Sentinel;
-
-        Left = (BinaryTree<TKey>)Sentinel;
-        Right = (BinaryTree<TKey>)Sentinel;
+        Papa = default;
+        Left = default;
+        Right = default;
     }
 
-    public static BinaryTree<TKey> Search(TKey key, BinaryTree<TKey>? root)
+    public static BinaryTree<TKey>? Search(TKey key, BinaryTree<TKey>? root)
     {
         Assert.NonNullReference(key, nameof(key));
 
-        BinaryTree<TKey> node = root ?? (BinaryTree<TKey>)Sentinel;
+        BinaryTree<TKey>? node = root;
 
-        while(node != Sentinel)
+        while(node is not null)
         {
-            int compareKeysResult = CompareKeys(node.GetKey(), key);
+            int compareKeysResult = CompareKeys(key, node.GetKey());
 
             if(compareKeysResult == 0)
             {
@@ -69,23 +80,26 @@ public abstract class BinaryTree<TKey> : Tree
             }
         }
 
-        return (BinaryTree<TKey>)Sentinel;
+        return default;
     }
 
-    public static BinaryTree<TKey> Insert(BinaryTree<TKey> tree, BinaryTree<TKey>? root)
+    public static bool Insert(BinaryTree<TKey> tree, BinaryTree<TKey> root)
     {
         Assert.NonNullReference(tree, nameof(tree));
+        Assert.NonNullReference(root, nameof(root));
 
         TKey key = tree.GetKey();
 
-        BinaryTree<TKey>? node = root ?? (BinaryTree<TKey>)Sentinel;
-        BinaryTree<TKey>? newRoot = node;
+        BinaryTree<TKey>? node = root;
+        BinaryTree<TKey>? papa = root;
 
-        while(node != Sentinel)
+        int compareKeysResult;
+
+        while(node is not null)
         {
-            newRoot = node;
-
-            int compareKeysResult = CompareKeys(node.GetKey(), key);
+            papa = node;
+            //                              floating root
+            compareKeysResult = CompareKeys(key, node.GetKey());
 
             if(compareKeysResult < 0)
             {
@@ -95,116 +109,121 @@ public abstract class BinaryTree<TKey> : Tree
             {
                 node = node.Right;
             }
-        }
-
-        if(newRoot == Sentinel)
-        {
-            newRoot = tree;
-        }
-        else
-        {
-            tree.Papa = newRoot;
-
-            int compareKeysResult = CompareKeys(newRoot.GetKey(), key);
-
-            if(compareKeysResult < 0)
+            else if(compareKeysResult == 0) // duplicate
             {
-                // left
-                newRoot.Left = tree;
-            }
-            else // compareKeysResult >= 0
-            {
-                // right
-                newRoot.Right = tree;
+                return false; // ignore, do not insert
             }
         }
 
-        return newRoot;
+        tree.Papa = papa;
+
+        compareKeysResult = CompareKeys(papa.GetKey(), key);
+
+        if(compareKeysResult < 0)
+        {
+            papa.Right = tree;
+        }
+        else // compareKeysResult >= 0
+        {
+            papa.Left = tree;
+        }
+
+        return true;
     }
 
-    public static BinaryTree<TKey> Delete(TKey key, BinaryTree<TKey>? root)
+    public static BinaryTree<TKey>? Delete(TKey key, BinaryTree<TKey> root)
     {
         Assert.NonNullReference(key, nameof(key));
+        Assert.NonNullReference(root, nameof(root));
 
-        BinaryTree<TKey> nodeToDelete = Search(key, root);
+        BinaryTree<TKey>? nodeToDelete = Search(key, root);
+        return Delete(nodeToDelete);
+    }
 
-        if(nodeToDelete == Sentinel)
+    public static BinaryTree<TKey>? Delete(BinaryTree<TKey>? nodeToDelete)
+    {
+        // See my AIL C++ library.
+        if(nodeToDelete is null)
         {
             // case 0: not found
             // do nothing
             return nodeToDelete;
         }
-        else if(nodeToDelete.Leaf)
+
+        BinaryTree<TKey>? node;
+
+        if(nodeToDelete.Left is null || nodeToDelete.Right is null)
         {
             // case 1: no kids - leaf, simply remove the node (nodeToDelete).
-            BinaryTree<TKey> papa = (BinaryTree<TKey>)nodeToDelete.Papa;
-
-            if(papa.Left == nodeToDelete)
-            {
-                papa.Left = (BinaryTree<TKey>)Sentinel;
-            }
-            else if(papa.Right == nodeToDelete)
-            {
-                papa.Right = (BinaryTree<TKey>)Sentinel;
-            }
-        }
-        else if(nodeToDelete.Left == Sentinel || nodeToDelete.Right == Sentinel)
-        {
             // case 2: one kid (left or right), replace the node to be deleted (nodeToDelete) with its kid.
-            BinaryTree<TKey> kid;
+            node = nodeToDelete;
+        }
+        else
+        {
+            // case 3: two kids.
+            node = GetInOrderSuccessor(nodeToDelete);
+        }
 
-            if(nodeToDelete.Left != Sentinel)
+        if(node is null)
+        {
+            nodeToDelete.Reset();
+            return nodeToDelete;
+        }
+
+        BinaryTree<TKey>? tmpNode;
+
+        if(node.Left is not null)
+        {
+            tmpNode = node.Left;
+        }
+        else
+        {
+            tmpNode = node.Right;
+        }
+
+        if(tmpNode is not null)
+        {
+            tmpNode.Papa = node.Papa;
+        }
+
+        if(node.Papa is not null)
+        {
+            if(ReferenceEquals(node, ((BinaryTree<TKey>)node.Papa).Left))
             {
-                kid = nodeToDelete.Left;
+                ((BinaryTree<TKey>)node.Papa).Left = tmpNode;
             }
             else
             {
-                kid = nodeToDelete.Right;
+                ((BinaryTree<TKey>)node.Papa).Right = tmpNode;
             }
-
-            BinaryTree<TKey> papa = (BinaryTree<TKey>)nodeToDelete.Papa;
-
-            if(papa.Left == nodeToDelete)
-            {
-                papa.Left = kid;
-            }
-            else if(papa.Right == nodeToDelete)
-            {
-                papa.Right = kid;
-            }
-
-            kid.Papa = papa;
         }
-        else if(nodeToDelete.Left != Sentinel && nodeToDelete.Right != Sentinel)
+
+        if(!ReferenceEquals(node, nodeToDelete))
         {
-            // case 3: two kids.
-            BinaryTree<TKey> successor = GetInOrderSuccessor(nodeToDelete);
+            node.Papa  = nodeToDelete.Papa;
+            node.Left  = nodeToDelete.Left;
+            node.Right = nodeToDelete.Right;
 
-            // Replace the node (nodeToDelete) with the inorder successor.
-            if(successor != Sentinel && successor != nodeToDelete) // check against self ref
+            if(nodeToDelete.Papa is not null)
             {
-                BinaryTree<TKey> nodeToDeletePapa = (BinaryTree<TKey>)nodeToDelete.Papa;
-                BinaryTree<TKey> nodeToDeleteLeft = nodeToDelete.Left;
-                BinaryTree<TKey> nodeToDeleteRight = nodeToDelete.Right;
+                if(ReferenceEquals(nodeToDelete, ((BinaryTree<TKey>)nodeToDelete.Papa).Left))
+                {
+                    ((BinaryTree<TKey>)nodeToDelete.Papa).Left = node;
+                }
+                else
+                {
+                    ((BinaryTree<TKey>)nodeToDelete.Papa).Right = node;
+                }
+            }
 
-                // update successor
-                successor.Papa = nodeToDeletePapa;
-                successor.Left = nodeToDeleteLeft;
-                successor.Right = nodeToDeleteRight;
+            if(nodeToDelete.Left is not null)
+            {
+                nodeToDelete.Left.Papa = node;
+            }
 
-                // update nodeToDelete's papa
-                if(nodeToDeletePapa.Left == nodeToDelete)
-                    nodeToDeletePapa.Left = successor;
-                if(nodeToDeletePapa.Right == nodeToDelete)
-                    nodeToDeletePapa.Right = successor;
-
-                // update nodeToDelete's left
-                if(nodeToDeleteLeft != Sentinel)
-                    nodeToDeleteLeft.Papa = successor;
-
-                // update nodeToDelete's right
-                if(nodeToDeleteRight != Sentinel)
-                    nodeToDeleteRight.Papa = successor;
+            if(nodeToDelete.Right is not null)
+            {
+                nodeToDelete.Right.Papa = node;
             }
         }
 
@@ -219,36 +238,34 @@ public abstract class BinaryTree<TKey> : Tree
     /// </summary>
     /// <param name="tree"></param>
     /// <returns></returns>
-    public static BinaryTree<TKey> GetInOrderSuccessor(BinaryTree<TKey> tree)
+    public static BinaryTree<TKey>? GetInOrderSuccessor(BinaryTree<TKey>? tree)
     {
-        Assert.NonNullReference(tree, nameof(tree));
-
         // case 1: node has a right subtree
-        if(tree.Right != Sentinel)
+        if(tree is not null && tree.Right is not null)
         {
             return GetLeftMostSuccessor(tree.Right);
         }
 
         // case 2: node has no right subtree ... walk up parents
-        BinaryTree<TKey> node = tree;
+        BinaryTree<TKey>? node = tree;
 
         // Go up to the parent using the parent pointer until you find a node that is the left child of its parent.
         // The parent of that node will be the inorder kid.
-        while(node.Papa != Sentinel && node == ((BinaryTree<TKey>)node.Papa).Right)
+        while(node is not null &&
+              node.Papa is not null &&
+              ReferenceEquals(node, ((BinaryTree<TKey>)node.Papa).Right))
         {
             node = (BinaryTree<TKey>)node.Papa;
         }
 
-        return (BinaryTree<TKey>)node.Papa;
+        return (BinaryTree<TKey>?)node?.Papa;
     }
 
-    public static BinaryTree<TKey> GetLeftMostSuccessor(BinaryTree<TKey> tree)
+    public static BinaryTree<TKey>? GetLeftMostSuccessor(BinaryTree<TKey>? tree)
     {
-        Assert.NonNullReference(tree, nameof(tree));
+        BinaryTree<TKey>? successor = tree;
 
-        BinaryTree<TKey> successor = tree;
-
-        while(successor.Left != Sentinel)
+        while(successor is not null && successor.Left is not null)
         {
             successor = successor.Left;
         }
@@ -256,13 +273,11 @@ public abstract class BinaryTree<TKey> : Tree
         return successor;
     }
 
-    public static BinaryTree<TKey> GetRightMostSuccessor(BinaryTree<TKey> tree)
+    public static BinaryTree<TKey>? GetRightMostSuccessor(BinaryTree<TKey>? tree)
     {
-        Assert.NonNullReference(tree, nameof(tree));
+        BinaryTree<TKey>? successor = tree;
 
-        BinaryTree<TKey> successor = tree;
-
-        while(successor.Right != Sentinel)
+        while(successor is not null && successor.Right is not null)
         {
             successor = successor.Right;
         }
@@ -275,6 +290,53 @@ public abstract class BinaryTree<TKey> : Tree
     protected static int CompareKeys(TKey key1, TKey key2)
     {
         return key1.CompareTo(key2);
+    }
+
+    public static bool Validate(BinaryTree<TKey> tree)
+    {
+        Assert.NonNullReference(tree, nameof(tree));
+
+        IEnumerable<BinaryTree<TKey>> inorderDfs = InorderDfs(tree).Cast<BinaryTree<TKey>>();
+
+        BinaryTree<TKey>? prevNode = inorderDfs.FirstOrDefault();
+
+        if(prevNode is not null)
+        {
+            foreach(BinaryTree<TKey> node in inorderDfs.Skip(1))
+            {
+                if(CompareKeys(prevNode.GetKey(), node.GetKey()) > 0)
+                    return false;
+
+                prevNode = node;
+            }
+        }
+
+        return true;
+    }
+
+    public static IEnumerable<BinaryTree<TKey>> InorderDfs(BinaryTree<TKey> tree)
+    {
+        Assert.NonNullReference(tree, nameof(tree));
+
+        Stack<BinaryTree<TKey>> stack = new();
+
+        BinaryTree<TKey>? currentTree = tree;
+
+        while(currentTree is not null || stack.Count > 0)
+        {
+            // traverse the left side
+            while(currentTree is not null)
+            {
+                stack.Push(currentTree);
+                currentTree = currentTree.Left;
+            }
+
+            currentTree = stack.Pop();
+            yield return currentTree;
+
+            // switch to right side
+            currentTree = currentTree?.Right;
+        }
     }
 
     public override IEnumerable<object> GetEqualityComponents()
