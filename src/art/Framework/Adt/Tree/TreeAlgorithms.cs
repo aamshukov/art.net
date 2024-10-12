@@ -21,17 +21,12 @@ public static class TreeAlgorithms
         {
             Tree node = stack.Pop();
 
-            if((node.Flags & Flags.Visited) == Flags.Visited)
-                continue;
-
-            node.Flags = HyperGraphAlgorithms.ModifyFlags(node.Flags, add: Flags.Visited);
-
             if(treeTraversal == TreeTraversal.Preorder)
                 yield return node;
 
             foreach(Tree? kid in node.Kids)
             {
-                if(kid is not null && (kid.Flags & Flags.Visited) != Flags.Visited)
+                if(kid is not null)
                 {
                     stack.Push(kid);
                 }
@@ -54,17 +49,12 @@ public static class TreeAlgorithms
         {
             Tree node = queue.Dequeue();
 
-            if((node.Flags & Flags.Visited) == Flags.Visited)
-                continue;
-
-            node.Flags = HyperGraphAlgorithms.ModifyFlags(node.Flags, add: Flags.Visited);
-
             if(treeTraversal == TreeTraversal.Preorder)
                 yield return node;
 
             foreach(Tree? kid in node.Kids)
             {
-                if(kid is not null && (kid.Flags & Flags.Visited) != Flags.Visited)
+                if(kid is not null)
                 {
                     queue.Enqueue(kid);
                 }

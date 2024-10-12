@@ -942,9 +942,11 @@ internal class TreeTests
                 Assert.That(BinaryTreeInt.Validate(binTreeRoot), Is.True);
             }
 
-            //const string fileName = "BinaryTree_Random_Success";
-            //await TreeSerialization.SerializeTree(DotDirectory, $"{fileName}.dot", binTreeRoot, digraph: true);
-            await Task.CompletedTask;
+            if(i == 0)
+            {
+                string fileName = $"BinaryTree_Random_Success-{i}";
+                await TreeSerialization.SerializeTree(DotDirectory, $"{fileName}.dot", binTreeRoot, digraph: true);
+            }
 
             PruneTree(nodes);
 
