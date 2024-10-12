@@ -23,6 +23,12 @@ public abstract class BinaryTree<TKey> : Tree
         AddKid(default); // right
     }
 
+    public new BinaryTree<TKey>? Papa
+    {
+        get { return (BinaryTree<TKey>?)base.Papa; }
+        set { base.Papa = value; }
+    }
+
     public BinaryTree<TKey>? Left
     {
         get { return (BinaryTree<TKey>?)Kids[0]; }
@@ -43,7 +49,7 @@ public abstract class BinaryTree<TKey> : Tree
 
         while(root is not null && root.Papa is not null)
         {
-            root = (BinaryTree<TKey>?)root.Papa;
+            root = root.Papa;
         }
 
         return root ?? this;
@@ -188,13 +194,13 @@ public abstract class BinaryTree<TKey> : Tree
 
         if(node.Papa is not null)
         {
-            if(ReferenceEquals(node, ((BinaryTree<TKey>)node.Papa).Left))
+            if(ReferenceEquals(node, node.Papa.Left))
             {
-                ((BinaryTree<TKey>)node.Papa).Left = tmpNode;
+                node.Papa.Left = tmpNode;
             }
             else
             {
-                ((BinaryTree<TKey>)node.Papa).Right = tmpNode;
+                node.Papa.Right = tmpNode;
             }
         }
 
@@ -206,13 +212,13 @@ public abstract class BinaryTree<TKey> : Tree
 
             if(nodeToDelete.Papa is not null)
             {
-                if(ReferenceEquals(nodeToDelete, ((BinaryTree<TKey>)nodeToDelete.Papa).Left))
+                if(ReferenceEquals(nodeToDelete, nodeToDelete.Papa.Left))
                 {
-                    ((BinaryTree<TKey>)nodeToDelete.Papa).Left = node;
+                    nodeToDelete.Papa.Left = node;
                 }
                 else
                 {
-                    ((BinaryTree<TKey>)nodeToDelete.Papa).Right = node;
+                    nodeToDelete.Papa.Right = node;
                 }
             }
 
@@ -253,12 +259,12 @@ public abstract class BinaryTree<TKey> : Tree
         // The parent of that node will be the inorder kid.
         while(node is not null &&
               node.Papa is not null &&
-              ReferenceEquals(node, ((BinaryTree<TKey>)node.Papa).Right))
+              ReferenceEquals(node, node.Papa.Right))
         {
-            node = (BinaryTree<TKey>)node.Papa;
+            node = node.Papa;
         }
 
-        return (BinaryTree<TKey>?)node?.Papa;
+        return node?.Papa;
     }
 
     public static BinaryTree<TKey>? GetLeftMostSuccessor(BinaryTree<TKey>? tree)

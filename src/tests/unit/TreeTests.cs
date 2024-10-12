@@ -67,6 +67,8 @@ internal class AvlTreeInt : AvlTree<int>
 [TestFixture]
 internal class TreeTests
 {
+    private const string DotDirectory = @"d:\tmp\art.trees.viz";
+
     private static void PruneTree(List<BinaryTreeInt> nodes)
     {
         while(nodes.Count > 0)
@@ -504,7 +506,7 @@ internal class TreeTests
     }
 
     [Test]
-    public void BinaryTree_Delete_Case3_TwoKids_Root_Success()
+    public async Task BinaryTree_Delete_Case3_TwoKids_Root_Success()
     {
         //                5                                          6
         //         3             8           5                3             8
@@ -559,6 +561,9 @@ internal class TreeTests
         Assert.That(binTree7.Papa, Is.EqualTo(binTree6));
         Assert.That(binTree7.Left, Is.Null);
         Assert.That(binTree7.Right, Is.Null);
+
+        const string fileName = "BinaryTree_Delete_Case3_TwoKids_Root_Success";
+        await TreeSerialization.SerializeTree(DotDirectory, $"{fileName}.dot", binTree5, digraph: true);
 
         var deletedNode = BinaryTreeInt.Delete(binTree5.GetKey(), binTree5);
         Assert.That(deletedNode?.Left, Is.Null);
@@ -910,7 +915,7 @@ internal class TreeTests
     }
 
     [Test]
-    public void BinaryTree_Random_Success()
+    public async Task BinaryTree_Random_Success()
     {
         int start = 100;
         int end = 1000;
@@ -936,6 +941,10 @@ internal class TreeTests
 
                 Assert.That(BinaryTreeInt.Validate(binTreeRoot), Is.True);
             }
+
+            //const string fileName = "BinaryTree_Random_Success";
+            //await TreeSerialization.SerializeTree(DotDirectory, $"{fileName}.dot", binTreeRoot, digraph: true);
+            await Task.CompletedTask;
 
             PruneTree(nodes);
 

@@ -25,13 +25,34 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
     {
     }
 
+    public new RedBlackTree<TKey>? Papa
+    {
+        get { return (RedBlackTree<TKey>?)base.Papa; }
+        set { base.Papa = value; }
+    }
+
+    public new RedBlackTree<TKey>? Left
+    {
+        get { return (RedBlackTree<TKey>?)Kids[0]; }
+        set { Kids[0] = value; }
+    }
+
+    public new RedBlackTree<TKey>? Right
+    {
+        get { return (RedBlackTree<TKey>?)Kids[1]; }
+        set { Kids[1] = value; }
+    }
+
     public static bool Insert(RedBlackTree<TKey> tree, RedBlackTree<TKey> root)
     {
         Assert.NonNullReference(tree, nameof(tree));
         Assert.NonNullReference(root, nameof(root));
 
-        //?? implement RedBlack tree logic.
+        // phase I (insert)
         return BinaryTree<TKey>.Insert(tree, root);
+
+        // phase II (rebalance)
+        //?? implement RedBlack tree logic.
     }
 
     public static RedBlackTree<TKey> Delete(TKey key, RedBlackTree<TKey> root)

@@ -18,7 +18,7 @@ public static class GraphvizSerialization
         Assert.NonEmptyString(fileName, nameof(fileName));
         Assert.NonNullReference(graph, nameof(graph));
 
-        string content = GenerateGraphvizContent(graph);
+        string content = GenerateGraphvizContent(graph, showSelfLoops);
 
         if(!Directory.Exists(filePath))
             Directory.CreateDirectory(filePath);
@@ -40,7 +40,7 @@ public static class GraphvizSerialization
         Assert.NonEmptyString(fileName, nameof(fileName));
         Assert.NonNullReference(graph, nameof(graph));
 
-        string content = GenerateDigraphvizContent(graph);
+        string content = GenerateDigraphvizContent(graph, showSelfLoops);
 
         if(!Directory.Exists(filePath))
             Directory.CreateDirectory(filePath);

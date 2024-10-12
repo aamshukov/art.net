@@ -25,13 +25,34 @@ public abstract class AvlTree<TKey> : BinaryTree<TKey>
     {
     }
 
+    public new AvlTree<TKey>? Papa
+    {
+        get { return (AvlTree<TKey>?)base.Papa; }
+        set { base.Papa = value; }
+    }
+
+    public new AvlTree<TKey>? Left
+    {
+        get { return (AvlTree<TKey>?)Kids[0]; }
+        set { Kids[0] = value; }
+    }
+
+    public new AvlTree<TKey>? Right
+    {
+        get { return (AvlTree<TKey>?)Kids[1]; }
+        set { Kids[1] = value; }
+    }
+
     public static bool Insert(AvlTree<TKey> tree, AvlTree<TKey> root)
     {
         Assert.NonNullReference(tree, nameof(tree));
         Assert.NonNullReference(root, nameof(root));
 
-        //?? implement AVL tree logic.
+        // phase I (insert)
         return BinaryTree<TKey>.Insert(tree, root);
+
+        // phase II (rebalance)
+        //?? implement AVL tree logic.
     }
 
     public static AvlTree<TKey> Delete(TKey key, AvlTree<TKey> root)

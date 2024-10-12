@@ -2,20 +2,21 @@
 // UI Lab Inc. Arthur Amshukov .
 //..............................
 using System.Text;
+using UILab.Art.Framework.Adt.Graph;
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
 
 namespace UILab.Art.Framework.Adt.Tree;
 
-public static class GraphvizSerialization
+public static class TreeSerialization
 {
-    public async static Task SerializeTree(string filePath, string fileName, Tree tree)
+    public async static Task SerializeTree(string filePath, string fileName, Tree tree, bool digraph = true)
     {
         Assert.NonEmptyString(filePath, nameof(filePath));
         Assert.NonEmptyString(fileName, nameof(fileName));
         Assert.NonNullReference(tree, nameof(tree));
 
-        string content = GenerateGraphvizContent(tree);
+        string content = GenerateGraphvizContent(tree, digraph);
 
         if(!Directory.Exists(filePath))
             Directory.CreateDirectory(filePath);
@@ -28,12 +29,12 @@ public static class GraphvizSerialization
         outputFile.Close();
     }
 
-    private static string GenerateGraphvizContent(Tree tree)
+    private static string GenerateGraphvizContent(Tree tree, bool digraph = true)
     {
         string indent = DomainHelper.GetIndent(4);
 
-        string graphType = "tree";
-        //string edgeType = "->";
+        string graphType = digraph ? "digraph" : "graph";
+        string edgeType = digraph ? "->" : "--";
         string edgeDir = string.Empty;
 
         StringBuilder sb = new();
@@ -43,14 +44,24 @@ public static class GraphvizSerialization
         sb.Append($"{indent}edge [dir=\"{edgeDir}\"];{Environment.NewLine}");
         sb.Append($"{indent}node [margin=0 fontcolor=black fontsize=11 width=0.3 shape=circle style=filled forcelabels=true];{Environment.NewLine}");
 
+        foreach(Tree root in TreeAlgorithms.Dfs(tree))
+        {
+            foreach(Tree? kid in root.Kids.Where(t => t is not null))
+            {
+                if(kid is null)
+                    continue;
+                sb.Append($"{indent}\"{root.Label}\" {edgeType} \"{kid.Label}\" [label=\"{root.Label}:{kid.Label}\"];{Environment.NewLine}");
+            }
+        }
+
         sb.Append($"}}{Environment.NewLine}");
 
         return sb.ToString();
     }
 
-    private static string ComposeTreeDescription(Tree tree)
+    private static string ComposeTreeDescription(Vertex vertex)
     {
-        return $"\"{tree.Label}\" [label=\"{tree.Label}({tree.ReferenceCounter.Count})\"];";
+        return $"\"{vertex.Label}\" [label=\"{vertex.Label}({vertex.ReferenceCounter.Count})\"]";
     }
 }
 
