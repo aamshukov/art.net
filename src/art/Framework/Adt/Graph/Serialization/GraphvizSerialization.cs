@@ -149,7 +149,7 @@ public static class GraphvizSerialization
                 // link domain's vertices
                 if(edge.Domain.Count == 1)
                 {
-                    var label = edge.Domain[0].Label;
+                    var label = edge.Domain.First().Value.Label;
 
                     if(showSelfLoops)
                     {
