@@ -28,22 +28,28 @@ public class UndirectedGraph : UndirectedHyperGraph
 
     public UndirectedEdge? GetEdge(id id)
     {
+        Assert.NonDisposed(Disposed);
         return (UndirectedEdge?)base.GetHyperEdge(id);
     }
 
     public void AddEdge(UndirectedEdge edge)
     {
+        Assert.NonDisposed(Disposed);
         Assert.NonNullReference(edge, nameof(edge));
+
         base.AddHyperEdge(edge);
     }
 
     public UndirectedEdge? RemoveEdge(id id, RemoveActionType removeActionType = RemoveActionType.Weak)
     {
+        Assert.NonDisposed(Disposed);
         return (UndirectedEdge?)base.RemoveHyperEdge(id, removeActionType);
     }
 
     public override IEnumerable<object> GetEqualityComponents()
     {
+        Assert.NonDisposed(Disposed);
+
         foreach(var component in base.GetEqualityComponents())
             yield return component;
     }

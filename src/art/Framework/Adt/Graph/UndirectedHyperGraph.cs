@@ -36,11 +36,14 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
                                          Dictionary<string, object>? attributes = default,
                                          string? version = default)
     {
+        Assert.NonDisposed(Disposed);
         return new(VertexCounter.NextId(), label, hyperEdges, value, flags, color, attributes, version);
     }
 
     public UndirectedVertex CloneVertex(UndirectedVertex vertex)
     {
+        Assert.NonDisposed(Disposed);
+
         return new(VertexCounter.NextId(),
                    $"{vertex.Label}:cloned",
                    vertex.HyperEdges.Values.ToList(),
@@ -57,11 +60,14 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
                                                Dictionary<string, object>? attributes = default,
                                                string? version = default)
     {
+        Assert.NonDisposed(Disposed);
         return new(HyperEdgeCounter.NextId(), label, vertices, flags, attributes, version);
     }
 
     public UndirectedHyperEdge? GetHyperEdge(id id)
     {
+        Assert.NonDisposed(Disposed);
+
         if(HyperEdges.TryGetValue(id, out UndirectedHyperEdge? hyperEdge))
             return hyperEdge;
         return default;
@@ -69,6 +75,7 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
 
     public void AddHyperEdge(UndirectedHyperEdge hyperEdge)
     {
+        Assert.NonDisposed(Disposed);
         Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
 
         HyperEdges.Add(hyperEdge.Id, hyperEdge);
@@ -89,6 +96,8 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
 
     public UndirectedHyperEdge? RemoveHyperEdge(id id, RemoveActionType removeActionType)
     {
+        Assert.NonDisposed(Disposed);
+
         if(HyperEdges.Remove(id, out UndirectedHyperEdge? hyperEdge))
         {
             // release this hyperedge's self-vertices
@@ -148,6 +157,8 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
 
     public UndirectedVertex? RemoveVertex(id id, RemoveActionType removeActionType)
     {
+        Assert.NonDisposed(Disposed);
+
         if(Vertices.TryGetValue(id, out UndirectedVertex? vertex))
         {
             RemoveVertexInternal(id, removeActionType);
@@ -158,6 +169,8 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
 
     private void RemoveVertexInternal(id id, RemoveActionType removeActionType)
     {
+        Assert.NonDisposed(Disposed);
+
         if(removeActionType == RemoveActionType.Weak)
         {
             // In an undirected hypergraph, weak vertex deletion refers to the removal of a vertex from the hypergraph
@@ -193,6 +206,8 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
 
     public override IEnumerable<object> GetEqualityComponents()
     {
+        Assert.NonDisposed(Disposed);
+
         foreach(var component in base.GetEqualityComponents())
             yield return component;
     }

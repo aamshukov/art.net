@@ -2,6 +2,8 @@
 // UI Lab Inc. Arthur Amshukov .
 //..............................
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
+using System.Text;
 using Newtonsoft.Json.Linq;
 using UILab.Art.Framework.Core.Diagnostics;
 
@@ -229,9 +231,33 @@ public static class Algorithms
                                        IEqualityComparer<T> comparer,
                                        out index index,
                                        out size length)
-{
+    {
         Assert.NotImplemented();
         index = 0;
         length = 0;
+    }
+
+    public static string CalculateSha256(byte[] data)
+    {
+        Assert.NonNullReference(data, nameof(data));
+        using SHA256 sha256 = SHA256.Create();
+        return CalculateSha256(data, sha256);
+    }
+
+    public static string CalculateSha256(byte[] data, SHA256 sha256)
+    {
+        Assert.NonNullReference(data, nameof(data));
+        Assert.NonNullReference(sha256, nameof(sha256));
+
+        byte[] hashBytes = sha256.ComputeHash(data);
+
+        StringBuilder sb = new();
+
+        for(index k = 0, n = hashBytes.Length; k < n; k++)
+        {
+            sb.Append($"{hashBytes[k]:X2}");
+        }
+
+        return sb.ToString();
     }
 }

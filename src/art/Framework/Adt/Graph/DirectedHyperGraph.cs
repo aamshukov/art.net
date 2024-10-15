@@ -37,11 +37,14 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
                                        Dictionary<string, object>? attributes = default,
                                        string? version = default)
     {
+        Assert.NonDisposed(Disposed);
         return new(VertexCounter.NextId(), label, inHyperEdges, outHyperEdges, value, flags, color, attributes, version);
     }
 
     public DirectedVertex CloneVertex(DirectedVertex vertex)
     {
+        Assert.NonDisposed(Disposed);
+
         return new(VertexCounter.NextId(),
                    $"{vertex.Label}:cloned",
                    vertex.InHyperEdges.Values.ToList(),
@@ -60,11 +63,14 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
                                              Dictionary<string, object>? attributes = default,
                                              string? version = default)
     {
+        Assert.NonDisposed(Disposed);
         return new(HyperEdgeCounter.NextId(), label, domain, codomain, flags, attributes, version);
     }
 
     public DirectedHyperEdge? GetHyperEdge(id id)
     {
+        Assert.NonDisposed(Disposed);
+
         if(HyperEdges.TryGetValue(id, out DirectedHyperEdge? hyperEdge))
             return hyperEdge;
         return default;
@@ -72,6 +78,7 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
 
     public void AddHyperEdge(DirectedHyperEdge hyperEdge)
     {
+        Assert.NonDisposed(Disposed);
         Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
 
         HyperEdges.Add(hyperEdge.Id, hyperEdge);
@@ -91,12 +98,16 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
 
     protected virtual void OnHyperEdgeAdd(DirectedHyperEdge hyperEdge)
     {
+        Assert.NonDisposed(Disposed);
         Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+
         HyperEdgeAdded?.Invoke(hyperEdge);
     }
 
     public DirectedHyperEdge? RemoveHyperEdge(id id, RemoveActionType removeActionType)
     {
+        Assert.NonDisposed(Disposed);
+
         if(HyperEdges.Remove(id, out DirectedHyperEdge? hyperEdge))
         {
             // release this hyperedge's self-vertices
@@ -177,6 +188,8 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
 
     public DirectedVertex? RemoveVertex(id id, RemoveActionType removeActionType)
     {
+        Assert.NonDisposed(Disposed);
+
         if(Vertices.TryGetValue(id, out DirectedVertex? vertex))
         {
             RemoveVertexInternal(id, removeActionType);
@@ -225,12 +238,16 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
     /// <param name="vertex"></param>
     public IEnumerable<UndirectedVertex> GetNeighbors(UndirectedVertex vertex)
     {
+        Assert.NonDisposed(Disposed);
         Assert.NonNullReference(vertex, nameof(vertex));
+
         yield return (UndirectedVertex)Enumerable.Empty<UndirectedVertex>();
     }
 
     public override IEnumerable<object> GetEqualityComponents()
     {
+        Assert.NonDisposed(Disposed);
+
         foreach(var component in base.GetEqualityComponents())
             yield return component;
     }

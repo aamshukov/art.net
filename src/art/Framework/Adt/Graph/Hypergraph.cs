@@ -55,6 +55,8 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>, IDisposable, 
 
     public TVertex? GetVertex(id id)
     {
+        Assert.NonDisposed(Disposed);
+
         if(Vertices.TryGetValue(id, out TVertex? vertex))
             return vertex;
         return default;
@@ -62,6 +64,7 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>, IDisposable, 
 
     public void AddVertex(TVertex vertex)
     {
+        Assert.NonDisposed(Disposed);
         Assert.NonNullReference(vertex, nameof(vertex));
         Assert.Ensure(!Vertices.ContainsKey(vertex.Id), nameof(vertex));
 
@@ -71,12 +74,16 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>, IDisposable, 
 
     protected virtual void OnVertexAdded(TVertex vertex)
     {
+        Assert.NonDisposed(Disposed);
         Assert.NonNullReference(vertex, nameof(vertex));
+
         VertexAdded?.Invoke(vertex);
     }
 
     public TVertex? RemoveVertex(id id)
     {
+        Assert.NonDisposed(Disposed);
+
         if(Vertices.TryGetValue(id, out TVertex? vertex))
         {
             if(vertex.CanRelease())
@@ -97,6 +104,8 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>, IDisposable, 
 
     public void Cleanup()
     {
+        Assert.NonDisposed(Disposed);
+
         var verticesToRemove = Vertices.Values.Where(vertex => vertex.CanRelease()).Select(vertex => vertex.Id);
 
         foreach(id id in verticesToRemove)
@@ -107,6 +116,8 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>, IDisposable, 
 
     public void ResetFlags(Flags add = Flags.Clear, Flags remove = Flags.Clear)
     {
+        Assert.NonDisposed(Disposed);
+
         foreach(TVertex vertex in Vertices.Values)
         {
             vertex.Flags = HyperGraphAlgorithms.ModifyFlags(vertex.Flags, add, remove);
@@ -115,6 +126,8 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>, IDisposable, 
 
     public void ResetColor()
     {
+        Assert.NonDisposed(Disposed);
+
         foreach(TVertex vertex in Vertices.Values)
         {
             vertex.Color = Color.Unknown;
@@ -123,6 +136,8 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>, IDisposable, 
 
     public override IEnumerable<object> GetEqualityComponents()
     {
+        Assert.NonDisposed(Disposed);
+
         foreach(var component in base.GetEqualityComponents())
             yield return component;
 
