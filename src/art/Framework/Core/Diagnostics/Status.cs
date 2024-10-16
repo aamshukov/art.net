@@ -2,10 +2,11 @@
 // UI Lab Inc. Arthur Amshukov .
 //..............................
 using UILab.Art.Framework.Core.Domain;
+using UILab.Art.Framework.Core.Domain.Abstractions;
 
 namespace UILab.Art.Framework.Core.Diagnostics;
 
-public sealed class Status
+public sealed class Status : IVersional
 {
     public static readonly Status Sentinel = new();
 
@@ -32,6 +33,8 @@ public sealed class Status
 
     public string Timestamp { get; init; }
 
+    public string? Version { get; init; }
+
     public Status(string? origin = default,
                   string? originId = default,
                   string? message = default,
@@ -39,7 +42,8 @@ public sealed class Status
                   StatusCode customCode = StatusCode.Success,
                   StatusCode systemCode = StatusCode.Success,
                   StatusCode libraryCode = StatusCode.Success,
-                  Exception? exception = default)
+                  Exception? exception = default,
+                  string? version = default)
     {
         Origin = origin?.Trim() ?? string.Empty;
         OriginId = originId?.Trim() ?? string.Empty;
@@ -51,5 +55,6 @@ public sealed class Status
         Exception = exception;
         ExceptionMessage = Exception != default ? DomainHelper.BuilExceptionText(Exception, nameof(Status)) : nameof(Status);
         Timestamp = DomainHelper.Timestamp();
+        Version = version;
     }
 }

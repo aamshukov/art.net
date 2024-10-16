@@ -60,6 +60,6 @@ public class Buffer<T> : EntityType<id>
 
         yield return Size;
         yield return Capacity;
-        // ignore Data, might be large
+        // ignore Payload, might be large
     }
 }

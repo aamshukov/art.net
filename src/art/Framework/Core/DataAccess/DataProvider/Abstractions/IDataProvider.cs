@@ -3,7 +3,7 @@
 //..............................
 using UILab.Art.Framework.Core.Content.Abstractions;
 
-namespace UILab.Art.Framework.Core.DataAccess.Abstractions;
+namespace UILab.Art.Framework.Core.DataAccess.DataProvider.Abstractions;
 
 public interface IDataProvider<T>
 {

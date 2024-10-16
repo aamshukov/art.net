@@ -14,11 +14,11 @@ using UILab.Art.Framework.Core.Content;
 using UILab.Art.Framework.Document.History;
 using UILab.Art.Framework.Document;
 using UILab.Art.Framework.Core.Content.Abstractions;
-using UILab.Art.Framework.Core.DataAccess;
-using UILab.Art.Framework.Core.DataAccess.Abstractions;
 using UILab.Art.Framework.Core.Text.Search;
 using UILab.Art.Framework.Document.Abstractions;
 using ArtText = UILab.Art.Framework.Core.Text.Text;
+using UILab.Art.Framework.Core.DataAccess.DataProvider;
+using UILab.Art.Framework.Core.DataAccess.DataProvider.Abstractions;
 
 namespace UILab.Art.Tests;
 

@@ -10,27 +10,21 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>9999</WarningLevel>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <WarningLevel>9999</WarningLevel>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup>
       <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
       <CompilerGeneratedFilesOutputPath>$(SolutionDir)..\build\generated\art</CompilerGeneratedFilesOutputPath>
       <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+      <Version>1.0.1</Version>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Arcturus\Frontend\Semantics\TypeChecking\**" />
-    <Compile Remove="Arcturus\Frontend\Semantics\TypeInference\**" />
-    <EmbeddedResource Remove="Arcturus\Frontend\Semantics\TypeChecking\**" />
-    <EmbeddedResource Remove="Arcturus\Frontend\Semantics\TypeInference\**" />
-    <None Remove="Arcturus\Frontend\Semantics\TypeChecking\**" />
-    <None Remove="Arcturus\Frontend\Semantics\TypeInference\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="8.0.10" />

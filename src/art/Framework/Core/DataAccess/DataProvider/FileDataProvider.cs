@@ -2,10 +2,10 @@
 // UI Lab Inc. Arthur Amshukov .
 //..............................
 using UILab.Art.Framework.Core.Content.Abstractions;
-using UILab.Art.Framework.Core.DataAccess.Abstractions;
+using UILab.Art.Framework.Core.DataAccess.DataProvider.Abstractions;
 using UILab.Art.Framework.Core.Diagnostics;
 
-namespace UILab.Art.Framework.Core.DataAccess;
+namespace UILab.Art.Framework.Core.DataAccess.DataProvider;
 
 public sealed class FileDataProvider : IStringDataProvider<codepoint>
 {
@@ -32,11 +32,11 @@ public sealed class FileDataProvider : IStringDataProvider<codepoint>
 
         using var stream = new StreamReader(FileName, detectEncodingFromByteOrderMarks: true);
 
-        while(true)
+        while (true)
         {
             string? line = stream.ReadLine();
 
-            if(line is null)
+            if (line is null)
             {
                 break;
             }

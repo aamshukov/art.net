@@ -4,10 +4,10 @@
 using System.Diagnostics.CodeAnalysis;
 using UILab.Art.Framework.Core.Content;
 using UILab.Art.Framework.Core.Content.Abstractions;
-using UILab.Art.Framework.Core.DataAccess.Abstractions;
+using UILab.Art.Framework.Core.DataAccess.DataProvider.Abstractions;
 using UILab.Art.Framework.Core.Diagnostics;
 
-namespace UILab.Art.Framework.Core.DataAccess;
+namespace UILab.Art.Framework.Core.DataAccess.DataProvider;
 
 public sealed class StringDataProvider : IStringDataProvider<codepoint>
 {
@@ -32,13 +32,13 @@ public sealed class StringDataProvider : IStringDataProvider<codepoint>
     {
         Assert.NonNullReference(content, nameof(content));
 
-        var codepoints = Data.EnumerateRunes().Select(r => (codepoint)r.Value).ToArray().AsMemory<codepoint>();
+        var codepoints = Data.EnumerateRunes().Select(r => (codepoint)r.Value).ToArray().AsMemory();
 
         count codepointsLength = codepoints.Length;
 
         offset srcOffset = 0;
 
-        for(id k = 0; ; k++)
+        for (id k = 0; ; k++)
         {
             size srcSize = Math.Min(codepointsLength, BufferSize);
 
@@ -49,7 +49,7 @@ public sealed class StringDataProvider : IStringDataProvider<codepoint>
 
             codepointsLength -= srcSize;
 
-            if(codepointsLength == 0)
+            if (codepointsLength == 0)
             {
                 break;
             }
