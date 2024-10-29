@@ -3,6 +3,7 @@
 //..............................
 using System.Text;
 using UILab.Art.Framework.Adt.Graph;
+using UILab.Art.Framework.Adt.Tree;
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Art.Framework.Core.Domain;
 
@@ -18,7 +19,7 @@ public static class TreeSerialization
 
         string content = GenerateGraphvizContent(tree, digraph);
 
-        if(!Directory.Exists(filePath))
+        if (!Directory.Exists(filePath))
             Directory.CreateDirectory(filePath);
 
         using StreamWriter outputFile = new(Path.Combine(filePath, fileName));
@@ -44,11 +45,11 @@ public static class TreeSerialization
         sb.Append($"{indent}edge [dir=\"{edgeDir}\"];{Environment.NewLine}");
         sb.Append($"{indent}node [margin=0 fontcolor=black fontsize=11 width=0.3 shape=circle style=filled forcelabels=true];{Environment.NewLine}");
 
-        foreach(Tree root in TreeAlgorithms.Dfs(tree))
+        foreach (Tree root in TreeAlgorithms.Dfs(tree))
         {
-            foreach(Tree? kid in root.Kids.Where(t => t is not null))
+            foreach (Tree? kid in root.Kids.Where(t => t is not null))
             {
-                if(kid is null)
+                if (kid is null)
                     continue;
                 sb.Append($"{indent}\"{root.Label}\" {edgeType} \"{kid.Label}\" [label=\"{root.Label}:{kid.Label}\"];{Environment.NewLine}");
             }

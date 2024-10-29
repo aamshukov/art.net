@@ -33,9 +33,8 @@ internal class RedBlackTreeInt : RedBlackTree<int>
                            string? label = default,
                            object? value = default,
                            Flags flags = Flags.Clear,
-                           Color color = Color.Unknown,
                            Dictionary<string, object>? attributes = default,
-                           string? version = default) : base(id, papa, label, value, flags, color, attributes, version)
+                           string? version = default) : base(id, papa, label, value, flags, attributes, version)
     {
     }
 

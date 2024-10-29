@@ -8,41 +8,43 @@ using UILab.Art.Framework.Core.Diagnostics;
 namespace UILab.Art.Framework.Adt.Tree;
 
 /// <summary>
-/// Red–Black Tree - self-balancing binary search tree.
+/// Splay Tree - BST with the additional property that recently accessed elements are quick to access again.
+/// https://en.wikipedia.org/wiki/Splay_tree
 /// </summary>
 /// <typeparam name="TKey"></typeparam>
-public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
+public abstract class SplayTree<TKey> : BinaryTree<TKey>
      where TKey : IComparable<TKey>
 {
-    public RedBlackTree(id id,
-                        Tree? papa = default,
-                        string? label = default,
-                        object? value = default,
-                        Flags flags = Flags.Clear,
-                        Dictionary<string, object>? attributes = default,
-                        string? version = default) : base(id, papa, label, value, flags, Color.Black, attributes, version)
+    public SplayTree(id id,
+                     Tree? papa = default,
+                     string? label = default,
+                     object? value = default,
+                     Flags flags = Flags.Clear,
+                     Color color = Color.Unknown,
+                     Dictionary<string, object>? attributes = default,
+                     string? version = default) : base(id, papa, label, value, flags, color, attributes, version)
     {
     }
 
-    public new RedBlackTree<TKey>? Papa
+    public new SplayTree<TKey>? Papa
     {
-        get { return (RedBlackTree<TKey>?)base.Papa; }
+        get { return (SplayTree<TKey>?)base.Papa; }
         set { base.Papa = value; }
     }
 
-    public new RedBlackTree<TKey>? Left
+    public new SplayTree<TKey>? Left
     {
-        get { return (RedBlackTree<TKey>?)Kids[0]; }
+        get { return (SplayTree<TKey>?)Kids[0]; }
         set { Kids[0] = value; }
     }
 
-    public new RedBlackTree<TKey>? Right
+    public new SplayTree<TKey>? Right
     {
-        get { return (RedBlackTree<TKey>?)Kids[1]; }
+        get { return (SplayTree<TKey>?)Kids[1]; }
         set { Kids[1] = value; }
     }
 
-    public static bool Insert(RedBlackTree<TKey> tree, RedBlackTree<TKey> root)
+    public static bool Insert(SplayTree<TKey> tree, SplayTree<TKey> root)
     {
         Assert.NonNullReference(tree, nameof(tree));
         Assert.NonNullReference(root, nameof(root));
@@ -51,15 +53,15 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
         return BinaryTree<TKey>.Insert(tree, root);
 
         // phase II (rebalance)
-        //?? implement RedBlack tree logic.
+        //?? implement SplayTree tree logic.
     }
 
-    public static RedBlackTree<TKey> Delete(TKey key, RedBlackTree<TKey> root)
+    public static SplayTree<TKey> Delete(TKey key, SplayTree<TKey> root)
     {
         Assert.NonNullReference(key, nameof(key));
         Assert.NonNullReference(root, nameof(root));
 
-        //?? implement RedBlack tree logic.
+        //?? implement SplayTree tree logic.
         BinaryTree<TKey>.Delete(key, root);
 
         return root!;
