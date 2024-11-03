@@ -1,0 +1,5 @@
+Hi everyone,
+
+I experimented with Angular over the weekend to get a feel for it. I set up a simple project on my computer, and the installation process seemed much more straightforward compared to the setup on BBB machines.
+
+By the way, Microsoft introduced a great package for using Blazor in WinForms: Microsoft.AspNetCore.Components.WebView.WindowsForms. Why not consider using that? It's a native C#/.NET component, making it easier to install, maintain, and work with. It also comes with a solid UI library, and since it's part of .NET Core, you don’t need to spawn Node.js or Angular processes.
