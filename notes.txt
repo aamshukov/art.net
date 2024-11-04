@@ -1,19 +1,1 @@
-Hi Guys,
-
-I experimented with Angular over the weekend to get a feel for it.
-I set up a simple project on my home computer (a couple of components in a single module),
-the installation process seemed much more straightforward compared to the setup on BBB machines (I managed to install only nodejs on BBB side).
-
-By the way, Microsoft introduced a great package for using Blazor in WinForms: Microsoft.AspNetCore.Components.WebView.WindowsForms.
-I played with a sample from Microsoft and it much faster compare to nodejs/Angular stuff.
-Why not consider using that?
-
-It's a native C#/.NET component, making it easier to install (nuget), maintain, and work with.
-It also comes with a solid UI library, and since it's packaged with CC, you don’t need to spawn Nodejs and Ng/CLI processes.
-Less installation, maintanance and unknown dependences ...
-The soup of C#, JavaScript, TypeScript, CSS, HTML, Angular, Nodejs, Ng/CLI, WebPack, and countless packages (which might be a nightmare to grab in BBB env).
-Marshaling data through that stack ...
-Ideally, this whole stack would operate smoothly in the CC environment, right? Nope ;)
-
-And, additionally, we could leverage one of the native WinForms libraries, either commercial or free, to further enhance the user interface.
 
