@@ -19,8 +19,9 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
                         string? label = default,
                         object? value = default,
                         Flags flags = Flags.Clear,
+                        Color color = Color.Unknown,
                         Dictionary<string, object>? attributes = default,
-                        string? version = default) : base(id, papa, label, value, flags, Color.Black, attributes, version)
+                        string? version = default) : base(id, papa, label, value, flags, color, attributes, version)
     {
     }
 
@@ -42,16 +43,23 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
         set { Kids[1] = value; }
     }
 
+    public bool IsRead() => Color == Color.Red;
+
     public static bool Insert(RedBlackTree<TKey> tree, RedBlackTree<TKey> root)
     {
         Assert.NonNullReference(tree, nameof(tree));
         Assert.NonNullReference(root, nameof(root));
 
         // phase I (insert)
-        return BinaryTree<TKey>.Insert(tree, root);
+        bool result = BinaryTree<TKey>.Insert(tree, root);
 
         // phase II (rebalance)
-        //?? implement RedBlack tree logic.
+        if(result)
+        {
+            Rebalance(tree);
+        }
+
+        return result;
     }
 
     public static RedBlackTree<TKey> Delete(TKey key, RedBlackTree<TKey> root)
@@ -63,6 +71,18 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
         BinaryTree<TKey>.Delete(key, root);
 
         return root!;
+    }
+
+    private static void Rebalance(RedBlackTree<TKey> tree)
+    {
+    }
+
+    private static void RotateLeft(RedBlackTree<TKey> tree)
+    {
+    }
+
+    private static void RotateRight(RedBlackTree<TKey> tree)
+    {
     }
 
     public override IEnumerable<object> GetEqualityComponents()
