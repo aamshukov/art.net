@@ -43,7 +43,9 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
         set { Kids[1] = value; }
     }
 
-    public bool IsRead() => Color == Color.Red;
+    public bool IsRed() => Color == Color.Red;
+
+    public bool IsBlack() => Color == Color.Black;
 
     public static bool Insert(RedBlackTree<TKey> tree, RedBlackTree<TKey> root)
     {
