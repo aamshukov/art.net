@@ -69,6 +69,8 @@ public abstract class Cache<TKey, TValue> : Disposable, ICache<TKey, TValue>
         Storage = new(-1, capacity);
     }
 
+    public abstract bool IsExpired(TKey key, string region);
+
     public abstract TValue Get(TKey key, string region);
 
     public abstract Task<TValue> GetAsync(TKey key, string region, CancellationToken cancellationToken);

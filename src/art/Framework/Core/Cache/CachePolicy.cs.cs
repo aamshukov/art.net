@@ -28,6 +28,8 @@ public abstract class CachePolicy<TKey, TValue> : Disposable, ICachePolicy<TKey,
         Diagnostics = diagnostics ?? new();
     }
 
+    public abstract bool IsExpired(TKey key, string region);
+
     public abstract TValue Get(TKey key, string region);
 
     public abstract Task<TValue> GetAsync(TKey key, string region, CancellationToken cancellationToken);

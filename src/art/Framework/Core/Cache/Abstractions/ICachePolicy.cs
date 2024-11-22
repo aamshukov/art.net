@@ -7,6 +7,8 @@ public interface ICachePolicy<TKey, TValue>
     where TKey : class, IComparable<TKey>
     where TValue : class
 {
+    bool IsExpired(TKey key, string region);
+
     TValue Get(TKey key, string region);
 
     Task<TValue> GetAsync(TKey key, string region, CancellationToken cancellationToken);
