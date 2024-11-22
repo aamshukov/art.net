@@ -22,7 +22,6 @@ public sealed class SymbolTable
 
     public Diagnostics Diagnostics { get; init; }
 
-
     public SymbolTable(Scope root, Statistics statistics, Diagnostics diagnostics)
     {
         Assert.NonNullReference(root, nameof(root));
