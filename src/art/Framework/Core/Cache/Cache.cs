@@ -1,6 +1,7 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
+using System.Collections.Concurrent;
 using UILab.Art.Framework.Core.Cache.Abstractions;
 using UILab.Art.Framework.Core.Diagnostics;
 
@@ -10,7 +11,7 @@ public abstract class Cache<TKey, TValue> : Disposable, ICache<TKey, TValue>
     where TKey : class, IComparable<TKey>
     where TValue : class
 {
-    protected Dictionary<TKey, CacheItem<TValue>> Storage { get; init; }
+    protected ConcurrentDictionary<TKey, CacheItem<TValue>> Storage { get; init; }
 
     public string Name { get; init; }
 
@@ -18,7 +19,7 @@ public abstract class Cache<TKey, TValue> : Disposable, ICache<TKey, TValue>
 
     public ICachePolicy<TKey, TValue> Policy { get; init; }
 
-    public count Capacity { get { return Storage.Capacity; } }
+    public count Capacity { get; init; }
 
     public count Count { get { return Storage.Count; } }
 
@@ -60,10 +61,12 @@ public abstract class Cache<TKey, TValue> : Disposable, ICache<TKey, TValue>
         Name = name;
         Region = region ?? name;
 
+        Capacity = capacity;
+
         Statistics = statistics ?? new();
         Diagnostics = diagnostics ?? new();
 
-        Storage = new(capacity);
+        Storage = new(-1, capacity);
     }
 
     public abstract TValue Get(TKey key, string region);
