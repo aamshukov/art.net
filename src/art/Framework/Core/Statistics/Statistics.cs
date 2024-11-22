@@ -3,7 +3,7 @@
 //..............................
 namespace UILab.Art.Framework.Core.Statistics;
 
-public sealed class Statistics
+public class Statistics
 {
     public Dictionary<string, count> Usage { get; init; }
 

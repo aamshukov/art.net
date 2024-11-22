@@ -6,64 +6,26 @@ using UILab.Art.Framework.Core.Diagnostics;
 
 namespace UILab.Art.Framework.Core.Cache;
 
-public abstract class Cache<TKey, TValue> : Disposable, ICache<TKey, TValue>
+public abstract class CachePolicy<TKey, TValue> : Disposable, ICachePolicy<TKey, TValue>
     where TKey : class, IComparable<TKey>
     where TValue : class
 {
     protected Dictionary<TKey, CacheItem<TValue>> Storage { get; init; }
 
-    public string Name { get; init; }
-
-    public string Region { get; init; }
-
-    public ICachePolicy<TKey, TValue> Policy { get; init; }
-
-    public count Capacity { get { return Storage.Capacity; } }
-
-    public count Count { get { return Storage.Count; } }
-
     public CacheStatistics Statistics { get; init; }
 
     public Diagnostics.Diagnostics Diagnostics { get; init; }
 
-    public abstract event EventHandler<CacheEventArgs<TKey, CacheItem<TValue>>>? Got;
-
-    public abstract event EventHandler<CacheEventArgs<TKey, CacheItem<TValue>>>? Added;
-
-    public abstract event EventHandler<CacheEventArgs<TKey, CacheItem<TValue>>>? Replaced;
-
-    public abstract event EventHandler<CacheEventArgs<TKey, CacheItem<TValue>>>? Removed;
-
-    public abstract event EventHandler<CacheEventArgs<TKey, CacheItem<TValue>>>? Evicted;
-
-    public abstract event EventHandler<CacheEventArgs<TKey, CacheItem<TValue>>>? Expired;
-
-    public abstract event EventHandler? Cleared;
-
-    public abstract event EventHandler? ClearedRegion;
-
-    public new abstract event EventHandler? Disposed;
-
-    public Cache(string name,
-                 ICachePolicy<TKey, TValue> policy,
-                 string? region = default,
-                 count capacity = 1024,
-                 CacheStatistics? statistics = default,
-                 Diagnostics.Diagnostics? diagnostics = default)
+    public CachePolicy(Dictionary<TKey, CacheItem<TValue>> storage,
+                       CacheStatistics? statistics = default,
+                       Diagnostics.Diagnostics? diagnostics = default)
     {
-        Assert.NonEmptyString(name, nameof(name));
-        Assert.NonNullReference(policy, nameof(policy));
-        Assert.Ensure(capacity >= 0, nameof(capacity));
+        Assert.NonNullReference(storage, nameof(storage));
 
-        Policy = policy;
-
-        Name = name;
-        Region = region ?? name;
+        Storage = storage;
 
         Statistics = statistics ?? new();
         Diagnostics = diagnostics ?? new();
-
-        Storage = new(capacity);
     }
 
     public abstract TValue Get(TKey key, string region);

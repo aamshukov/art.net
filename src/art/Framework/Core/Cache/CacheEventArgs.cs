@@ -11,9 +11,9 @@ public sealed class CacheEventArgs<TKey, TValue> : EventArgs
 {
      public TKey Key { get; init; }
 
-     public CacheData<TValue> Value { get; init; }
+     public CacheItem<TValue> Value { get; init; }
 
-     public CacheEventArgs(TKey key, CacheData<TValue> value)
+     public CacheEventArgs(TKey key, CacheItem<TValue> value)
      {
         Assert.NonNullReference(key, nameof(key));
         Assert.NonNullReference(value, nameof(value));

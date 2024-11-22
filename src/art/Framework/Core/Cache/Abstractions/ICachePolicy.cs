@@ -3,7 +3,7 @@
 //..............................
 namespace UILab.Art.Framework.Core.Cache.Abstractions;
 
-public interface ICache<TKey, TValue>
+public interface ICachePolicy<TKey, TValue>
     where TKey : class, IComparable<TKey>
     where TValue : class
 {
