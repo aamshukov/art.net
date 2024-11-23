@@ -36,17 +36,23 @@ public abstract class CachePolicy<TKey, TValue> : Disposable, ICachePolicy<TKey,
 
     public abstract bool TryGet(TKey key, string region, out TValue value);
 
+    public abstract Task<bool> TryGetAsync(TKey key, string region, CancellationToken cancellationToken, out TValue value);
+
     public abstract void Set(TKey key, TValue value, string region);
 
     public abstract Task SetAsync(TKey key, TValue value, string region, CancellationToken cancellationToken);
 
     public abstract bool TrySet(TKey key, TValue value, string region);
 
+    public abstract Task<bool> TrySetAsync(TKey key, TValue value, string region, CancellationToken cancellationToken);
+
     public abstract void Remove(TKey key, string region);
 
     public abstract Task RemoveAsync(TKey key, string region, CancellationToken cancellationToken);
 
     public abstract bool TryRemove(TKey key, string region, out TValue value);
+
+    public abstract Task<bool> TryRemoveAsync(TKey key, string region, out TValue value, CancellationToken cancellationToken);
 
     public abstract void Clear();
 
