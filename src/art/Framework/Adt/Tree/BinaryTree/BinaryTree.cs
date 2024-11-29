@@ -41,6 +41,8 @@ public abstract class BinaryTree<TKey> : Tree
         set { Kids[1] = value; }
     }
 
+    public BinaryTree<TKey>? Uncle(BinaryTree<TKey> node) => (BinaryTree<TKey>?)(node?.Papa?.Papa?.Kids[1]);
+
     public bool Leaf => Left is null && Right is null;
 
     public BinaryTree<TKey> Root()
@@ -343,6 +345,51 @@ public abstract class BinaryTree<TKey> : Tree
             // switch to right side
             currentTree = currentTree?.Right;
         }
+    }
+
+    /// <summary>
+    /// ChatGPT.
+    /// A left rotation is performed to decrease the height of the right subtree.
+    ///     1. Identify the pivot node (y), which is the right child of the current root (x).
+    ///     2. Make the left subtree of y the right subtree of x.
+    ///     3. Make y the new root, and x becomes the left child of y.
+    ///
+    ///           r                r
+    ///            \                \
+    ///             x                y
+    ///              \              / \
+    ///               y            x   T1
+    ///              / \            \
+    ///             T1  T2           T2
+    ///
+    /// </summary>
+    /// <param name="tree"></param>
+    protected static void RotateLeft(RedBlackTree<TKey> tree)
+    {
+
+        // return pivot - might be a new root
+    }
+
+    /// <summary>
+    /// ChatGPT.
+    /// A right rotation is performed to decrease the height of the left subtree.
+    ///     1. Identify the pivot node (y), which is the left child of the current root (x).
+    ///     2. Make the right subtree of y the left subtree of x.
+    ///     3. Make y the new root, and x becomes the right child of y.
+    /// 
+    ///           r                r
+    ///            \                \
+    ///             x                y
+    ///            /                / \
+    ///           y                T1  x
+    ///          / \                   /
+    ///         T1  T2                T2
+    /// 
+    /// </summary>
+    /// <param name="tree"></param>
+    protected static void RotateRight(RedBlackTree<TKey> tree)
+    {
+        // return pivot - might be a new root
     }
 
     public override IEnumerable<object> GetEqualityComponents()

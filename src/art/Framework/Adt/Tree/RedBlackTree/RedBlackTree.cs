@@ -43,6 +43,8 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
         set { Kids[1] = value; }
     }
 
+    public RedBlackTree<TKey>? Uncle(RedBlackTree<TKey> node) => (RedBlackTree<TKey>?)(node?.Papa?.Papa?.Kids[1]);
+
     public bool IsRed() => Color == Color.Red;
 
     public bool IsBlack() => Color == Color.Black;
@@ -75,15 +77,12 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
         return root!;
     }
 
+    public bool CheckInvariant(RedBlackTree<TKey> tree)
+    {
+        return false;
+    }
+
     private static void Rebalance(RedBlackTree<TKey> tree)
-    {
-    }
-
-    private static void RotateLeft(RedBlackTree<TKey> tree)
-    {
-    }
-
-    private static void RotateRight(RedBlackTree<TKey> tree)
     {
     }
 

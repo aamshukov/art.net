@@ -43,6 +43,8 @@ public abstract class AvlTree<TKey> : BinaryTree<TKey>
         set { Kids[1] = value; }
     }
 
+    public AvlTree<TKey>? Uncle(AvlTree<TKey> node) => (AvlTree<TKey>?)(node?.Papa?.Papa?.Kids[1]);
+
     public static bool Insert(AvlTree<TKey> tree, AvlTree<TKey> root)
     {
         Assert.NonNullReference(tree, nameof(tree));
