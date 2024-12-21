@@ -85,12 +85,14 @@ public class Tree : Vertex
 
         while(queue?.Count > 0)
         {
-            result = visitor.Visit<TParam, TResult>(queue.Dequeue(), param);
+            Tree tree = queue.Dequeue();
 
-            foreach(Tree? tree in Kids)
+            result = visitor.Visit<TParam, TResult>(tree, param);
+
+            foreach(Tree? kid in tree.Kids)
             {
-                if(tree is not null)
-                    queue?.Enqueue(tree);
+                if(kid is not null)
+                    queue?.Enqueue(kid);
             }
         }
 
