@@ -3,6 +3,7 @@
 //..............................
 using System.Diagnostics;
 using UILab.Art.Framework.Adt.Graph;
+using UILab.Art.Framework.Core.DesignPatterns.Observer;
 using UILab.Art.Framework.Core.DesignPatterns.Visitor.Abstractions;
 using UILab.Art.Framework.Core.Diagnostics;
 
@@ -75,6 +76,25 @@ public class Tree : Vertex
         where TParam : default
     {
         Assert.NonNullReference(visitor, nameof(visitor));
-        return visitor.Visit<TParam, TResult>(this, param);
+
+        TResult? result = default;
+
+        Queue<Tree> queue = new(); // queue - in reverse order for left-to-right traversal
+
+        queue.Enqueue(this);
+
+        while(queue?.Count > 0)
+        {
+            result = visitor.Visit<TParam, TResult>(queue.Dequeue(), param);
+
+            foreach(Tree? tree in Kids)
+            {
+                if(tree is not null)
+                    queue?.Enqueue(tree);
+            }
+        }
+
+        // returns the last obtained result
+        return result;
     }
 }
