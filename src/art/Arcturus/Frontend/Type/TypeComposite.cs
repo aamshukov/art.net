@@ -31,7 +31,7 @@ public class TypeComposite : TypeScalar
 
     public override bool Equivalent(Type other)
     {
-        Assert.NonNullReference(other, nameof(other));
+        Assert.NonNullReference(other);
         return Composite() && other.Composite() && base.Equivalent(other) && Members == ((TypeComposite)other).Members;
     }
 
@@ -46,7 +46,7 @@ public class TypeComposite : TypeScalar
         where TResult : default
         where TParam : default
     {
-        Assert.NonNullReference(visitor, nameof(visitor));
+        Assert.NonNullReference(visitor);
         return visitor.Visit<TParam, TResult>(this, param);
     }
 }

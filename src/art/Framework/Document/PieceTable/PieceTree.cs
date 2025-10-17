@@ -44,7 +44,7 @@ public sealed class PieceTree : RedBlackTree<index>
         Assert.Ensure(id >= 0, nameof(id));
         Assert.Ensure(leftSize >= 0, nameof(leftSize));
         Assert.Ensure(rightSize >= 0, nameof(rightSize));
-        Assert.NonNullReference(span, nameof(span));
+        Assert.NonNullReference(span);
 
         Span = span;
 

@@ -29,8 +29,8 @@ public sealed class PieceTreeTable : ValueType
 
     public PieceTreeTable(IContent<codepoint> originalContent, IContent<codepoint> workingContent, size tabSize = 4)
     {
-        Assert.NonNullReference(originalContent, nameof(originalContent));
-        Assert.NonNullReference(workingContent, nameof(workingContent));
+        Assert.NonNullReference(originalContent);
+        Assert.NonNullReference(workingContent);
         Assert.Ensure(tabSize >= 0, nameof(tabSize));
 
         Pieces = default;

@@ -33,8 +33,8 @@ public sealed class DocumentHistoryLiveEntry : DocumentHistoryEntry
                                     bool confirm = false)
             : base(group, editActionType, operation, description, confirm)
     {
-        Assert.NonNullReference(addPieces, nameof(addPieces));
-        Assert.NonNullReference(removePieces, nameof(removePieces));
+        Assert.NonNullReference(addPieces);
+        Assert.NonNullReference(removePieces);
 
         InjectionPoint = injectionPoint;
         AddPieces = addPieces;

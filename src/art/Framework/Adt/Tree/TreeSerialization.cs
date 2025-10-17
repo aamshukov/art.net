@@ -13,9 +13,9 @@ public static class TreeSerialization
 {
     public async static Task SerializeTree(string filePath, string fileName, Tree tree, bool digraph = true)
     {
-        Assert.NonEmptyString(filePath, nameof(filePath));
-        Assert.NonEmptyString(fileName, nameof(fileName));
-        Assert.NonNullReference(tree, nameof(tree));
+        Assert.NonEmptyString(filePath);
+        Assert.NonEmptyString(fileName);
+        Assert.NonNullReference(tree);
 
         string content = GenerateGraphvizContent(tree, digraph);
 

@@ -43,8 +43,8 @@ public sealed class BoyerMoore : ISearch
                                      count count = count.MaxValue,
                                      object? meta = default)
     {
-        Assert.NonNullReference(text, nameof(text));
-        Assert.NonNullReference(pattern, nameof(pattern));
+        Assert.NonNullReference(text);
+        Assert.NonNullReference(pattern);
         Assert.Ensure(start >= 0, nameof(start));
         Assert.Ensure(length >= 0, nameof(length));
         Assert.Ensure(count >= 0, nameof(count));

@@ -10,7 +10,7 @@ public static class TreeAlgorithms
 {
     public static IEnumerable<Tree> Dfs(Tree tree, TreeTraversal treeTraversal = TreeTraversal.Preorder)
     {
-        Assert.NonNullReference(tree, nameof(tree));
+        Assert.NonNullReference(tree);
         Assert.Ensure(treeTraversal == TreeTraversal.Preorder || treeTraversal == TreeTraversal.Postorder, nameof(treeTraversal));
 
         Stack<Tree> stack = new();
@@ -39,7 +39,7 @@ public static class TreeAlgorithms
 
     public static IEnumerable<Tree> Bfs(Tree tree, TreeTraversal treeTraversal = TreeTraversal.Preorder)
     {
-        Assert.NonNullReference(tree, nameof(tree));
+        Assert.NonNullReference(tree);
 
         Queue<Tree> queue = new();
 

@@ -26,7 +26,7 @@ public class JsonPatchBuilder : IJsonPatchBuilder
 
     public JsonPatchBuilder(IJsonPatchDocument document)
     {
-        Assert.NonNullReference(document, nameof(document));
+        Assert.NonNullReference(document);
         Document = (JsonPatchDocument)document;
     }
 
@@ -37,14 +37,14 @@ public class JsonPatchBuilder : IJsonPatchBuilder
     /// <param name="rhs">Target Json document.</param>
     public void Build(string lhs, string rhs)
     {
-        Assert.NonNullReference(lhs, nameof(lhs));
-        Assert.NonNullReference(rhs, nameof(rhs));
+        Assert.NonNullReference(lhs);
+        Assert.NonNullReference(rhs);
 
         JToken lhsJson = JToken.Parse(lhs);
         JToken rhsJson = JToken.Parse(rhs);
 
-        Assert.NonNullReference(lhsJson, nameof(lhsJson));
-        Assert.NonNullReference(rhsJson, nameof(rhsJson));
+        Assert.NonNullReference(lhsJson);
+        Assert.NonNullReference(rhsJson);
 
         Build(lhsJson, rhsJson);
     }
@@ -56,8 +56,8 @@ public class JsonPatchBuilder : IJsonPatchBuilder
     /// <param name="rhs">Target Json document.</param>
     public void Build(JToken lhs, JToken rhs)
     {
-        Assert.NonNullReference(lhs, nameof(lhs));
-        Assert.NonNullReference(rhs, nameof(rhs));
+        Assert.NonNullReference(lhs);
+        Assert.NonNullReference(rhs);
 
         Document.Operations.Clear();
         CalculateDifferences(string.Empty, lhs, rhs);

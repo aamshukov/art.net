@@ -66,7 +66,7 @@ public abstract class BinaryTree<TKey> : Tree
 
     public static BinaryTree<TKey>? Search(TKey key, BinaryTree<TKey>? root)
     {
-        Assert.NonNullReference(key, nameof(key));
+        Assert.NonNullReference(key);
 
         BinaryTree<TKey>? node = root;
 
@@ -93,8 +93,8 @@ public abstract class BinaryTree<TKey> : Tree
 
     public static bool Insert(BinaryTree<TKey> tree, BinaryTree<TKey> root)
     {
-        Assert.NonNullReference(tree, nameof(tree));
-        Assert.NonNullReference(root, nameof(root));
+        Assert.NonNullReference(tree);
+        Assert.NonNullReference(root);
 
         TKey key = tree.GetKey();
 
@@ -141,8 +141,8 @@ public abstract class BinaryTree<TKey> : Tree
 
     public static BinaryTree<TKey>? Delete(TKey key, BinaryTree<TKey> root)
     {
-        Assert.NonNullReference(key, nameof(key));
-        Assert.NonNullReference(root, nameof(root));
+        Assert.NonNullReference(key);
+        Assert.NonNullReference(root);
 
         BinaryTree<TKey>? nodeToDelete = Search(key, root);
         return Delete(nodeToDelete);
@@ -302,7 +302,7 @@ public abstract class BinaryTree<TKey> : Tree
 
     public static bool Validate(BinaryTree<TKey> tree)
     {
-        Assert.NonNullReference(tree, nameof(tree));
+        Assert.NonNullReference(tree);
 
         IEnumerable<BinaryTree<TKey>> inorderDfs = InorderDfs(tree).Cast<BinaryTree<TKey>>();
 
@@ -324,7 +324,7 @@ public abstract class BinaryTree<TKey> : Tree
 
     public static IEnumerable<BinaryTree<TKey>> InorderDfs(BinaryTree<TKey> tree)
     {
-        Assert.NonNullReference(tree, nameof(tree));
+        Assert.NonNullReference(tree);
 
         Stack<BinaryTree<TKey>> stack = new();
 
@@ -402,7 +402,7 @@ public abstract class BinaryTree<TKey> : Tree
         where TResult : default
         where TParam : default
     {
-        Assert.NonNullReference(visitor, nameof(visitor));
+        Assert.NonNullReference(visitor);
         return visitor.Visit<TParam, TResult>(this, param);
     }
 }

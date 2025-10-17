@@ -28,7 +28,7 @@ public sealed class VectorClock
 
     public VectorClock Merge(VectorClock other)
     {
-        Assert.NonNullReference(other, nameof(other));
+        Assert.NonNullReference(other);
         Assert.Ensure(Vector.Count == other.Vector.Count, nameof(other.Vector));
 
         Vector[Index] += 1;

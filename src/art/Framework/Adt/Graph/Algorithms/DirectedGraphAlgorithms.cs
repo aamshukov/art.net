@@ -9,8 +9,8 @@ public static class DirectedGraphAlgorithms
 {
     public static DirectedGraph BuildGraph(string label, List<id> verticesIds, List<List<id>> endPoints)
     {
-        Assert.NonNullReference(verticesIds, nameof(verticesIds));
-        Assert.NonNullReference(endPoints, nameof(endPoints));
+        Assert.NonNullReference(verticesIds);
+        Assert.NonNullReference(endPoints);
 
         DirectedGraph graph = new(1, label: label);
 

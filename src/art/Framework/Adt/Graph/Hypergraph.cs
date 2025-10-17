@@ -65,7 +65,7 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>, IDisposable, 
     public void AddVertex(TVertex vertex)
     {
         Assert.NonDisposed(Disposed);
-        Assert.NonNullReference(vertex, nameof(vertex));
+        Assert.NonNullReference(vertex);
         Assert.Ensure(!Vertices.ContainsKey(vertex.Id), nameof(vertex));
 
         Vertices.Add(vertex.Id, vertex);
@@ -75,7 +75,7 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>, IDisposable, 
     protected virtual void OnVertexAdded(TVertex vertex)
     {
         Assert.NonDisposed(Disposed);
-        Assert.NonNullReference(vertex, nameof(vertex));
+        Assert.NonNullReference(vertex);
 
         VertexAdded?.Invoke(vertex);
     }
@@ -98,7 +98,7 @@ public abstract class HyperGraph<TVertex, TEdge> : EntityType<id>, IDisposable, 
 
     protected virtual void OnVertexRemoved(TVertex vertex)
     {
-        Assert.NonNullReference(vertex, nameof(vertex));
+        Assert.NonNullReference(vertex);
         VertexRemoved?.Invoke(vertex);
     }
 

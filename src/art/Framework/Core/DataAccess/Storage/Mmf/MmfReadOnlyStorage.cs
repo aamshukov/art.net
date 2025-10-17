@@ -23,7 +23,7 @@ public class MmfReadOnlyStorage<T> : Disposable, IReadOnlyStorage<T>
                               MmfCursor? cursor,
                               EndiannessType endiannessType = EndiannessType.LittleEndian)
     {
-        Assert.NonNullReference(mmf, nameof(mmf));
+        Assert.NonNullReference(mmf);
 
         Mmf = mmf;
         View = view ?? mmf.CreateViewAccessor();

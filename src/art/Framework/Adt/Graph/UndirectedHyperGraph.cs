@@ -76,7 +76,7 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
     public void AddHyperEdge(UndirectedHyperEdge hyperEdge)
     {
         Assert.NonDisposed(Disposed);
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        Assert.NonNullReference(hyperEdge);
 
         HyperEdges.Add(hyperEdge.Id, hyperEdge);
 
@@ -90,7 +90,7 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
 
     protected virtual void OnHyperEdgeAdd(UndirectedHyperEdge hyperEdge)
     {
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        Assert.NonNullReference(hyperEdge);
         HyperEdgeAdded?.Invoke(hyperEdge);
     }
 
@@ -151,7 +151,7 @@ public class UndirectedHyperGraph : HyperGraph<UndirectedVertex, UndirectedHyper
 
     protected virtual void OnHyperEdgeRemoved(UndirectedHyperEdge hyperEdge)
     {
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        Assert.NonNullReference(hyperEdge);
         HyperEdgeRemoved?.Invoke(hyperEdge);
     }
 

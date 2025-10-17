@@ -79,7 +79,7 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
     public void AddHyperEdge(DirectedHyperEdge hyperEdge)
     {
         Assert.NonDisposed(Disposed);
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        Assert.NonNullReference(hyperEdge);
 
         HyperEdges.Add(hyperEdge.Id, hyperEdge);
 
@@ -99,7 +99,7 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
     protected virtual void OnHyperEdgeAdd(DirectedHyperEdge hyperEdge)
     {
         Assert.NonDisposed(Disposed);
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        Assert.NonNullReference(hyperEdge);
 
         HyperEdgeAdded?.Invoke(hyperEdge);
     }
@@ -182,7 +182,7 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
 
     protected virtual void OnHyperEdgeRemoved(DirectedHyperEdge hyperEdge)
     {
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        Assert.NonNullReference(hyperEdge);
         HyperEdgeRemoved?.Invoke(hyperEdge);
     }
 
@@ -239,7 +239,7 @@ public class DirectedHyperGraph : HyperGraph<DirectedVertex, DirectedHyperEdge>
     public IEnumerable<UndirectedVertex> GetNeighbors(UndirectedVertex vertex)
     {
         Assert.NonDisposed(Disposed);
-        Assert.NonNullReference(vertex, nameof(vertex));
+        Assert.NonNullReference(vertex);
 
         yield return (UndirectedVertex)Enumerable.Empty<UndirectedVertex>();
     }

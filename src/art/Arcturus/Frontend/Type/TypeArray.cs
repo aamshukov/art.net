@@ -30,7 +30,7 @@ public class TypeArray : Type
                                                        value: value,
                                                        attributes: attributes, version: version)
     {
-        Assert.NonNullReference(underlyingType, nameof(underlyingType));
+        Assert.NonNullReference(underlyingType);
         Assert.NonEmptyCollection<TypeArrayBound>(bounds, nameof(bounds));
 
         UnderlyingType = underlyingType;
@@ -39,7 +39,7 @@ public class TypeArray : Type
 
     public override bool Equivalent(Type other)
     {
-        Assert.NonNullReference(other, nameof(other));
+        Assert.NonNullReference(other);
         return Array() && other.Array() && base.Equivalent(other) && Bounds == ((TypeArray)other).Bounds;
     }
 
@@ -54,7 +54,7 @@ public class TypeArray : Type
         where TResult : default
         where TParam : default
     {
-        Assert.NonNullReference(visitor, nameof(visitor));
+        Assert.NonNullReference(visitor);
         return visitor.Visit<TParam, TResult>(this, param);
     }
 }

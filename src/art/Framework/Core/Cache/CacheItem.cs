@@ -39,8 +39,8 @@ public sealed class CacheItem<TValue>
 
     public CacheItem(TValue value, string region, TimeSpan? expiration = default)
     {
-        Assert.NonNullReference(value, nameof(value));
-        Assert.NonEmptyString(region, nameof(region));
+        Assert.NonNullReference(value);
+        Assert.NonEmptyString(region);
 
         Value = value;
         Region = region;

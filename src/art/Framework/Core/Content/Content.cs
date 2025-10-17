@@ -26,8 +26,8 @@ public class Content<T> : EntityType<string>, IContent<T>
                    size bufferSize,
                    string? version = default) : base(id, version)
     {
-        Assert.NonEmptyString(id, nameof(id));
-        Assert.NonEmptyString(source, nameof(source));
+        Assert.NonEmptyString(id);
+        Assert.NonEmptyString(source);
         Assert.Ensure(bufferSize > 0, nameof(bufferSize));
 
         Contents = new();
@@ -145,7 +145,7 @@ public class Content<T> : EntityType<string>, IContent<T>
         //  0 1 2 3 4 5 6 7 8 9  0 1 2 3 4 5 6 7 8 9  0 1 2 3 4 5 6 7 8 9  0 1 2 3 4 5 6 7 8 9
         //  - - - - - - - - - -  - - - - . . . . . .  . . . . . . . . . .  . . . . . . . . . .
         //                               4 5 6 7 8 9  0 1 2 3 4 5 6 7 8 9  0 1 2 3 4 5 6 7 8 9
-        Assert.NonNullReference(codepoints, nameof(codepoints));
+        Assert.NonNullReference(codepoints);
 
         if(Contents.Count == 0)
         {

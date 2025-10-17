@@ -56,7 +56,7 @@ public class TypeCallable : TypeScalar
 
     public override bool Equivalent(Type other)
     {
-        Assert.NonNullReference(other, nameof(other));
+        Assert.NonNullReference(other);
 
         bool result = Callable() &&
                       other.Callable() &&
@@ -91,7 +91,7 @@ public class TypeCallable : TypeScalar
         where TResult : default
         where TParam : default
     {
-        Assert.NonNullReference(visitor, nameof(visitor));
+        Assert.NonNullReference(visitor);
         return visitor.Visit<TParam, TResult>(this, param);
     }
 }

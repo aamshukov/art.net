@@ -75,7 +75,7 @@ public class Tree : Vertex
         where TResult : default
         where TParam : default
     {
-        Assert.NonNullReference(visitor, nameof(visitor));
+        Assert.NonNullReference(visitor);
 
         TResult? result = default;
 

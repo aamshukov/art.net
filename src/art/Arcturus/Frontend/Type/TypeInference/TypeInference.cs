@@ -13,7 +13,7 @@ public sealed class TypeInference
 
     public TypeInference(SymbolTable symTable)
     {
-        Assert.NonNullReference(symTable, nameof(symTable));
+        Assert.NonNullReference(symTable);
         TypeNameCounter = new();
     }
 

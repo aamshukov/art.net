@@ -16,7 +16,7 @@ public static class UndirectedHyperGraphAlgorithms
     /// </summary>
     public static count GetVertexDegree(UndirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
         return u.HyperEdges.Count;
     }
 
@@ -25,8 +25,8 @@ public static class UndirectedHyperGraphAlgorithms
     /// </summary>
     public static bool AreVerticesAdjacent(UndirectedVertex u, UndirectedVertex v)
     {
-        Assert.NonNullReference(v, nameof(v));
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(v);
+        Assert.NonNullReference(u);
 
         bool adjacent = false;
 
@@ -44,7 +44,7 @@ public static class UndirectedHyperGraphAlgorithms
 
     public static IEnumerable<UndirectedVertex> GetAdjacentVertices(UndirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
 
         foreach(UndirectedHyperEdge hyperEdge in u.HyperEdges.Values)
         {
@@ -63,7 +63,7 @@ public static class UndirectedHyperGraphAlgorithms
     /// </summary>
     public static IEnumerable<UndirectedHyperEdge> GetVertexIncidentHyperEdges(UndirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
 
         foreach(UndirectedHyperEdge hyperEdge in u.HyperEdges.Values)
         {
@@ -73,13 +73,13 @@ public static class UndirectedHyperGraphAlgorithms
 
     public static bool IsVertexIsolated(UndirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
         return GetVertexDegree(u) == 0;
     }
 
     public static bool IsVertexPendant(UndirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
         return GetVertexDegree(u) == 1;
     }
 
@@ -88,27 +88,27 @@ public static class UndirectedHyperGraphAlgorithms
     /// </summary>
     public static IEnumerable<UndirectedVertex> GetVertexNeighbors(UndirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
         return GetAdjacentVertices(u);
     }
 
     public static count GetHyperEdgeDegree(UndirectedHyperEdge hyperEdge)
     {
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        Assert.NonNullReference(hyperEdge);
         return hyperEdge.Vertices.Count;
     }
 
     public static bool AreHyperEdgesAdjacent(UndirectedHyperEdge hyperEdge1, UndirectedHyperEdge hyperEdge2)
     {
-        Assert.NonNullReference(hyperEdge1, nameof(hyperEdge1));
-        Assert.NonNullReference(hyperEdge2, nameof(hyperEdge2));
+        Assert.NonNullReference(hyperEdge1);
+        Assert.NonNullReference(hyperEdge2);
 
         return hyperEdge1.Vertices.Keys.Intersect(hyperEdge2.Vertices.Keys).Any();
     }
 
     public static bool IsHyperEdgeSingleton(UndirectedHyperEdge hyperEdge)
     {
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        Assert.NonNullReference(hyperEdge);
         return GetHyperEdgeDegree(hyperEdge) == 1;
     }
 
@@ -118,7 +118,7 @@ public static class UndirectedHyperGraphAlgorithms
     /// </summary>
     public static bool IsRegular(UndirectedHyperGraph graph, size k = 2)
     {
-        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(graph);
 
         foreach(UndirectedVertex vertex in graph.Vertices.Values)
         {
@@ -136,7 +136,7 @@ public static class UndirectedHyperGraphAlgorithms
     /// </summary>
     public static bool IsUniform(UndirectedHyperGraph graph, size k = 2)
     {
-        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(graph);
 
         foreach(UndirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
         {
@@ -157,8 +157,8 @@ public static class UndirectedHyperGraphAlgorithms
 
     public static UndirectedVertex ContractHyperEdge(UndirectedHyperGraph graph, UndirectedHyperEdge contractedHyperEdge)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(contractedHyperEdge, nameof(contractedHyperEdge));
+        Assert.NonNullReference(graph);
+        Assert.NonNullReference(contractedHyperEdge);
 
         var vertices = contractedHyperEdge.Vertices.Values;
 
@@ -220,7 +220,7 @@ public static class UndirectedHyperGraphAlgorithms
 
     public static IEnumerable<UndirectedVertex> GetSelfLoopVertices(UndirectedHyperEdge hyperEdge)
     {
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        Assert.NonNullReference(hyperEdge);
 
         if(hyperEdge.Vertices.Count == 1)
         {
@@ -243,8 +243,8 @@ public static class UndirectedHyperGraphAlgorithms
                                                     IObserver<UndirectedVertex>? observer = default)
 
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(graph);
+        Assert.NonNullReference(u);
 
         Stack<UndirectedVertex> stack = new();
 
@@ -290,8 +290,8 @@ public static class UndirectedHyperGraphAlgorithms
                                                     bool preorder = true,
                                                     IObserver<UndirectedVertex>? observer = default)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(graph);
+        Assert.NonNullReference(u);
 
         Queue<UndirectedVertex> queue = new();
 

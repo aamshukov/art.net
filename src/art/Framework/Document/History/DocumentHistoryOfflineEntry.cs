@@ -20,7 +20,7 @@ public sealed class DocumentHistoryOfflineEntry : DocumentHistoryEntry
                                        bool confirm = false)
             : base(group, editActionType, operation, description, confirm)
     {
-        Assert.NonNullReference(content, nameof(content));
+        Assert.NonNullReference(content);
 
         Content = content;
         Location = location;

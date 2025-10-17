@@ -239,15 +239,15 @@ public static class Algorithms
 
     public static string CalculateSha256(byte[] data)
     {
-        Assert.NonNullReference(data, nameof(data));
+        Assert.NonNullReference(data);
         using SHA256 sha256 = SHA256.Create();
         return CalculateSha256(data, sha256);
     }
 
     public static string CalculateSha256(byte[] data, SHA256 sha256)
     {
-        Assert.NonNullReference(data, nameof(data));
-        Assert.NonNullReference(sha256, nameof(sha256));
+        Assert.NonNullReference(data);
+        Assert.NonNullReference(sha256);
 
         byte[] hashBytes = sha256.ComputeHash(data);
 

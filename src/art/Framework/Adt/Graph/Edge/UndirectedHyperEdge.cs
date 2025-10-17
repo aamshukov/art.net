@@ -30,7 +30,7 @@ public class UndirectedHyperEdge : HyperEdge<UndirectedVertex>
 
     public void AddVertex(UndirectedVertex vertex)
     {
-        Assert.NonNullReference(vertex, nameof(vertex));
+        Assert.NonNullReference(vertex);
         Assert.Ensure(!Vertices.ContainsKey(vertex.Id), nameof(vertex));
 
         Vertices.Add(vertex.Id, vertex);
@@ -58,7 +58,7 @@ public class UndirectedHyperEdge : HyperEdge<UndirectedVertex>
         where TResult : default
         where TParam : default
     {
-        Assert.NonNullReference(visitor, nameof(visitor));
+        Assert.NonNullReference(visitor);
         return visitor.Visit<TParam, TResult>(this, param);
     }
 }

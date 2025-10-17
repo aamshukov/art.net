@@ -17,8 +17,8 @@ public abstract class Observable<T> : IObservable<T>
 
         public Unsubscriber(List<IObserver<T>> observers, IObserver<T> observer)
         {
-            Assert.NonNullReference(observers, nameof(observers));
-            Assert.NonNullReference(observer, nameof(observer));
+            Assert.NonNullReference(observers);
+            Assert.NonNullReference(observer);
 
             Observers = observers;
             Observer = observer;
@@ -55,7 +55,7 @@ public abstract class Observable<T> : IObservable<T>
 
     public IDisposable Subscribe(IObserver<T> observer)
     {
-        Assert.NonNullReference(observer, nameof(observer));
+        Assert.NonNullReference(observer);
 
         if(!Observers.Contains(observer))
         {

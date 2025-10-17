@@ -17,7 +17,7 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static count GetVertexInDegree(DirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
         return u.InHyperEdges.Count;
     }
 
@@ -27,7 +27,7 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static count GetVertexOutDegree(DirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
         return u.OutHyperEdges.Count;
     }
 
@@ -38,7 +38,7 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static count GetVertexDegree(DirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
         return GetVertexInDegree(u) + GetVertexOutDegree(u);
     }
 
@@ -48,8 +48,8 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static bool AreVerticesAdjacent(DirectedVertex u, DirectedVertex v)
     {
-        Assert.NonNullReference(v, nameof(v));
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(v);
+        Assert.NonNullReference(u);
 
         foreach(DirectedHyperEdge hyperEdge in u.OutHyperEdges.Values)
         {
@@ -64,7 +64,7 @@ public static class DirectedHyperGraphAlgorithms
 
     public static IEnumerable<DirectedVertex> GetAdjacentVertices(DirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
 
         foreach(DirectedHyperEdge hyperEdge in u.OutHyperEdges.Values)
         {
@@ -83,7 +83,7 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static IEnumerable<DirectedHyperEdge> GetVertexIncidentHyperEdges(DirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
 
         foreach(DirectedHyperEdge hyperEdge in u.InHyperEdges.Values)
         {
@@ -98,13 +98,13 @@ public static class DirectedHyperGraphAlgorithms
 
     public static bool IsVertexIsolated(DirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
         return GetVertexDegree(u) == 0;
     }
 
     public static bool IsVertexPendant(DirectedVertex u)
     {
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(u);
         return GetVertexDegree(u) == 1;
     }
 
@@ -114,8 +114,8 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static IEnumerable<DirectedVertex> GetVertexInNeighbors(DirectedHyperGraph graph, DirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(graph);
+        Assert.NonNullReference(u);
 
         foreach(DirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
         {
@@ -135,8 +135,8 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static IEnumerable<DirectedVertex> GetVertexOutNeighbors(DirectedHyperGraph graph, DirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(graph);
+        Assert.NonNullReference(u);
 
         foreach(DirectedHyperEdge hyperEdge in graph.HyperEdges.Values)
         {
@@ -155,8 +155,8 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static IEnumerable<DirectedVertex> GetVertexNeighbors(DirectedHyperGraph graph, DirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(graph);
+        Assert.NonNullReference(u);
 
         return GetVertexOutNeighbors(graph, u).Union(GetVertexInNeighbors(graph, u));
     }
@@ -167,8 +167,8 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static IEnumerable<DirectedVertex> CollectPredecessors(DirectedHyperGraph graph, DirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(graph);
+        Assert.NonNullReference(u);
 
         return GetVertexInNeighbors(graph, u);
     }
@@ -179,8 +179,8 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static IEnumerable<DirectedVertex> CollectSuccessors(DirectedHyperGraph graph, DirectedVertex u)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(graph);
+        Assert.NonNullReference(u);
 
         return GetVertexOutNeighbors(graph, u);
     }
@@ -190,7 +190,7 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static count GetHyperEdgeDegree(DirectedHyperEdge hyperEdge)
     {
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        Assert.NonNullReference(hyperEdge);
         return hyperEdge.Domain.Count + hyperEdge.Codomain.Count;
     }
 
@@ -199,8 +199,8 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static bool AreHyperEdgesInAdjacent(DirectedHyperEdge hyperEdge1, DirectedHyperEdge hyperEdge2)
     {
-        Assert.NonNullReference(hyperEdge1, nameof(hyperEdge1));
-        Assert.NonNullReference(hyperEdge2, nameof(hyperEdge2));
+        Assert.NonNullReference(hyperEdge1);
+        Assert.NonNullReference(hyperEdge2);
 
         return hyperEdge1.Codomain.Keys.Intersect(hyperEdge2.Codomain.Keys).Any();
     }
@@ -210,8 +210,8 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static bool AreHyperEdgesOutAdjacent(DirectedHyperEdge hyperEdge1, DirectedHyperEdge hyperEdge2)
     {
-        Assert.NonNullReference(hyperEdge1, nameof(hyperEdge1));
-        Assert.NonNullReference(hyperEdge2, nameof(hyperEdge2));
+        Assert.NonNullReference(hyperEdge1);
+        Assert.NonNullReference(hyperEdge2);
 
         return hyperEdge1.Domain.Keys.Intersect(hyperEdge2.Domain.Keys).Any();
     }
@@ -221,8 +221,8 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static bool AreHyperEdgesAdjacent(DirectedHyperEdge hyperEdge1, DirectedHyperEdge hyperEdge2)
     {
-        Assert.NonNullReference(hyperEdge1, nameof(hyperEdge1));
-        Assert.NonNullReference(hyperEdge2, nameof(hyperEdge2));
+        Assert.NonNullReference(hyperEdge1);
+        Assert.NonNullReference(hyperEdge2);
 
         return hyperEdge1.Codomain.Keys.Intersect(hyperEdge2.Domain.Keys).Any();
     }
@@ -232,7 +232,7 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static bool IsHyperEdgeSingleton(DirectedHyperEdge hyperEdge, SingletonEdgeType singletonEdgeType = SingletonEdgeType.SelfLoop)
     {
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        Assert.NonNullReference(hyperEdge   );
 
         return singletonEdgeType switch
         {
@@ -248,7 +248,7 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static bool IsInRegular(DirectedHyperGraph graph, size k = 2)
     {
-        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(graph);
 
         foreach(DirectedVertex vertex in graph.Vertices.Values)
         {
@@ -266,7 +266,7 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static bool IsOutRegular(DirectedHyperGraph graph, size k = 2)
     {
-        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(graph);
 
         foreach(DirectedVertex vertex in graph.Vertices.Values)
         {
@@ -284,7 +284,7 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static bool IsRegular(DirectedHyperGraph graph, size k = 2)
     {
-        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(graph);
 
         foreach(DirectedVertex vertex in graph.Vertices.Values)
         {
@@ -302,7 +302,7 @@ public static class DirectedHyperGraphAlgorithms
     /// </summary>
     public static bool IsUniform(DirectedHyperGraph graph, UniformType uniformType = UniformType.Full, size k = 2)
     {
-        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(graph);
 
         if(uniformType == UniformType.SourceSet)
         {
@@ -346,8 +346,8 @@ public static class DirectedHyperGraphAlgorithms
 
     public static DirectedVertex ContractHyperEdge(DirectedHyperGraph graph, DirectedHyperEdge contractedHyperEdge)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(contractedHyperEdge, nameof(contractedHyperEdge));
+        Assert.NonNullReference(graph);
+        Assert.NonNullReference(contractedHyperEdge);
 
         var domain = contractedHyperEdge.Domain.Values;
         var codomain = contractedHyperEdge.Codomain.Values;
@@ -429,7 +429,7 @@ public static class DirectedHyperGraphAlgorithms
 
     public static IEnumerable<DirectedVertex> GetSelfLoopVertices(DirectedHyperEdge hyperEdge)
     {
-        Assert.NonNullReference(hyperEdge, nameof(hyperEdge));
+        Assert.NonNullReference(hyperEdge);
 
         if(hyperEdge.Domain.Count == 1 && hyperEdge.Codomain.Count == 1)
         {
@@ -454,8 +454,8 @@ public static class DirectedHyperGraphAlgorithms
                                                   bool preorder = true,
                                                   IObserver<DirectedVertex>? observer = default)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(graph);
+        Assert.NonNullReference(u);
 
         Stack<DirectedVertex> stack = new();
 
@@ -501,8 +501,8 @@ public static class DirectedHyperGraphAlgorithms
                                                   bool preorder = true,
                                                   IObserver<DirectedVertex>? observer = default)
     {
-        Assert.NonNullReference(graph, nameof(graph));
-        Assert.NonNullReference(u, nameof(u));
+        Assert.NonNullReference(graph);
+        Assert.NonNullReference(u);
 
         Queue<DirectedVertex> queue = new();
 

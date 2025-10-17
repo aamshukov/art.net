@@ -45,7 +45,7 @@ public class DirectedHyperEdge : HyperEdge<DirectedVertex>
 
     public void AddVertex(DirectedVertex vertex, bool domain = true)
     {
-        Assert.NonNullReference(vertex, nameof(vertex));
+        Assert.NonNullReference(vertex);
 
         var vertices = domain ? Domain : Codomain;
         Assert.Ensure(!vertices.ContainsKey(vertex.Id), nameof(vertex));
@@ -79,7 +79,7 @@ public class DirectedHyperEdge : HyperEdge<DirectedVertex>
         where TResult : default
         where TParam : default
     {
-        Assert.NonNullReference(visitor, nameof(visitor));
+        Assert.NonNullReference(visitor);
         return visitor.Visit<TParam, TResult>(this, param);
     }
 }

@@ -34,8 +34,8 @@ public sealed class PieceTable : ValueType
 
     public PieceTable(IContent<codepoint> originalContent, IContent<codepoint> workingContent, size tabSize = 4)
     {
-        Assert.NonNullReference(originalContent, nameof(originalContent));
-        Assert.NonNullReference(workingContent, nameof(workingContent));
+        Assert.NonNullReference(originalContent);
+        Assert.NonNullReference(workingContent);
         Assert.Ensure(tabSize >= 0, nameof(tabSize));
 
         Pieces = new();
@@ -71,8 +71,8 @@ public sealed class PieceTable : ValueType
     /// <param name="piece"></param>
     public void AddPiece(Piece piece)
     {
-        Assert.NonNullReference(piece, nameof(piece));
-        Assert.NonNullReference(Pieces.Last != default, nameof(piece));
+        Assert.NonNullReference(piece);
+        Assert.NonNullReference(Pieces.Last != default);
 
         #pragma warning disable CS8604
         Pieces.AddBefore(Pieces.Last, piece); // add to the end, before tail sentinel
@@ -81,7 +81,7 @@ public sealed class PieceTable : ValueType
 
     public LinkedListNode<Piece> InsertPiece(Piece piece, LinkedListNode<Piece> anchorNode, bool insertAfter)
     {
-        Assert.NonNullReference(piece, nameof(piece));
+        Assert.NonNullReference(piece);
 
         if(insertAfter)
         {
@@ -103,7 +103,7 @@ public sealed class PieceTable : ValueType
         if(addPieces.Count > 0)
         {
             var startNode = FindPieceNodeByPieceId(injectionPoint, reverse: false);
-            Assert.NonNullReference(startNode, nameof(startNode));
+            Assert.NonNullReference(startNode);
 
             foreach(var addPiece in addPieces)
             {
@@ -135,7 +135,7 @@ public sealed class PieceTable : ValueType
         //         b                4 : 1                  b b              4 : 2
         //           D E F G H      5 : 5                      D E F G H    6 : 5
         Assert.Ensure(location >= 0, nameof(location));
-        Assert.NonNullReference(codepoints, nameof(codepoints));
+        Assert.NonNullReference(codepoints);
 
         addPieces = new();
         removePieces = new();
@@ -331,7 +331,7 @@ public sealed class PieceTable : ValueType
         //            ^
         Assert.Ensure(offset >= 0, nameof(offset));
         Assert.Ensure(length >= 0, nameof(length));
-        Assert.NonNullReference(piece, nameof(piece));
+        Assert.NonNullReference(piece);
         Assert.Ensure(length <= piece.Span.Length, nameof(length));
 
         index spanStart = piece.Span.Start;
@@ -677,7 +677,7 @@ public sealed class PieceTable : ValueType
         //              | 0x0085                <Next Line> (NEL)
         //              | 0x2028                LINE SEPARATOR
         //              | 0x2029                PARAGRAPH SEPARATOR
-        Assert.NonNullReference(piece, nameof(piece));
+        Assert.NonNullReference(piece);
 
         LineMappings lineMappings = piece.LineMappings;
 

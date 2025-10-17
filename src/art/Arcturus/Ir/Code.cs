@@ -17,13 +17,13 @@ public sealed class Code<TOperation> where TOperation : notnull
 
     public void AddInstruction(Instruction<TOperation> instruction)
     {
-        Assert.NonNullReference(instruction, nameof(instruction));
+        Assert.NonNullReference(instruction);
         Instructions.Add(instruction);
     }
 
     public void RemoveInstruction(Instruction<TOperation> instruction)
     {
-        Assert.NonNullReference(instruction, nameof(instruction));
+        Assert.NonNullReference(instruction);
         Instructions.Remove(instruction);
     }
 

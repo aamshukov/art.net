@@ -19,7 +19,7 @@ public sealed unsafe class MmfCursor : Disposable
 
     public MmfCursor(MemoryMappedViewAccessor view)
     {
-        Assert.NonNullReference(view, nameof(view));
+        Assert.NonNullReference(view);
 
         View = view;
 

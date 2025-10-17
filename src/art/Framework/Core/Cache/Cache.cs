@@ -52,8 +52,8 @@ public abstract class Cache<TKey, TValue> : Disposable, ICache<TKey, TValue>
                  CacheStatistics? statistics = default,
                  Diagnostics.Diagnostics? diagnostics = default)
     {
-        Assert.NonEmptyString(name, nameof(name));
-        Assert.NonNullReference(policy, nameof(policy));
+        Assert.NonEmptyString(name);
+        Assert.NonNullReference(policy);
         Assert.Ensure(capacity >= 0, nameof(capacity));
 
         Policy = policy;

@@ -15,7 +15,7 @@ public abstract class Observer<T> : IObserver<T>
 
     public virtual void Subscribe(IObservable<T> observable)
     {
-        Assert.NonNullReference(observable, nameof(observable));
+        Assert.NonNullReference(observable);
         Disposable = observable.Subscribe(this);
     }
 

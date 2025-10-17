@@ -35,7 +35,7 @@ public class UndirectedGraph : UndirectedHyperGraph
     public void AddEdge(UndirectedEdge edge)
     {
         Assert.NonDisposed(Disposed);
-        Assert.NonNullReference(edge, nameof(edge));
+        Assert.NonNullReference(edge);
 
         base.AddHyperEdge(edge);
     }

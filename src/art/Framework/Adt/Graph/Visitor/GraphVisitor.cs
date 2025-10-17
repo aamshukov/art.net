@@ -14,13 +14,13 @@ public class GraphVisitor<TVertex, TEdge> : IVisitor
 
     public GraphVisitor(HyperGraph<TVertex, TEdge> graph)
     {
-        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonNullReference(graph);
         Graph = graph;
     }
 
     public virtual TResult? Visit<TParam, TResult>(IVisitable visitable, TParam? param = default)
     {
-        Assert.NonNullReference(visitable, nameof(visitable));
+        Assert.NonNullReference(visitable);
         return default; //??
     }
 }

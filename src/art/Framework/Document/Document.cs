@@ -74,10 +74,10 @@ public class Document : EntityType<string>, IDocument, IDisposable, IAsyncDispos
                     size tabSize = DefaultTabSize,
                     string? version = default) : base(id, version)
     {
-        Assert.NonEmptyString(id, nameof(id));
-        Assert.NonEmptyString(source, nameof(source));
-        Assert.NonNullReference(content, nameof(content));
-        Assert.NonNullReference(history, nameof(history));
+        Assert.NonEmptyString(id);
+        Assert.NonEmptyString(source);
+        Assert.NonNullReference(content);
+        Assert.NonNullReference(history);
         Assert.Ensure(tabSize >= 0, nameof(tabSize));
 
         Source = source;
@@ -200,7 +200,7 @@ public class Document : EntityType<string>, IDocument, IDisposable, IAsyncDispos
     {
         // see UILab.Art.Framework.Core.Text.Search.BoyerMoore implementation for details.
         // Code duplication of the UILab.Art.Framework.Core.Text.Search.BoyerMoore search engine.
-        Assert.NonNullReference(pattern, nameof(pattern));
+        Assert.NonNullReference(pattern);
         Assert.Ensure(start >= 0, nameof(start));
         Assert.Ensure(length >= 0, nameof(length));
         Assert.Ensure(count >= 0, nameof(count));
@@ -291,7 +291,7 @@ public class Document : EntityType<string>, IDocument, IDisposable, IAsyncDispos
     {
         Assert.Ensure(location >= 0, nameof(location));
         Assert.Ensure(count >= 0, nameof(count));
-        Assert.NonNullReference(codepoints, nameof(codepoints));
+        Assert.NonNullReference(codepoints);
         return new();
     }
 
@@ -303,7 +303,7 @@ public class Document : EntityType<string>, IDocument, IDisposable, IAsyncDispos
     public count Insert(location location, ReadOnlyMemory<codepoint> codepoints)
     {
         Assert.Ensure(location >= 0, nameof(location));
-        Assert.NonNullReference(codepoints, nameof(codepoints));
+        Assert.NonNullReference(codepoints);
 
         if(codepoints.Length == 0)
         {

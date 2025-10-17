@@ -19,7 +19,7 @@ public sealed class StringDataProvider : IStringDataProvider<codepoint>
 
     public StringDataProvider(string data, size bufferSize, string? version = default)
     {
-        Assert.NonNullReference(data, nameof(data)); // might be empty or WS
+        Assert.NonNullReference(data); // might be empty or WS
         Assert.Ensure(bufferSize > 0, nameof(bufferSize));
 
         Data = data;
@@ -30,7 +30,7 @@ public sealed class StringDataProvider : IStringDataProvider<codepoint>
     [SuppressMessage("Critical Code Smell", "S1994:\"for\" loop increment clauses should modify the loops' counters", Justification = "<Pending>")]
     public void Load(IContent<codepoint> content)
     {
-        Assert.NonNullReference(content, nameof(content));
+        Assert.NonNullReference(content);
 
         var codepoints = Data.EnumerateRunes().Select(r => (codepoint)r.Value).ToArray().AsMemory();
 
@@ -60,7 +60,7 @@ public sealed class StringDataProvider : IStringDataProvider<codepoint>
 
     public async Task LoadAsync(IContent<codepoint> content, CancellationToken cancellationToken)
     {
-        Assert.NonNullReference(content, nameof(content));
+        Assert.NonNullReference(content);
 
         Load(content);
         await Task.CompletedTask;

@@ -11,9 +11,12 @@ public abstract class Disposable : IDisposable, IAsyncDisposable
 
     public bool Disposed { get; private set; }
 
+    public bool Disposing { get; private set; }
+
     protected Disposable()
     {
         Disposed = false;
+        Disposing = false;
     }
 
     public void Dispose()
@@ -27,10 +30,12 @@ public abstract class Disposable : IDisposable, IAsyncDisposable
     [SuppressMessage("Major Code Smell", "S108:Nested blocks of code should not be left empty", Justification = "<Pending>")]
     protected virtual void Dispose(bool disposing)
     {
-        if(!Disposed)
+        if(!Disposed && !Disposing)
         {
             lock(syncRoot)
             {
+                Disposing = true;
+
                 try
                 {
                     if(!Disposed)
@@ -51,6 +56,7 @@ public abstract class Disposable : IDisposable, IAsyncDisposable
                 finally
                 {
                     Disposed = true;
+                    Disposing = false;
                 }
             }
         }

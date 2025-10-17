@@ -58,7 +58,7 @@ public abstract class Symbol : EntityType<id>, IVisitable
                   Dictionary<string, object>? metadata = default,
                   string? version = default) : base(id, version)
     {
-        Assert.NonNullReference(type, nameof(type));
+        Assert.NonNullReference(type);
 
         Kind = kind;
         Name = label?.Trim() ?? $"S:{id.ToString()}";

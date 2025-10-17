@@ -19,7 +19,7 @@ public sealed class Piece : EntityType<id>
     public Piece(id id, Span span, ContentType contentType, string? version = default) : base(id, version)
     {
         Assert.Ensure(id >= 0, nameof(id));
-        Assert.NonNullReference(span, nameof(span));
+        Assert.NonNullReference(span);
 
         Span = span;
         LineMappings = new();

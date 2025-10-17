@@ -15,7 +15,7 @@ public sealed class FileDataProvider : IStringDataProvider<codepoint>
 
     public FileDataProvider(string fileName, string? version = default)
     {
-        Assert.NonEmptyString(fileName, nameof(fileName));
+        Assert.NonEmptyString(fileName);
         Assert.Ensure(File.Exists(fileName), nameof(fileName));
 
         FileName = fileName;
@@ -24,7 +24,7 @@ public sealed class FileDataProvider : IStringDataProvider<codepoint>
 
     public void Load(IContent<codepoint> content)
     {
-        Assert.NonNullReference(content, nameof(content));
+        Assert.NonNullReference(content);
 
         count nakedCount = 0;
         count crlfCount = 0;
@@ -54,7 +54,7 @@ public sealed class FileDataProvider : IStringDataProvider<codepoint>
 
     public async Task LoadAsync(IContent<codepoint> content, CancellationToken cancellationToken)
     {
-        Assert.NonNullReference(content, nameof(content));
+        Assert.NonNullReference(content);
 
         Load(content);
         await Task.CompletedTask;

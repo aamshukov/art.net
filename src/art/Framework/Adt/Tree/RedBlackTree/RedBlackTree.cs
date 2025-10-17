@@ -51,8 +51,8 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
 
     public static bool Insert(RedBlackTree<TKey> tree, RedBlackTree<TKey> root)
     {
-        Assert.NonNullReference(tree, nameof(tree));
-        Assert.NonNullReference(root, nameof(root));
+        Assert.NonNullReference(tree);
+        Assert.NonNullReference(root);
 
         // phase I (insert)
         bool result = BinaryTree<TKey>.Insert(tree, root);
@@ -68,8 +68,8 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
 
     public static RedBlackTree<TKey> Delete(TKey key, RedBlackTree<TKey> root)
     {
-        Assert.NonNullReference(key, nameof(key));
-        Assert.NonNullReference(root, nameof(root));
+        Assert.NonNullReference(key);
+        Assert.NonNullReference(root);
 
         //?? implement RedBlack tree logic.
         BinaryTree<TKey>.Delete(key, root);
@@ -97,7 +97,7 @@ public abstract class RedBlackTree<TKey> : BinaryTree<TKey>
         where TResult : default
         where TParam : default
     {
-        Assert.NonNullReference(visitor, nameof(visitor));
+        Assert.NonNullReference(visitor);
         return visitor.Visit<TParam, TResult>(this, param);
     }
 }

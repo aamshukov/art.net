@@ -36,7 +36,7 @@ public class DirectedGraph : DirectedHyperGraph
     public void AddEdge(DirectedEdge edge)
     {
         Assert.NonDisposed(Disposed);
-        Assert.NonNullReference(edge, nameof(edge));
+        Assert.NonNullReference(edge);
 
         base.AddHyperEdge(edge);
     }

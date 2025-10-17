@@ -20,7 +20,7 @@ public abstract class CachePolicy<TKey, TValue> : Disposable, ICachePolicy<TKey,
                        CacheStatistics? statistics = default,
                        Diagnostics.Diagnostics? diagnostics = default)
     {
-        Assert.NonNullReference(storage, nameof(storage));
+        Assert.NonNullReference(storage);
 
         Storage = storage;
 

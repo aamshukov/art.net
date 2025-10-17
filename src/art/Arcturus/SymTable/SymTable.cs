@@ -24,9 +24,9 @@ public sealed class SymbolTable
 
     public SymbolTable(Scope root, Statistics statistics, Diagnostics diagnostics)
     {
-        Assert.NonNullReference(root, nameof(root));
-        Assert.NonNullReference(statistics, nameof(statistics));
-        Assert.NonNullReference(diagnostics, nameof(diagnostics));
+        Assert.NonNullReference(root);
+        Assert.NonNullReference(statistics);
+        Assert.NonNullReference(diagnostics);
 
         Root = root;
         Scope = root;

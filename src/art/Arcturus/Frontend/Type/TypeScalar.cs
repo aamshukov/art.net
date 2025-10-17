@@ -28,7 +28,7 @@ public class TypeScalar : Type
 
     public override bool Equivalent(Type other)
     {
-        Assert.NonNullReference(other, nameof(other));
+        Assert.NonNullReference(other);
         return Scalar() && other.Scalar() && base.Equivalent(other);
     }
 
@@ -42,7 +42,7 @@ public class TypeScalar : Type
         where TResult : default
         where TParam : default
     {
-        Assert.NonNullReference(visitor, nameof(visitor));
+        Assert.NonNullReference(visitor);
         return visitor.Visit<TParam, TResult>(this, param);
     }
 }

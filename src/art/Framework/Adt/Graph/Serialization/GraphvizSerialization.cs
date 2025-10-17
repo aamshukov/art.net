@@ -14,9 +14,9 @@ public static class GraphvizSerialization
                                                            UndirectedHyperGraph graph,
                                                            bool showSelfLoops = true)
     {
-        Assert.NonEmptyString(filePath, nameof(filePath));
-        Assert.NonEmptyString(fileName, nameof(fileName));
-        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonEmptyString(filePath);
+        Assert.NonEmptyString(fileName);
+        Assert.NonNullReference(graph);
 
         string content = GenerateGraphvizContent(graph, showSelfLoops);
 
@@ -36,9 +36,9 @@ public static class GraphvizSerialization
                                                          DirectedHyperGraph graph,
                                                          bool showSelfLoops = true)
     {
-        Assert.NonEmptyString(filePath, nameof(filePath));
-        Assert.NonEmptyString(fileName, nameof(fileName));
-        Assert.NonNullReference(graph, nameof(graph));
+        Assert.NonEmptyString(filePath);
+        Assert.NonEmptyString(fileName);
+        Assert.NonNullReference(graph);
 
         string content = GenerateDigraphvizContent(graph, showSelfLoops);
 

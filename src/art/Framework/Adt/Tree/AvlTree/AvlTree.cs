@@ -47,8 +47,8 @@ public abstract class AvlTree<TKey> : BinaryTree<TKey>
 
     public static bool Insert(AvlTree<TKey> tree, AvlTree<TKey> root)
     {
-        Assert.NonNullReference(tree, nameof(tree));
-        Assert.NonNullReference(root, nameof(root));
+        Assert.NonNullReference(tree);
+        Assert.NonNullReference(root);
 
         // phase I (insert)
         return BinaryTree<TKey>.Insert(tree, root);
@@ -59,8 +59,8 @@ public abstract class AvlTree<TKey> : BinaryTree<TKey>
 
     public static AvlTree<TKey> Delete(TKey key, AvlTree<TKey> root)
     {
-        Assert.NonNullReference(key, nameof(key));
-        Assert.NonNullReference(root, nameof(root));
+        Assert.NonNullReference(key);
+        Assert.NonNullReference(root);
 
         //?? implement AVL tree logic.
         BinaryTree<TKey>.Delete(key, root);
@@ -78,7 +78,7 @@ public abstract class AvlTree<TKey> : BinaryTree<TKey>
         where TResult : default
         where TParam : default
     {
-        Assert.NonNullReference(visitor, nameof(visitor));
+        Assert.NonNullReference(visitor);
         return visitor.Visit<TParam, TResult>(this, param);
     }
 }

@@ -39,7 +39,7 @@ public abstract class Type : Tree
 
     public virtual bool Equivalent(Type other)
     {
-        Assert.NonNullReference(other, nameof(other));
+        Assert.NonNullReference(other);
         return Id == other.Id && Kind == other.Kind && Cardinality == other.Cardinality && Label == other.Label;
     }
 
@@ -112,7 +112,7 @@ public abstract class Type : Tree
         where TResult : default
         where TParam : default
     {
-        Assert.NonNullReference(visitor, nameof(visitor));
+        Assert.NonNullReference(visitor);
         return visitor.Visit<TParam, TResult>(this, param);
     }
 }

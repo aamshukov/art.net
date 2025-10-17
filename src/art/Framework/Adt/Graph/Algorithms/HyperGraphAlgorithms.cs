@@ -34,7 +34,7 @@ public static class HyperGraphAlgorithms
                                    out List<id> vertices,
                                    out List<List<id>> endPoints)
     {
-        Assert.NonEmptyString(nxFilePath, nameof(nxFilePath));
+        Assert.NonEmptyString(nxFilePath);
 
         var jContent = File.ReadAllText(Path.Combine(nxFilePath, nxFileName));
         var jToken = (JToken)JsonConvert.DeserializeObject(jContent,

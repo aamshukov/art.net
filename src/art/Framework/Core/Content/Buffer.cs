@@ -39,7 +39,7 @@ public class Buffer<T> : EntityType<id>
 
     public void SetData(ReadOnlyMemory<T> srcData, offset srcOffset = 0, size srcSize = size.MaxValue, offset dstOffset = offset.MaxValue)
     {
-        Assert.NonNullReference(srcData, nameof(srcData));
+        Assert.NonNullReference(srcData);
 
         srcSize = Math.Min(srcSize, srcData.Length);
         dstOffset = Math.Min(dstOffset, Size);
