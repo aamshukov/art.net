@@ -9,9 +9,43 @@ public abstract class Disposable : IDisposable, IAsyncDisposable
 {
     private readonly object syncRoot = new();
 
-    public bool Disposed { get; private set; }
+    private bool _disposed;
+    public bool Disposed
+    {
+        get
+        {
+            lock(syncRoot)
+            {
+                return _disposed;
+            }
+        }
+        private set
+        {
+            lock(syncRoot)
+            {
+                _disposed = value;
+            }
+        }
+    }
 
-    public bool Disposing { get; private set; }
+    private bool _disposing;
+    public bool Disposing
+    {
+        get
+        {
+            lock(syncRoot)
+            {
+                return _disposing;
+            }
+        }
+        private set
+        {
+            lock(syncRoot)
+            {
+                _disposing = value;
+            }
+        }
+    }
 
     protected Disposable()
     {
