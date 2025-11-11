@@ -19,8 +19,8 @@ public class DirectedEdge : DirectedHyperEdge
     public DirectedVertex? V { get; init; }
 
     public DirectedEdge(id id,
-                        DirectedVertex? u = default,
-                        DirectedVertex? v = default,
+                        DirectedVertex u,
+                        DirectedVertex v,
                         string? label = default,
                         Flags flags = Flags.Clear,
                         Dictionary<string, object>? attributes = default,

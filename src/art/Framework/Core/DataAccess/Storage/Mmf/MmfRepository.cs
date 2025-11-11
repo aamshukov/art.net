@@ -2,15 +2,15 @@
 // UI Lab Inc. Arthur Amshukov .
 //..............................
 using System.IO.MemoryMappedFiles;
-using UILab.Art.Framework.Core.DataAccess.Storage.Abstractions;
+using UILab.Art.Framework.Core.DataAccess.Repository.Abstractions;
 using UILab.Art.Framework.Core.Diagnostics;
 using UILab.Framework.Core.Platform;
 
-namespace UILab.Art.Framework.Core.DataAccess.Storage.Mmf;
+namespace UILab.Art.Framework.Core.DataAccess.Repository.Mmf;
 
-public class MmfStorage<T> : MmfReadOnlyStorage<T>, IStorage<T>
+public class MmfRepository<T> : MmfReadOnlyRepository<T>, IRepository<T>
 {
-    public MmfStorage(MemoryMappedFile mmf,
+    public MmfRepository(MemoryMappedFile mmf,
                       MemoryMappedViewAccessor? view,
                       MmfCursor? cursor,
                       EndiannessType endiannessType = EndiannessType.LittleEndian) : base(mmf, view, cursor, endiannessType)

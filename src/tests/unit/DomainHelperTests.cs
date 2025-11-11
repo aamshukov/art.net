@@ -1,6 +1,9 @@
 ﻿//..............................
 // UI Lab Inc. Arthur Amshukov .
 //..............................
+using System;
+using System.Buffers;
+using Newtonsoft.Json.Linq;
 using UILab.Art.Framework.Core.Domain;
 
 namespace UILab.Art.Tests;
@@ -53,6 +56,44 @@ internal class DomainHelperTests
     {
         B b = new();
         string stringified = DomainHelper.Stringify(b);
-        Assert.That(stringified, Is.EqualTo(b.ToString()));
+        string bStr = b.ToString();
+        Assert.That(stringified, Is.EqualTo(bStr));
+    }
+
+    [Test]
+    public void DomainHelper_DateTimeOffset_Success()
+    {
+        (var dt, var ianaId) = DomainHelper.CurrentDateTime();
+        TimeZoneInfo localZone = TimeZoneInfo.Local;
+        Console.WriteLine($"{dt}: {localZone.Id} → {ianaId}");
+    }
+
+    private class BufferSegment : ReadOnlySequenceSegment<byte>
+    {
+        public BufferSegment(ReadOnlyMemory<byte> memory)
+        {
+            Memory = memory;
+        }
+
+        public BufferSegment Append(ReadOnlyMemory<byte> memory)
+        {
+            var segment = new BufferSegment(memory);
+            Next = segment;
+            segment.RunningIndex = RunningIndex + Memory.Length;
+            return segment;
+        }
+    }
+
+    [Test]
+    public void DomainHelper_Linearize_ReadOnlySequence_Success()
+    {
+        var first = new BufferSegment(new byte[] { 1, 2, 3 });
+        var last = first.Append(new byte[] { 4, 5, 6 }).Append(new byte[] { 7, 8, 9 });
+
+        ReadOnlySequence<byte> sequence = new(first, 0, last, last.Memory.Length);
+
+        DomainHelper.Linearize(in sequence, out byte[]? lease);
+        Assert.That(lease, Is.Not.Null);
+        DomainHelper.Recycle(lease);
     }
 }

@@ -75,10 +75,10 @@ internal class GraphTests
         var v3 = graph.CreateVertex(label: "3");
         graph.AddVertex(v3);
 
-        var e1 = graph.CreateEdge(u: v1, label: "v1-v1:0"); // self-loop
+        var e1 = graph.CreateEdge(u: v1, v: v1, label: "v1-v1:0"); // self-loop
         graph.AddHyperEdge(e1);
 
-        var e2 = graph.CreateEdge(u: v1, label: "v1-v1:1");
+        var e2 = graph.CreateEdge(u: v1, v: v1, label: "v1-v1:1");
         graph.AddHyperEdge(e2);
 
         var e3 = graph.CreateEdge(u: v1, v: v2, label: "v1-v2:2");
@@ -90,10 +90,10 @@ internal class GraphTests
         var e5 = graph.CreateEdge(u: v1, v: v3, label: "v1-v3:4");
         graph.AddHyperEdge(e5);
 
-        var e6 = graph.CreateEdge(u: v2, label: "v2-v2:5");
+        var e6 = graph.CreateEdge(u: v2, v: v2, label: "v2-v2:5");
         graph.AddHyperEdge(e6);
 
-        var e7 = graph.CreateEdge(u: v2, label: "v2-v2:6");
+        var e7 = graph.CreateEdge(u: v2, v: v2, label: "v2-v2:6");
         graph.AddHyperEdge(e7);
 
         var e8 = graph.CreateEdge(u: v2, v: v1, label: "v2-v1:7");
@@ -105,7 +105,7 @@ internal class GraphTests
         var e10 = graph.CreateEdge(u: v2, v: v3, label: "v2-v3:9");
         graph.AddHyperEdge(e10);
 
-        var e11 = graph.CreateEdge(u: v3, label: "v3-v3:10");
+        var e11 = graph.CreateEdge(u: v3, v: v3, label: "v3-v3:10");
         graph.AddHyperEdge(e11);
 
         const string fileName = "UndirectedGraph_Algorithms_PreorderPostorder_Traversal_DfsBfs_Success";
@@ -170,7 +170,7 @@ internal class GraphTests
         var e5 = graph.CreateEdge(u: v2, v: v3, label: "v2-v3");
         graph.AddHyperEdge(e5);
 
-        var e6 = graph.CreateEdge(u: v3, label: "v3-v3:10");
+        var e6 = graph.CreateEdge(u: v3, v: v3, label: "v3-v3:10");
         graph.AddHyperEdge(e6);
 
         const string fileName = "UndirectedGraph_Algorithms_PreorderPostorder_Traversal_DfsBfs2_Success";
@@ -316,10 +316,10 @@ internal class GraphTests
         var v3 = graph.CreateVertex(label: "3");
         graph.AddVertex(v3);
 
-        var e1 = graph.CreateEdge(u: v1, label: "v1-v1:0"); // self-loop
+        var e1 = graph.CreateEdge(u: v1, v: v1, label: "v1-v1:0"); // self-loop
         graph.AddHyperEdge(e1);
 
-        var e2 = graph.CreateEdge(u: v1, label: "v1-v1:1");
+        var e2 = graph.CreateEdge(u: v1, v: v1, label: "v1-v1:1");
         graph.AddHyperEdge(e2);
 
         var e3 = graph.CreateEdge(u: v1, v: v2, label: "v1-v2:2");
@@ -331,10 +331,10 @@ internal class GraphTests
         var e5 = graph.CreateEdge(u: v1, v: v3, label: "v1-v3:4");
         graph.AddHyperEdge(e5);
 
-        var e6 = graph.CreateEdge(u: v2, label: "v2-v2:5");
+        var e6 = graph.CreateEdge(u: v2, v: v2, label: "v2-v2:5");
         graph.AddHyperEdge(e6);
 
-        var e7 = graph.CreateEdge(u: v2, label: "v2-v2:6");
+        var e7 = graph.CreateEdge(u: v2, v: v2, label: "v2-v2:6");
         graph.AddHyperEdge(e7);
 
         var e8 = graph.CreateEdge(u: v2, v: v1, label: "v2-v1:7");
@@ -346,7 +346,7 @@ internal class GraphTests
         var e10 = graph.CreateEdge(u: v2, v: v3, label: "v2-v3:9");
         graph.AddHyperEdge(e10);
 
-        var e11 = graph.CreateEdge(u: v3, label: "v3-v3:10");
+        var e11 = graph.CreateEdge(u: v3, v: v3, label: "v3-v3:10");
         graph.AddHyperEdge(e11);
 
         const string fileName = "DirectedGraph_Algorithms_PreorderPostorder_Traversal_DfsBfs_Success";
@@ -411,7 +411,7 @@ internal class GraphTests
         var e5 = graph.CreateEdge(u: v2, v: v3, label: "v2-v3");
         graph.AddHyperEdge(e5);
 
-        var e6 = graph.CreateEdge(u: v3, label: "v3-v3:10");
+        var e6 = graph.CreateEdge(u: v3, v: v3, label: "v3-v3:10");
         graph.AddHyperEdge(e6);
 
         const string fileName = "DirectedGraph_Algorithms_PreorderPostorder_Traversal_DfsBfs2_Success";

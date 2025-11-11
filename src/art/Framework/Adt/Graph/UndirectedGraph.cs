@@ -16,8 +16,8 @@ public class UndirectedGraph : UndirectedHyperGraph
     {
     }
 
-    public UndirectedEdge CreateEdge(UndirectedVertex? u = default,
-                                     UndirectedVertex? v = default,
+    public UndirectedEdge CreateEdge(UndirectedVertex u,
+                                     UndirectedVertex v,
                                      string? label = default,
                                      Flags flags = Flags.Clear,
                                      Dictionary<string, object>? attributes = default,

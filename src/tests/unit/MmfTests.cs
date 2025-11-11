@@ -4,7 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.CompilerServices;
-using UILab.Art.Framework.Core.DataAccess.Storage.Mmf;
+using UILab.Art.Framework.Core.DataAccess.Repository.Mmf;
 
 namespace UILab.Art.Tests;
 

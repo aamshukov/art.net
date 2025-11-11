@@ -3,9 +3,9 @@
 //..............................
 using UILab.Art.Framework.Core.Diagnostics;
 
-namespace UILab.Art.Framework.Core.DataAccess.Storage.Abstractions;
+namespace UILab.Art.Framework.Core.DataAccess.Repository.Abstractions;
 
-public interface IStorage<T> : IReadOnlyStorage<T>
+public interface IRepository<T> : IReadOnlyRepository<T>
 {
     Result<WriteOperataionResult> Write(ReadOnlyMemory<T> buffer, offset offset, count count);
 

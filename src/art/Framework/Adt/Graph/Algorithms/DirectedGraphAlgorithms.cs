@@ -32,7 +32,7 @@ public static class DirectedGraphAlgorithms
             {
                 DirectedVertex u = graph.Vertices[uId];
 
-                DirectedEdge edge = graph.CreateEdge(u: u, label: $"{u.Label}-{u.Label}");
+                DirectedEdge edge = graph.CreateEdge(u: u, v: u, label: $"{u.Label}-{u.Label}");
                 graph.AddEdge(edge);
             }
             else

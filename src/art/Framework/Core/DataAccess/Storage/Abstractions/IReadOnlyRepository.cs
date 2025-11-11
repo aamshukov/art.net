@@ -3,9 +3,9 @@
 //..............................
 using UILab.Art.Framework.Core.Diagnostics;
 
-namespace UILab.Art.Framework.Core.DataAccess.Storage.Abstractions;
+namespace UILab.Art.Framework.Core.DataAccess.Repository.Abstractions;
 
-public interface IReadOnlyStorage<T>
+public interface IReadOnlyRepository<T>
 {
     Result<ReadOperataionResult<T>> Read(offset offset, count count);
 

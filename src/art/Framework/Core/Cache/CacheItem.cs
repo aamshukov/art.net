@@ -15,27 +15,27 @@ public sealed class CacheItem<TValue>
     /// <summary>
     /// Date created, UTC.
     /// </summary>
-    public DateTime Created { get; init; }
+    public DateTimeOffset Created { get; init; }
 
     /// <summary>
     /// Date accessed, UTC.
     /// </summary>
-    public DateTime Accessed { get; set; }
+    public DateTimeOffset Accessed { get; set; }
 
     /// <summary>
     /// Date modified, UTC.
     /// </summary>
-    public DateTime Modified { get; set; }
+    public DateTimeOffset Modified { get; set; }
 
     /// <summary>
     /// Date removed, UTC.
     /// </summary>
-    public DateTime Removed { get; set; }
+    public DateTimeOffset Removed { get; set; }
 
     /// <summary>
     /// Expiration date, UTC.
     /// </summary>
-    public DateTime Expiration { get; init; }
+    public DateTimeOffset Expiration { get; init; }
 
     public CacheItem(TValue value, string region, TimeSpan? expiration = default)
     {
@@ -45,7 +45,7 @@ public sealed class CacheItem<TValue>
         Value = value;
         Region = region;
 
-        var timestamp = DateTime.UtcNow;
+        var timestamp = DateTimeOffset.Now;
 
         Created = timestamp;
         Accessed = timestamp;

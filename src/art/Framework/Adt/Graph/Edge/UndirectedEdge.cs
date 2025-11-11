@@ -19,8 +19,8 @@ public class UndirectedEdge : UndirectedHyperEdge
     public UndirectedVertex? V { get; init; }
 
     public UndirectedEdge(id id,
-                          UndirectedVertex? u = default,
-                          UndirectedVertex? v = default,
+                          UndirectedVertex u,
+                          UndirectedVertex v,
                           string? label = default,
                           Flags flags = Flags.Clear,
                           Dictionary<string, object>? attributes = default,

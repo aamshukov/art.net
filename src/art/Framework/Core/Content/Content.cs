@@ -35,7 +35,7 @@ public class Content<T> : EntityType<string>, IContent<T>
         BufferSize = bufferSize;
     }
 
-    public size Length() => Contents.Aggregate(0, (result, buffer) => result + buffer.Size);
+    public size Length() => checked(Contents.Aggregate(0, (result, buffer) => result + buffer.Size));
 
     public T GetCodepoint(location location, T defaultValue)
     {

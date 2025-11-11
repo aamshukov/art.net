@@ -32,7 +32,7 @@ public static class UndirectedGraphAlgorithms
             {
                 UndirectedVertex u = graph.Vertices[uId];
 
-                UndirectedEdge edge = graph.CreateEdge(u: u, label: $"{u.Label}-{u.Label}");
+                UndirectedEdge edge = graph.CreateEdge(u: u, v: u, label: $"{u.Label}-{u.Label}");
                 graph.AddEdge(edge);
             }
             else

@@ -16,8 +16,8 @@ public class DirectedGraph : DirectedHyperGraph
     {
     }
 
-    public DirectedEdge CreateEdge(DirectedVertex? u = default,
-                                   DirectedVertex? v = default,
+    public DirectedEdge CreateEdge(DirectedVertex u,
+                                   DirectedVertex v,
                                    string? label = default,
                                    Flags flags = Flags.Clear,
                                    Dictionary<string, object>? attributes = default,

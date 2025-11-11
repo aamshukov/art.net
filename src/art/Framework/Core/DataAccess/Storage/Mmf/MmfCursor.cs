@@ -9,7 +9,7 @@ using System.IO.MemoryMappedFiles;
 using System.Runtime.CompilerServices;
 using UILab.Art.Framework.Core.Diagnostics;
 
-namespace UILab.Art.Framework.Core.DataAccess.Storage.Mmf;
+namespace UILab.Art.Framework.Core.DataAccess.Repository.Mmf;
 
 public sealed unsafe class MmfCursor : Disposable
 {
